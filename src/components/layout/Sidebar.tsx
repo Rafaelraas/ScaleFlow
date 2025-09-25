@@ -4,7 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Users, Settings, LayoutDashboard, Repeat, ListChecks, User } from "lucide-react"; // Added User icon
+import { CalendarDays, Users, Settings, LayoutDashboard, Repeat, ListChecks, User, Building } from "lucide-react"; // Added Building icon
 import { useSession } from "@/providers/SessionContextProvider";
 
 interface SidebarProps {
@@ -58,10 +58,16 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       roles: ["employee", "manager"],
     },
     {
-      name: "Profile Settings", // New item
+      name: "Profile Settings",
       href: "/profile-settings",
-      icon: User, // Using User icon
-      roles: ["manager", "employee", "system_admin"], // Visible to all authenticated roles
+      icon: User,
+      roles: ["manager", "employee", "system_admin"],
+    },
+    {
+      name: "Company Settings", // New item
+      href: "/company-settings",
+      icon: Building, // Using Building icon
+      roles: ["manager", "system_admin"], // Visible to managers and system admins
     },
   ];
 
