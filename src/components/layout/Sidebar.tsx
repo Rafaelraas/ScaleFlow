@@ -5,30 +5,33 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Users, Settings, LayoutDashboard } from "lucide-react";
+import { useSession } from "@/providers/SessionContextProvider"; // Import useSession
 
 interface SidebarProps {
   isMobile?: boolean;
 }
 
 export const Sidebar = ({ isMobile = false }: SidebarProps) => {
+  const { userRole } = useSession(); // Get userRole from context
+
   const navItems = [
     {
       name: "Dashboard",
       href: "/dashboard",
       icon: LayoutDashboard,
-      roles: ["manager", "employee"],
+      roles: ["manager", "employee", "system_admin"],
     },
     {
       name: "Schedules",
       href: "/schedules",
       icon: CalendarDays,
-      roles: ["manager"],
+      roles: ["manager", "system_admin"],
     },
     {
       name: "Employees",
       href: "/employees",
       icon: Users,
-      roles: ["manager"],
+      roles: ["manager", "system_admin"],
     },
     {
       name: "My Schedule",
@@ -50,8 +53,9 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
     },
   ];
 
-  // For now, we'll show all links. Later, this will be filtered by user role.
-  const filteredNavItems = navItems; // .filter(item => item.roles.includes(currentUserRole));
+  const filteredNavItems = userRole
+    ? navItems.filter((item) => item.roles.includes(userRole))
+    : [];
 
   return (
     <div

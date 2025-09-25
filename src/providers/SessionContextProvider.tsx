@@ -6,9 +6,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { showSuccess, showError } from "@/utils/toast";
 
+interface UserProfile {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  avatar_url: string | null;
+  company_id: string | null;
+  role_id: string;
+  role_name: string; // Added role_name
+}
+
 interface SessionContextType {
   session: Session | null;
   isLoading: boolean;
+  userProfile: UserProfile | null; // Added userProfile
+  userRole: string | null; // Added userRole
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -16,19 +28,48 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 export const SessionContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const fetchUserProfileAndRole = async (userId: string) => {
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('*, roles(name)')
+      .eq('id', userId)
+      .single();
+
+    if (profileError) {
+      console.error("Error fetching user profile:", profileError);
+      showError("Failed to load user profile.");
+      setUserProfile(null);
+      setUserRole(null);
+    } else if (profileData) {
+      const profileWithRoleName: UserProfile = {
+        ...profileData,
+        role_name: (profileData.roles as { name: string }).name,
+      };
+      setUserProfile(profileWithRoleName);
+      setUserRole(profileWithRoleName.role_name);
+    }
+  };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
         setSession(currentSession);
+        if (currentSession?.user?.id) {
+          await fetchUserProfileAndRole(currentSession.user.id);
+        }
         if (location.pathname === '/login' || location.pathname === '/register') {
           navigate('/');
           showSuccess("Logged in successfully!");
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
+        setUserProfile(null);
+        setUserRole(null);
         if (location.pathname !== '/login' && location.pathname !== '/register') {
           navigate('/login');
           showSuccess("Logged out successfully!");
@@ -37,8 +78,11 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setIsLoading(false);
     });
 
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       setSession(initialSession);
+      if (initialSession?.user?.id) {
+        await fetchUserProfileAndRole(initialSession.user.id);
+      }
       setIsLoading(false);
       if (!initialSession && location.pathname !== '/login' && location.pathname !== '/register') {
         navigate('/login');
@@ -51,7 +95,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   }, [navigate, location.pathname]);
 
   return (
-    <SessionContext.Provider value={{ session, isLoading }}>
+    <SessionContext.Provider value={{ session, isLoading, userProfile, userRole }}>
       {children}
     </SessionContext.Provider>
   );

@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { Layout } from "./components/layout/Layout";
 import { useSession } from "./providers/SessionContextProvider";
-import { MadeWithDyad } from "./components/made-with-dyad"; // Ensure MadeWithDyad is imported
+import { MadeWithDyad } from "./components/made-with-dyad";
 
 const queryClient = new QueryClient();
 
@@ -44,7 +44,7 @@ const App = () => {
               <Route path="/swap-requests" element={<Layout><div>Swap Requests Page</div></Layout>} />
             </>
           ) : (
-            <Route path="/" element={<Login />} /> // Redirect unauthenticated users to login
+            <Route path="/" element={<Login />} />
           )}
           <Route path="*" element={<NotFound />} />
         </Routes>
