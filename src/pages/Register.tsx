@@ -17,7 +17,7 @@ const Register = () => {
         <CardContent>
           <Auth
             supabaseClient={supabase}
-            providers={['email']} // Corrected from 'magicLink' to 'email'
+            providers={[]} // Corrected to an empty array for email/magic link
             appearance={{
               theme: ThemeSupa,
               variables: {
