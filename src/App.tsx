@@ -18,54 +18,47 @@ import SwapRequests from "./pages/SwapRequests";
 import ProfileSettings from "./pages/ProfileSettings";
 import CompanySettings from "./pages/CompanySettings";
 import { Layout } from "./components/layout/Layout";
-import { useSession } from "./providers/SessionContextProvider";
+import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 import { MadeWithDyad } from "./components/made-with-dyad";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const { session, isLoading, userProfile } = useSession();
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-        <p className="text-xl text-gray-600 dark:text-gray-400">Loading application...</p>
-        <MadeWithDyad />
-      </div>
-    );
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <Routes>
+          {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          {session ? (
-            userProfile && userProfile.company_id === null ? (
-              <Route path="*" element={<CreateCompany />} />
-            ) : (
-              <>
-                {/* Redirect root to dashboard if user is logged in and has a company */}
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
-                <Route path="/schedules" element={<Layout><Schedules /></Layout>} />
-                <Route path="/employees" element={<Layout><Employees /></Layout>} />
-                <Route path="/employee-preferences" element={<Layout><EmployeePreferences /></Layout>} />
-                <Route path="/my-schedule" element={<Layout><MySchedule /></Layout>} />
-                <Route path="/preferences" element={<Layout><Preferences /></Layout>} />
-                <Route path="/swap-requests" element={<Layout><SwapRequests /></Layout>} />
-                <Route path="/profile-settings" element={<Layout><ProfileSettings /></Layout>} />
-                <Route path="/company-settings" element={<Layout><CompanySettings /></Layout>} />
-                {/* Keep the original Index page accessible if navigated directly */}
-                <Route path="/index" element={<Layout><Index /></Layout>} />
-              </>
-            )
-          ) : (
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          )}
+          <Route path="/create-company" element={<CreateCompany />} />
+          <Route path="/index" element={<Layout><Index /></Layout>} /> {/* Keep Index accessible directly */}
+
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} /> {/* Default authenticated route */}
+            <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+            <Route path="/profile-settings" element={<Layout><ProfileSettings /></Layout>} />
+            <Route path="/swap-requests" element={<Layout><SwapRequests /></Layout>} />
+          </Route>
+
+          {/* Manager-specific routes */}
+          <Route element={<ProtectedRoute allowedRoles={['manager', 'system_admin']} />}>
+            <Route path="/schedules" element={<Layout><Schedules /></Layout>} />
+            <Route path="/employees" element={<Layout><Employees /></Layout>} />
+            <Route path="/employee-preferences" element={<Layout><EmployeePreferences /></Layout>} />
+            <Route path="/company-settings" element={<Layout><CompanySettings /></Layout>} />
+          </Route>
+
+          {/* Employee-specific routes */}
+          <Route element={<ProtectedRoute allowedRoles={['employee', 'manager', 'system_admin']} />}> {/* Managers can also view their own schedule/preferences */}
+            <Route path="/my-schedule" element={<Layout><MySchedule /></Layout>} />
+            <Route path="/preferences" element={<Layout><Preferences /></Layout>} />
+          </Route>
+
+          {/* Catch-all for 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </TooltipProvider>

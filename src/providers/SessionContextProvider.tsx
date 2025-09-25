@@ -63,7 +63,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
           await fetchUserProfileAndRole(currentSession.user.id);
         }
         if (location.pathname === '/login' || location.pathname === '/register') {
-          navigate('/');
+          navigate('/dashboard'); // Redirect to dashboard after login/register if already authenticated
           showSuccess("Logged in successfully!");
         }
       } else if (event === 'SIGNED_OUT') {
@@ -84,15 +84,23 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         await fetchUserProfileAndRole(initialSession.user.id);
       }
       setIsLoading(false);
-      if (!initialSession && location.pathname !== '/login' && location.pathname !== '/register') {
-        navigate('/login');
-      } else if (initialSession && (location.pathname === '/login' || location.pathname === '/register')) {
-        navigate('/');
+      
+      // Initial redirection logic
+      if (!initialSession) {
+        if (location.pathname !== '/login' && location.pathname !== '/register') {
+          navigate('/login');
+        }
+      } else if (initialSession && userProfile?.company_id === null && location.pathname !== '/create-company') {
+        // If authenticated but no company, redirect to create company page
+        navigate('/create-company');
+      } else if (initialSession && userProfile?.company_id !== null && (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/create-company')) {
+        // If authenticated with a company and on login/register/create-company, redirect to dashboard
+        navigate('/dashboard');
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, location.pathname]);
+  }, [navigate, location.pathname, userProfile?.company_id]); // Added userProfile.company_id to dependencies
 
   return (
     <SessionContext.Provider value={{ session, isLoading, userProfile, userRole }}>
