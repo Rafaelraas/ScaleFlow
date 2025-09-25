@@ -4,15 +4,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Users, Settings, LayoutDashboard } from "lucide-react";
-import { useSession } from "@/providers/SessionContextProvider"; // Import useSession
+import { CalendarDays, Users, Settings, LayoutDashboard, Repeat } from "lucide-react"; // Added Repeat icon
+import { useSession } from "@/providers/SessionContextProvider";
 
 interface SidebarProps {
   isMobile?: boolean;
 }
 
 export const Sidebar = ({ isMobile = false }: SidebarProps) => {
-  const { userRole } = useSession(); // Get userRole from context
+  const { userRole } = useSession();
 
   const navItems = [
     {
@@ -48,8 +48,8 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
     {
       name: "Swap Requests",
       href: "/swap-requests",
-      icon: Users, // Placeholder icon, can be changed later
-      roles: ["employee"],
+      icon: Repeat, // Changed icon to Repeat
+      roles: ["employee", "manager"], // Now visible to both
     },
   ];
 
