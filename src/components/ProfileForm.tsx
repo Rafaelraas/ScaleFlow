@@ -20,6 +20,7 @@ import { useSession } from "@/providers/SessionContextProvider";
 import { showError, showSuccess } from "@/utils/toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserIcon } from "lucide-react";
+import { Label } from "@/components/ui/label"; // Added Label import
 
 const formSchema = z.object({
   first_name: z.string().optional(),

@@ -15,7 +15,7 @@ interface Shift {
   id: string;
   start_time: string;
   end_time: string;
-  roles: { name: string } | null;
+  roles: { name: string } | null; // Corrected to single object
 }
 
 interface Preference {
@@ -30,9 +30,9 @@ interface Preference {
 interface SwapRequest {
   id: string;
   status: string;
-  requesting_employee: { first_name: string; last_name: string } | null;
-  target_employee: { first_name: string; last_name: string } | null;
-  requested_shift: { start_time: string; end_time: string; roles: { name: string } | null } | null;
+  requesting_employee: { first_name: string; last_name: string } | null; // Corrected to single object
+  target_employee: { first_name: string; last_name: string } | null;     // Corrected to single object
+  requested_shift: { start_time: string; end_time: string; roles: { name: string } | null } | null; // Corrected to single object
 }
 
 const Dashboard = () => {
@@ -65,7 +65,7 @@ const Dashboard = () => {
         if (prefsError) {
           showError("Failed to fetch pending preferences: " + prefsError.message);
         } else {
-          setPendingPreferences(prefsData || []);
+          setPendingPreferences(prefsData as Preference[] || []);
         }
 
         // Fetch pending swap requests for managers
@@ -85,7 +85,18 @@ const Dashboard = () => {
         if (swapsError) {
           showError("Failed to fetch pending swap requests: " + swapsError.message);
         } else {
-          setPendingSwapRequests(swapsData || []);
+          // Supabase often returns nested relations as arrays even for single relationships.
+          // We'll map to ensure the types match our interface expecting single objects.
+          const formattedSwaps = (swapsData || []).map(req => ({
+            ...req,
+            requesting_employee: req.requesting_employee?.[0] || null,
+            target_employee: req.target_employee?.[0] || null,
+            requested_shift: req.requested_shift?.[0] ? {
+              ...req.requested_shift[0],
+              roles: req.requested_shift[0].roles?.[0] || null,
+            } : null,
+          }));
+          setPendingSwapRequests(formattedSwaps as SwapRequest[] || []);
         }
 
       } else if (userRole === 'employee') {
@@ -102,7 +113,16 @@ const Dashboard = () => {
           showError("Failed to fetch next shift: " + shiftsError.message);
         } else if (shiftsData && shiftsData.length > 0) {
           const nextUpcoming = shiftsData.find(shift => isFuture(parseISO(shift.start_time)));
-          setNextShift(nextUpcoming || null);
+          if (nextUpcoming) {
+            // Map to ensure roles is a single object
+            const formattedShift: Shift = {
+              ...nextUpcoming,
+              roles: nextUpcoming.roles?.[0] || null,
+            };
+            setNextShift(formattedShift);
+          } else {
+            setNextShift(null);
+          }
         } else {
           setNextShift(null);
         }

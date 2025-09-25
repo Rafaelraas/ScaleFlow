@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { showError } from "@/utils/toast";
+import { showError, showSuccess } from "@/utils/toast"; // Added showSuccess
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ const EmployeePreferences = () => {
       showError("Failed to fetch employee preferences: " + error.message);
       setPreferences([]);
     } else {
-      setPreferences(data || []);
+      setPreferences(data as EmployeePreference[] || []);
     }
     setLoadingPreferences(false);
   };

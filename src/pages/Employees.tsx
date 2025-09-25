@@ -28,7 +28,7 @@ interface EmployeeProfile {
   first_name: string | null;
   last_name: string | null;
   role_id: string; // Include role_id for editing
-  roles: { name: string } | null;
+  roles: { name: string } | null; // Corrected to single object
 }
 
 const Employees = () => {
@@ -56,7 +56,12 @@ const Employees = () => {
       showError("Failed to fetch employees: " + error.message);
       setEmployees([]);
     } else {
-      setEmployees(data || []);
+      // Map to ensure roles is a single object
+      const formattedEmployees = (data || []).map(emp => ({
+        ...emp,
+        roles: emp.roles?.[0] || null,
+      }));
+      setEmployees(formattedEmployees as EmployeeProfile[] || []);
     }
     setLoadingEmployees(false);
   };

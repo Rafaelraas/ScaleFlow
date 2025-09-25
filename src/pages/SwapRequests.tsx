@@ -12,14 +12,14 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { format } from "date-fns";
 
 interface ShiftDetails {
-  id: string; // Added shift ID for updates
+  id: string;
   start_time: string;
   end_time: string;
-  roles: { name: string } | null;
+  roles: { name: string } | null; // Corrected to single object
 }
 
 interface EmployeeDetails {
-  id: string; // Added employee ID for updates
+  id: string;
   first_name: string;
   last_name: string;
 }
@@ -34,7 +34,7 @@ interface SwapRequest {
   request_notes: string | null;
   created_at: string;
   
-  // Joined data
+  // Joined data - Corrected to single objects
   requested_shift: ShiftDetails | null;
   target_shift: ShiftDetails | null;
   requesting_employee: EmployeeDetails | null;
@@ -84,7 +84,21 @@ const SwapRequests = () => {
       showError("Failed to fetch swap requests: " + error.message);
       setSwapRequests([]);
     } else {
-      setSwapRequests(data || []);
+      // Map to ensure nested relations are single objects, not arrays
+      const formattedSwaps = (data || []).map(req => ({
+        ...req,
+        requested_shift: req.requested_shift?.[0] ? {
+          ...req.requested_shift[0],
+          roles: req.requested_shift[0].roles?.[0] || null,
+        } : null,
+        target_shift: req.target_shift?.[0] ? {
+          ...req.target_shift[0],
+          roles: req.target_shift[0].roles?.[0] || null,
+        } : null,
+        requesting_employee: req.requesting_employee?.[0] || null,
+        target_employee: req.target_employee?.[0] || null,
+      }));
+      setSwapRequests(formattedSwaps as SwapRequest[] || []);
     }
     setLoadingRequests(false);
   };
