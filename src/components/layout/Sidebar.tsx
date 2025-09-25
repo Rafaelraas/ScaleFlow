@@ -4,7 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Users, Settings, LayoutDashboard, Repeat } from "lucide-react"; // Added Repeat icon
+import { CalendarDays, Users, Settings, LayoutDashboard, Repeat, ListChecks } from "lucide-react"; // Added ListChecks icon
 import { useSession } from "@/providers/SessionContextProvider";
 
 interface SidebarProps {
@@ -34,6 +34,12 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       roles: ["manager", "system_admin"],
     },
     {
+      name: "Employee Preferences", // New item
+      href: "/employee-preferences",
+      icon: ListChecks, // Using ListChecks icon
+      roles: ["manager", "system_admin"],
+    },
+    {
       name: "My Schedule",
       href: "/my-schedule",
       icon: CalendarDays,
@@ -48,8 +54,8 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
     {
       name: "Swap Requests",
       href: "/swap-requests",
-      icon: Repeat, // Changed icon to Repeat
-      roles: ["employee", "manager"], // Now visible to both
+      icon: Repeat,
+      roles: ["employee", "manager"],
     },
   ];
 
