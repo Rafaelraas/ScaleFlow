@@ -15,5 +15,5 @@ export default defineConfig(() => ({
     },
   },
   // Add base path for GitHub Pages deployment
-  base:, // IMPORTANT: Replace <YOUR_REPO_NAME> with your actual repository name
+  base:scaleflow, // IMPORTANT: Replace <YOUR_REPO_NAME> with your actual repository name
 }));
