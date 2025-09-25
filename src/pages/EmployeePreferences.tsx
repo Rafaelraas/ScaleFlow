@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { showError, showSuccess } from "@/utils/toast"; // Added showSuccess
+import { showError, showSuccess } from "@/utils/toast";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
