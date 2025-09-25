@@ -11,10 +11,11 @@ import CreateCompany from "./pages/CreateCompany";
 import Dashboard from "./pages/Dashboard";
 import Schedules from "./pages/Schedules";
 import Employees from "./pages/Employees";
-import EmployeePreferences from "./pages/EmployeePreferences"; // Import new page
+import EmployeePreferences from "./pages/EmployeePreferences";
 import MySchedule from "./pages/MySchedule";
 import Preferences from "./pages/Preferences";
 import SwapRequests from "./pages/SwapRequests";
+import ProfileSettings from "./pages/ProfileSettings"; // Import new page
 import { Layout } from "./components/layout/Layout";
 import { useSession } from "./providers/SessionContextProvider";
 import { MadeWithDyad } from "./components/made-with-dyad";
@@ -50,10 +51,11 @@ const App = () => {
                 <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
                 <Route path="/schedules" element={<Layout><Schedules /></Layout>} />
                 <Route path="/employees" element={<Layout><Employees /></Layout>} />
-                <Route path="/employee-preferences" element={<Layout><EmployeePreferences /></Layout>} /> {/* New route */}
+                <Route path="/employee-preferences" element={<Layout><EmployeePreferences /></Layout>} />
                 <Route path="/my-schedule" element={<Layout><MySchedule /></Layout>} />
                 <Route path="/preferences" element={<Layout><Preferences /></Layout>} />
                 <Route path="/swap-requests" element={<Layout><SwapRequests /></Layout>} />
+                <Route path="/profile-settings" element={<Layout><ProfileSettings /></Layout>} /> {/* New route */}
               </>
             )
           ) : (
