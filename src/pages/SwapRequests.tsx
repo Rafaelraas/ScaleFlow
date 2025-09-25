@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import InitiateSwapForm from "@/components/InitiateSwapForm"; // Import the new form
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { showError } from "@/utils/toast";
@@ -41,6 +43,7 @@ const SwapRequests = () => {
   const { session, isLoading, userRole } = useSession();
   const [swapRequests, setSwapRequests] = useState<SwapRequest[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(true);
+  const [isInitiateSwapDialogOpen, setIsInitiateSwapDialogOpen] = useState(false);
 
   const fetchSwapRequests = async () => {
     if (!session?.user?.id || userRole !== 'employee') {
@@ -83,6 +86,11 @@ const SwapRequests = () => {
     }
   }, [session?.user?.id, userRole, isLoading]);
 
+  const handleInitiateSwapSuccess = () => {
+    setIsInitiateSwapDialogOpen(false);
+    fetchSwapRequests(); // Re-fetch requests after a new one is initiated
+  };
+
   if (userRole !== 'employee') {
     return (
       <div className="flex flex-col items-center justify-center h-full p-4">
@@ -110,7 +118,17 @@ const SwapRequests = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Shift Swap Requests</h1>
-        <Button>Initiate New Swap</Button> {/* Placeholder for initiating new swap requests */}
+        <Dialog open={isInitiateSwapDialogOpen} onOpenChange={setIsInitiateSwapDialogOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={() => setIsInitiateSwapDialogOpen(true)}>Initiate New Swap</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Initiate New Shift Swap</DialogTitle>
+            </DialogHeader>
+            <InitiateSwapForm onSuccess={handleInitiateSwapSuccess} onCancel={() => setIsInitiateSwapDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
 
       {loadingRequests ? (
