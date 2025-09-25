@@ -4,7 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Users, Settings, LayoutDashboard, Repeat, ListChecks, User, Building } from "lucide-react"; // Added Building icon
+import { CalendarDays, Users, Settings, LayoutDashboard, Repeat, ListChecks, User, Building, Clock } from "lucide-react"; // Added Clock icon
 import { useSession } from "@/providers/SessionContextProvider";
 
 interface SidebarProps {
@@ -26,6 +26,12 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       href: "/schedules",
       icon: CalendarDays,
       roles: ["manager", "system_admin"],
+    },
+    {
+      name: "Shift Templates", // New item
+      href: "/shift-templates",
+      icon: Clock, // Using Clock icon
+      roles: ["manager", "system_admin"], // Visible to managers and system admins
     },
     {
       name: "Employees",
@@ -64,10 +70,10 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       roles: ["manager", "employee", "system_admin"],
     },
     {
-      name: "Company Settings", // New item
+      name: "Company Settings",
       href: "/company-settings",
-      icon: Building, // Using Building icon
-      roles: ["manager", "system_admin"], // Visible to managers and system admins
+      icon: Building,
+      roles: ["manager", "system_admin"],
     },
   ];
 
