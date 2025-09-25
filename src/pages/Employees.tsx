@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { showError } from "@/utils/toast";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import InviteEmployeeForm from "@/components/InviteEmployeeForm"; // Import the new form
 
 interface EmployeeProfile {
   id: string;
@@ -19,6 +21,7 @@ const Employees = () => {
   const { userProfile, userRole } = useSession();
   const [employees, setEmployees] = useState<EmployeeProfile[]>([]);
   const [loadingEmployees, setLoadingEmployees] = useState(true);
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
   const fetchEmployees = async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
@@ -46,6 +49,11 @@ const Employees = () => {
     fetchEmployees();
   }, [userProfile?.company_id, userRole]);
 
+  const handleInviteSuccess = () => {
+    setIsInviteDialogOpen(false);
+    fetchEmployees(); // Re-fetch employees after a new one is invited
+  };
+
   if (userRole !== 'manager') {
     return (
       <div className="flex flex-col items-center justify-center h-full p-4">
@@ -64,7 +72,17 @@ const Employees = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Employee Management</h1>
-        <Button>Invite Employee</Button> {/* Placeholder for invite functionality */}
+        <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={() => setIsInviteDialogOpen(true)}>Invite Employee</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Invite New Employee</DialogTitle>
+            </DialogHeader>
+            <InviteEmployeeForm onSuccess={handleInviteSuccess} onCancel={() => setIsInviteDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
 
       {loadingEmployees ? (
