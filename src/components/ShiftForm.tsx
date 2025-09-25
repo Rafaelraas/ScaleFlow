@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { format, setHours, setMinutes } from "date-fns";
+import { format, setHours, setMinutes, addHours, parse } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -60,10 +60,20 @@ interface ShiftFormProps {
   };
 }
 
+interface ShiftTemplate {
+  id: string;
+  name: string;
+  duration_hours: number;
+  default_start_time: string; // HH:mm format
+  default_role_id: string | null;
+  default_notes: string | null;
+}
+
 const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
   const { userProfile } = useSession();
   const [employees, setEmployees] = useState<any[]>([]);
   const [roles, setRoles] = useState<any[]>([]);
+  const [shiftTemplates, setShiftTemplates] = useState<ShiftTemplate[]>([]);
   const [loading, setLoading] = useState(true);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -96,6 +106,12 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
         .from('roles')
         .select('id, name');
 
+      const { data: templatesData, error: templatesError } = await supabase
+        .from('shift_templates')
+        .select('*')
+        .eq('company_id', userProfile.company_id)
+        .order('name', { ascending: true });
+
       if (employeesError) {
         showError("Failed to fetch employees: " + employeesError.message);
       } else {
@@ -107,11 +123,48 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
       } else {
         setRoles(rolesData || []);
       }
+
+      if (templatesError) {
+        showError("Failed to fetch shift templates: " + templatesError.message);
+      } else {
+        setShiftTemplates(templatesData || []);
+      }
       setLoading(false);
     };
 
     fetchDependencies();
   }, [userProfile?.company_id]);
+
+  const handleTemplateChange = (templateId: string) => {
+    if (!templateId) {
+      // Clear template-related fields if "No template" is selected
+      form.setValue("role_id", undefined);
+      form.setValue("notes", "");
+      // Don't clear dates, as user might have picked them already
+      return;
+    }
+
+    const selectedTemplate = shiftTemplates.find(t => t.id === templateId);
+    if (selectedTemplate) {
+      const now = new Date();
+      const [hours, minutes] = selectedTemplate.default_start_time.split(':').map(Number);
+      
+      // Set start time to today's date with template's default time
+      let startTime = setHours(setMinutes(now, minutes), hours);
+      
+      // If the start time is in the past, set it for tomorrow
+      if (startTime < now) {
+        startTime = addHours(startTime, 24); // Add 24 hours to make it tomorrow
+      }
+
+      const endTime = addHours(startTime, selectedTemplate.duration_hours);
+
+      form.setValue("start_time", startTime);
+      form.setValue("end_time", endTime);
+      form.setValue("role_id", selectedTemplate.default_role_id || undefined);
+      form.setValue("notes", selectedTemplate.default_notes || "");
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!userProfile?.company_id) {
@@ -169,6 +222,27 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {!initialData && ( // Only show template selector for new shifts
+          <FormItem>
+            <FormLabel>Apply Shift Template (Optional)</FormLabel>
+            <Select onValueChange={handleTemplateChange} defaultValue="">
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a template to pre-fill details" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="">No Template</SelectItem>
+                {shiftTemplates.map((template) => (
+                  <SelectItem key={template.id} value={template.id}>
+                    {template.name} ({template.duration_hours}h, {template.default_start_time})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormItem>
+        )}
+
         <FormField
           control={form.control}
           name="start_time"
