@@ -62,14 +62,16 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         if (currentSession?.user?.id) {
           await fetchUserProfileAndRole(currentSession.user.id);
         }
-        if (location.pathname === '/login' || location.pathname === '/register') {
-          navigate('/dashboard'); // Redirect to dashboard after login/register if already authenticated
+        // Redirect from login/register to dashboard after successful auth
+        if (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/create-company') {
+          navigate('/dashboard');
           showSuccess("Logged in successfully!");
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
         setUserProfile(null);
         setUserRole(null);
+        // Redirect to login if signed out and not already on login/register
         if (location.pathname !== '/login' && location.pathname !== '/register') {
           navigate('/login');
           showSuccess("Logged out successfully!");
@@ -78,6 +80,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setIsLoading(false);
     });
 
+    // Initial session check on component mount
     supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       setSession(initialSession);
       if (initialSession?.user?.id) {
@@ -85,22 +88,15 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       }
       setIsLoading(false);
       
-      // Initial redirection logic
-      if (!initialSession) {
-        if (location.pathname !== '/login' && location.pathname !== '/register') {
-          navigate('/login');
-        }
-      } else if (initialSession && userProfile?.company_id === null && location.pathname !== '/create-company') {
-        // If authenticated but no company, redirect to create company page
-        navigate('/create-company');
-      } else if (initialSession && userProfile?.company_id !== null && (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/create-company')) {
-        // If authenticated with a company and on login/register/create-company, redirect to dashboard
-        navigate('/dashboard');
+      // Only redirect to login if no session and not already on an auth page
+      if (!initialSession && location.pathname !== '/login' && location.pathname !== '/register') {
+        navigate('/login');
       }
+      // Other specific redirects (like to /create-company) will now be handled by ProtectedRoute
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, location.pathname, userProfile?.company_id]); // Added userProfile.company_id to dependencies
+  }, [navigate, location.pathname]); // Removed userProfile?.company_id from dependencies
 
   return (
     <SessionContext.Provider value={{ session, isLoading, userProfile, userRole }}>
