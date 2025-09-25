@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { format } from "date-fns";
+import { format, setHours, setMinutes } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -49,9 +49,18 @@ const formSchema = z.object({
 interface ShiftFormProps {
   onSuccess: () => void;
   onCancel: () => void;
+  initialData?: {
+    id?: string; // Optional for new shifts, required for editing
+    start_time: string;
+    end_time: string;
+    employee_id: string | null;
+    role_id: string | null;
+    notes: string | null;
+    published: boolean;
+  };
 }
 
-const ShiftForm = ({ onSuccess, onCancel }: ShiftFormProps) => {
+const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
   const { userProfile } = useSession();
   const [employees, setEmployees] = useState<any[]>([]);
   const [roles, setRoles] = useState<any[]>([]);
@@ -60,12 +69,12 @@ const ShiftForm = ({ onSuccess, onCancel }: ShiftFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      start_time: undefined,
-      end_time: undefined,
-      employee_id: undefined,
-      role_id: undefined,
-      notes: "",
-      published: false,
+      start_time: initialData ? new Date(initialData.start_time) : undefined,
+      end_time: initialData ? new Date(initialData.end_time) : undefined,
+      employee_id: initialData?.employee_id || undefined,
+      role_id: initialData?.role_id || undefined,
+      notes: initialData?.notes || "",
+      published: initialData?.published || false,
     },
   });
 
@@ -106,27 +115,50 @@ const ShiftForm = ({ onSuccess, onCancel }: ShiftFormProps) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!userProfile?.company_id) {
-      showError("Company ID not found. Cannot create shift.");
+      showError("Company ID not found. Cannot create/update shift.");
       return;
     }
 
-    const { data, error } = await supabase
-      .from('shifts')
-      .insert({
-        company_id: userProfile.company_id,
-        start_time: values.start_time.toISOString(),
-        end_time: values.end_time.toISOString(),
-        employee_id: values.employee_id || null,
-        role_id: values.role_id || null,
-        notes: values.notes || null,
-        published: values.published,
-      });
+    if (initialData?.id) {
+      // Update existing shift
+      const { error } = await supabase
+        .from('shifts')
+        .update({
+          start_time: values.start_time.toISOString(),
+          end_time: values.end_time.toISOString(),
+          employee_id: values.employee_id || null,
+          role_id: values.role_id || null,
+          notes: values.notes || null,
+          published: values.published,
+        })
+        .eq('id', initialData.id);
 
-    if (error) {
-      showError("Failed to create shift: " + error.message);
+      if (error) {
+        showError("Failed to update shift: " + error.message);
+      } else {
+        showSuccess("Shift updated successfully!");
+        onSuccess();
+      }
     } else {
-      showSuccess("Shift created successfully!");
-      onSuccess();
+      // Create new shift
+      const { error } = await supabase
+        .from('shifts')
+        .insert({
+          company_id: userProfile.company_id,
+          start_time: values.start_time.toISOString(),
+          end_time: values.end_time.toISOString(),
+          employee_id: values.employee_id || null,
+          role_id: values.role_id || null,
+          notes: values.notes || null,
+          published: values.published,
+        });
+
+      if (error) {
+        showError("Failed to create shift: " + error.message);
+      } else {
+        showSuccess("Shift created successfully!");
+        onSuccess();
+      }
     }
   };
 
@@ -162,7 +194,13 @@ const ShiftForm = ({ onSuccess, onCancel }: ShiftFormProps) => {
                   <Calendar
                     mode="single"
                     selected={field.value}
-                    onSelect={field.onChange}
+                    onSelect={(date) => {
+                      if (date) {
+                        const existingTime = field.value || new Date();
+                        const newDateWithTime = setHours(setMinutes(date, existingTime.getMinutes()), existingTime.getHours());
+                        field.onChange(newDateWithTime);
+                      }
+                    }}
                     initialFocus
                   />
                   <div className="p-3 border-t">
@@ -208,7 +246,13 @@ const ShiftForm = ({ onSuccess, onCancel }: ShiftFormProps) => {
                   <Calendar
                     mode="single"
                     selected={field.value}
-                    onSelect={field.onChange}
+                    onSelect={(date) => {
+                      if (date) {
+                        const existingTime = field.value || new Date();
+                        const newDateWithTime = setHours(setMinutes(date, existingTime.getMinutes()), existingTime.getHours());
+                        field.onChange(newDateWithTime);
+                      }
+                    }}
                     initialFocus
                   />
                   <div className="p-3 border-t">
@@ -235,7 +279,7 @@ const ShiftForm = ({ onSuccess, onCancel }: ShiftFormProps) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Assign Employee (Optional)</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
+              <Select onValueChange={field.onChange} value={field.value || ""}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select an employee" />
@@ -260,7 +304,7 @@ const ShiftForm = ({ onSuccess, onCancel }: ShiftFormProps) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Required Role (Optional)</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
+              <Select onValueChange={field.onChange} value={field.value || ""}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
@@ -319,7 +363,7 @@ const ShiftForm = ({ onSuccess, onCancel }: ShiftFormProps) => {
             Cancel
           </Button>
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Creating..." : "Create Shift"}
+            {form.formState.isSubmitting ? (initialData?.id ? "Updating..." : "Creating...") : (initialData?.id ? "Update Shift" : "Create Shift")}
           </Button>
         </div>
       </form>
