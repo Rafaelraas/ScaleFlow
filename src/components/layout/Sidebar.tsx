@@ -5,15 +5,12 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Users, Settings, LayoutDashboard } from "lucide-react";
-import { useSession } from "@/contexts/SessionContext";
 
 interface SidebarProps {
   isMobile?: boolean;
 }
 
 export const Sidebar = ({ isMobile = false }: SidebarProps) => {
-  const { session } = useSession();
-
   const navItems = [
     {
       name: "Dashboard",
@@ -48,13 +45,13 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
     {
       name: "Swap Requests",
       href: "/swap-requests",
-      icon: Users,
+      icon: Users, // Placeholder icon, can be changed later
       roles: ["employee"],
     },
   ];
 
-  // For now, we'll show all links if authenticated. Later, this will be filtered by user role.
-  const filteredNavItems = navItems;
+  // For now, we'll show all links. Later, this will be filtered by user role.
+  const filteredNavItems = navItems; // .filter(item => item.roles.includes(currentUserRole));
 
   return (
     <div
@@ -71,7 +68,7 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
         </div>
       )}
       <nav className="flex-1 p-4 space-y-2">
-        {session && filteredNavItems.map((item) => (
+        {filteredNavItems.map((item) => (
           <Button
             key={item.name}
             asChild
@@ -84,16 +81,6 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
             </Link>
           </Button>
         ))}
-        {!session && !isMobile && (
-          <div className="space-y-2">
-            <Button asChild variant="ghost" className="w-full justify-start">
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button asChild className="w-full justify-start">
-              <Link to="/register">Register</Link>
-            </Button>
-          </div>
-        )}
       </nav>
     </div>
   );
