@@ -16,7 +16,7 @@ import MySchedule from "./pages/MySchedule";
 import Preferences from "./pages/Preferences";
 import SwapRequests from "./pages/SwapRequests";
 import ProfileSettings from "./pages/ProfileSettings";
-import CompanySettings from "./pages/CompanySettings"; // Import new page
+import CompanySettings from "./pages/CompanySettings";
 import { Layout } from "./components/layout/Layout";
 import { useSession } from "./providers/SessionContextProvider";
 import { MadeWithDyad } from "./components/made-with-dyad";
@@ -48,7 +48,8 @@ const App = () => {
               <Route path="*" element={<CreateCompany />} />
             ) : (
               <>
-                <Route path="/" element={<Layout><Index /></Layout>} />
+                {/* Redirect root to dashboard if user is logged in and has a company */}
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
                 <Route path="/schedules" element={<Layout><Schedules /></Layout>} />
                 <Route path="/employees" element={<Layout><Employees /></Layout>} />
@@ -57,7 +58,9 @@ const App = () => {
                 <Route path="/preferences" element={<Layout><Preferences /></Layout>} />
                 <Route path="/swap-requests" element={<Layout><SwapRequests /></Layout>} />
                 <Route path="/profile-settings" element={<Layout><ProfileSettings /></Layout>} />
-                <Route path="/company-settings" element={<Layout><CompanySettings /></Layout>} /> {/* New route */}
+                <Route path="/company-settings" element={<Layout><CompanySettings /></Layout>} />
+                {/* Keep the original Index page accessible if navigated directly */}
+                <Route path="/index" element={<Layout><Index /></Layout>} />
               </>
             )
           ) : (
