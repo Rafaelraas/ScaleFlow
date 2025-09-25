@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { showError } from "@/utils/toast";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
 
 interface Preference {
   id: string;
@@ -92,7 +93,30 @@ const Preferences = () => {
       </div>
 
       {loadingPreferences ? (
-        <p>Loading your preferences...</p>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Start Date</TableHead>
+                <TableHead>End Date</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Notes</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(5)].map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[180px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[70px]" /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       ) : preferences.length === 0 ? (
         <p className="text-center text-gray-500">You have not submitted any work preferences yet.</p>
       ) : (
