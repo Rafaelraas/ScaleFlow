@@ -4,16 +4,30 @@ import React, { useState, useEffect } from "react";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { showError } from "@/utils/toast";
+import { showError, showSuccess } from "@/utils/toast";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import InviteEmployeeForm from "@/components/InviteEmployeeForm"; // Import the new form
+import InviteEmployeeForm from "@/components/InviteEmployeeForm";
+import EditEmployeeForm from "@/components/EditEmployeeForm"; // Import the new form
+import { Edit, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface EmployeeProfile {
   id: string;
   first_name: string | null;
   last_name: string | null;
+  role_id: string; // Include role_id for editing
   roles: { name: string } | null;
 }
 
@@ -22,6 +36,8 @@ const Employees = () => {
   const [employees, setEmployees] = useState<EmployeeProfile[]>([]);
   const [loadingEmployees, setLoadingEmployees] = useState(true);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<EmployeeProfile | null>(null);
 
   const fetchEmployees = async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
@@ -32,7 +48,7 @@ const Employees = () => {
     setLoadingEmployees(true);
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, roles(name)')
+      .select('id, first_name, last_name, role_id, roles(name)')
       .eq('company_id', userProfile.company_id)
       .order('last_name', { ascending: true });
 
@@ -52,6 +68,34 @@ const Employees = () => {
   const handleInviteSuccess = () => {
     setIsInviteDialogOpen(false);
     fetchEmployees(); // Re-fetch employees after a new one is invited
+  };
+
+  const handleEditClick = (employee: EmployeeProfile) => {
+    setEditingEmployee(employee);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditSuccess = () => {
+    setIsEditDialogOpen(false);
+    setEditingEmployee(null);
+    fetchEmployees(); // Re-fetch employees after update
+  };
+
+  const handleRemoveEmployee = async (employeeId: string, employeeName: string) => {
+    // To "remove" an employee from a company, we unlink their profile
+    // by setting company_id and role_id to null.
+    // The user account itself is not deleted.
+    const { error } = await supabase
+      .from('profiles')
+      .update({ company_id: null, role_id: null }) // Set role_id to null as well
+      .eq('id', employeeId);
+
+    if (error) {
+      showError("Failed to remove employee: " + error.message);
+    } else {
+      showSuccess(`${employeeName} has been removed from the company.`);
+      fetchEmployees(); // Re-fetch employees after removal
+    }
   };
 
   if (userRole !== 'manager') {
@@ -97,7 +141,7 @@ const Employees = () => {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Role</TableHead>
-                <TableHead>Actions</TableHead> {/* Placeholder for actions like edit/remove */}
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -105,15 +149,52 @@ const Employees = () => {
                 <TableRow key={employee.id}>
                   <TableCell>{employee.first_name} {employee.last_name}</TableCell>
                   <TableCell>{employee.roles ? employee.roles.name : 'N/A'}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm">Edit</Button>
-                    <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">Remove</Button>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end space-x-2">
+                      <Button variant="ghost" size="sm" onClick={() => handleEditClick(employee)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action will remove {employee.first_name} {employee.last_name} from your company. They will no longer have access to company resources.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleRemoveEmployee(employee.id, `${employee.first_name} ${employee.last_name}`)}>Remove</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
+      )}
+
+      {editingEmployee && (
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Edit Employee</DialogTitle>
+            </DialogHeader>
+            <EditEmployeeForm
+              employee={editingEmployee}
+              onSuccess={handleEditSuccess}
+              onCancel={() => setIsEditDialogOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
       )}
       <MadeWithDyad />
     </div>
