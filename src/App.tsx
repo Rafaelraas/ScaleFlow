@@ -14,7 +14,7 @@ import Employees from "./pages/Employees";
 import EmployeePreferences from "./pages/EmployeePreferences";
 import MySchedule from "./pages/MySchedule";
 import Preferences from "./pages/Preferences";
-import SwapRequests from "./pages/SwapRequests";
+import SwapRequests from "./pages/SwapRequests"; // Import new page
 import ProfileSettings from "./pages/ProfileSettings";
 import CompanySettings from "./pages/CompanySettings";
 import { Layout } from "./components/layout/Layout";
@@ -41,7 +41,7 @@ const App = () => {
             <Route path="/" element={<Navigate to="/dashboard" replace />} /> {/* Default authenticated route */}
             <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
             <Route path="/profile-settings" element={<Layout><ProfileSettings /></Layout>} />
-            <Route path="/swap-requests" element={<Layout><SwapRequests /></Layout>} />
+            <Route path="/swap-requests" element={<Layout><SwapRequests /></Layout>} /> {/* New route */}
           </Route>
 
           {/* Manager-specific routes */}
