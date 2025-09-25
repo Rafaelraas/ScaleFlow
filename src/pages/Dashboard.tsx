@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { showError } from "@/utils/toast";
 import { format, isFuture, parseISO } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
 
 interface Shift {
   id: string;
@@ -163,8 +164,22 @@ const Dashboard = () => {
 
   if (isLoading || loadingDashboard) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-4">
-        <p className="text-xl text-gray-600 dark:text-gray-400">Loading dashboard...</p>
+      <div className="container mx-auto p-4">
+        <Skeleton className="h-8 w-1/3 mb-6" /> {/* Welcome message skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4 mb-2" />
+                <Skeleton className="h-4 w-full" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-10 w-1/4 mb-4" />
+                <Skeleton className="h-8 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
         <MadeWithDyad />
       </div>
     );
@@ -189,7 +204,7 @@ const Dashboard = () => {
                 <ul className="list-disc list-inside text-sm text-muted-foreground mb-4">
                   {pendingPreferences.slice(0, 3).map(pref => (
                     <li key={pref.id}>
-                      {pref.profiles?.first_name} {pref.profiles?.last_name} - {pref.preference_type.replace(/_/g, ' ')}
+                      {pref.profiles ? `${pref.profiles.first_name} ${pref.profiles.last_name}` : 'N/A'} - {pref.preference_type.replace(/_/g, ' ')}
                     </li>
                   ))}
                   {pendingPreferences.length > 3 && <li>...and {pendingPreferences.length - 3} more</li>}
