@@ -11,16 +11,16 @@ interface UserProfile {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
-  company_id: string | null;
+  company_id: string | null; // Ensure company_id is part of the profile
   role_id: string;
-  role_name: string; // Added role_name
+  role_name: string;
 }
 
 interface SessionContextType {
   session: Session | null;
   isLoading: boolean;
-  userProfile: UserProfile | null; // Added userProfile
-  userRole: string | null; // Added userRole
+  userProfile: UserProfile | null;
+  userRole: string | null;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
