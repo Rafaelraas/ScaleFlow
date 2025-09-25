@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, CalendarIcon } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +22,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 interface Shift {
   id: string;
@@ -35,6 +45,17 @@ interface Shift {
   published: boolean;
 }
 
+interface EmployeeOption {
+  id: string;
+  first_name: string;
+  last_name: string;
+}
+
+interface RoleOption {
+  id: string;
+  name: string;
+}
+
 const Schedules = () => {
   const { userProfile, userRole } = useSession();
   const [shifts, setShifts] = useState<Shift[]>([]);
@@ -43,6 +64,57 @@ const Schedules = () => {
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
   const [loadingShifts, setLoadingShifts] = useState(true);
 
+  // Filter states
+  const [filterEmployeeId, setFilterEmployeeId] = useState<string | null>(null);
+  const [filterRoleId, setFilterRoleId] = useState<string | null>(null);
+  const [filterPublished, setFilterPublished] = useState<string | null>(null); // 'true', 'false', or null for all
+  const [filterStartDate, setFilterStartDate] = useState<Date | undefined>(undefined);
+  const [filterEndDate, setFilterEndDate] = useState<Date | undefined>(undefined);
+
+  const [employeeOptions, setEmployeeOptions] = useState<EmployeeOption[]>([]);
+  const [roleOptions, setRoleOptions] = useState<RoleOption[]>([]);
+  const [loadingFilterOptions, setLoadingFilterOptions] = useState(true);
+
+  // Fetch filter options (employees and roles)
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      if (!userProfile?.company_id) {
+        setLoadingFilterOptions(false);
+        return;
+      }
+
+      setLoadingFilterOptions(true);
+      const { data: employeesData, error: employeesError } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name')
+        .eq('company_id', userProfile.company_id)
+        .order('last_name', { ascending: true });
+
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('roles')
+        .select('id, name')
+        .order('name', { ascending: true });
+
+      if (employeesError) {
+        showError("Failed to fetch employee filter options: " + employeesError.message);
+      } else {
+        setEmployeeOptions(employeesData || []);
+      }
+
+      if (rolesError) {
+        showError("Failed to fetch role filter options: " + rolesError.message);
+      } else {
+        setRoleOptions(rolesData || []);
+      }
+      setLoadingFilterOptions(false);
+    };
+
+    if (userProfile?.company_id) {
+      fetchFilterOptions();
+    }
+  }, [userProfile?.company_id]);
+
+
   const fetchShifts = async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
       setLoadingShifts(false);
@@ -50,11 +122,30 @@ const Schedules = () => {
     }
 
     setLoadingShifts(true);
-    const { data, error } = await supabase
+    let query = supabase
       .from('shifts')
       .select('*, profiles(first_name, last_name), roles(name)')
       .eq('company_id', userProfile.company_id)
       .order('start_time', { ascending: true });
+
+    // Apply filters
+    if (filterEmployeeId) {
+      query = query.eq('employee_id', filterEmployeeId);
+    }
+    if (filterRoleId) {
+      query = query.eq('role_id', filterRoleId);
+    }
+    if (filterPublished !== null) {
+      query = query.eq('published', filterPublished === 'true');
+    }
+    if (filterStartDate) {
+      query = query.gte('start_time', format(filterStartDate, 'yyyy-MM-dd'));
+    }
+    if (filterEndDate) {
+      query = query.lte('end_time', format(filterEndDate, 'yyyy-MM-ddT23:59:59.999Z')); // End of day
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       showError("Failed to fetch shifts: " + error.message);
@@ -67,7 +158,7 @@ const Schedules = () => {
 
   useEffect(() => {
     fetchShifts();
-  }, [userProfile?.company_id, userRole]);
+  }, [userProfile?.company_id, userRole, filterEmployeeId, filterRoleId, filterPublished, filterStartDate, filterEndDate]);
 
   const handleShiftFormSuccess = () => {
     setIsCreateDialogOpen(false);
@@ -126,10 +217,99 @@ const Schedules = () => {
         </Dialog>
       </div>
 
-      {loadingShifts ? (
+      {/* Filter Section */}
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Select onValueChange={(value) => setFilterEmployeeId(value === 'all' ? null : value)} value={filterEmployeeId || 'all'}>
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by Employee" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Employees</SelectItem>
+            {employeeOptions.map((employee) => (
+              <SelectItem key={employee.id} value={employee.id}>
+                {employee.first_name} {employee.last_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select onValueChange={(value) => setFilterRoleId(value === 'all' ? null : value)} value={filterRoleId || 'all'}>
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by Role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Roles</SelectItem>
+            {roleOptions.map((role) => (
+              <SelectItem key={role.id} value={role.id}>
+                {role.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select onValueChange={(value) => setFilterPublished(value === 'all' ? null : value)} value={filterPublished || 'all'}>
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="true">Published</SelectItem>
+            <SelectItem value="false">Unpublished</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <div className="flex space-x-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !filterStartDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {filterStartDate ? format(filterStartDate, "PPP") : <span>Start Date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={filterStartDate}
+                onSelect={setFilterStartDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !filterEndDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {filterEndDate ? format(filterEndDate, "PPP") : <span>End Date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={filterEndDate}
+                onSelect={setFilterEndDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+
+      {loadingShifts || loadingFilterOptions ? (
         <p>Loading shifts...</p>
       ) : shifts.length === 0 ? (
-        <p className="text-center text-gray-500">No shifts found for your company. Start by creating one!</p>
+        <p className="text-center text-gray-500">No shifts found matching your criteria.</p>
       ) : (
         <div className="rounded-md border">
           <Table>
