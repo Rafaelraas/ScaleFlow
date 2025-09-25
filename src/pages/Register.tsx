@@ -5,6 +5,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-router-dom"; // Import Link
 
 const Register = () => {
   return (
@@ -16,7 +17,7 @@ const Register = () => {
         <CardContent>
           <Auth
             supabaseClient={supabase}
-            providers={[]} // No third-party providers for now
+            providers={['magicLink']} // Added magicLink provider
             appearance={{
               theme: ThemeSupa,
               variables: {
@@ -29,9 +30,15 @@ const Register = () => {
               },
             }}
             theme="light" // Use light theme by default
-            view="sign_up"
+            view="sign_up" // Explicitly set view to sign_up
             redirectTo={window.location.origin} // Redirect to home after registration
           />
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link to="/login" className="text-primary hover:underline">
+              Sign in
+            </Link>
+          </p>
         </CardContent>
       </Card>
     </div>
