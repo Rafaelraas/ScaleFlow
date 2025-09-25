@@ -151,7 +151,7 @@ const Schedules = () => {
       showError("Failed to fetch shifts: " + error.message);
       setShifts([]);
     } else {
-      setShifts(data || []);
+      setShifts(data as Shift[] || []);
     }
     setLoadingShifts(false);
   };
