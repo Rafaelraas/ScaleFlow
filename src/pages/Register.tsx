@@ -1,18 +1,22 @@
 "use client";
 
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSession } from "@/contexts/SessionContext";
 
 const Register = () => {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle registration logic here
-    console.log("Register submitted");
-  };
+  const { isLoading } = useSession();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+        <p className="text-lg text-gray-700 dark:text-gray-300">Loading authentication...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -22,29 +26,23 @@ const Register = () => {
           <CardDescription>Create your account to get started.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input id="companyName" type="text" placeholder="My Company Inc." required />
-            </div>
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@example.com" required />
-            </div>
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required />
-            </div>
-            <Button type="submit" className="w-full">
-              Register
-            </Button>
-          </form>
-          <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Link to="/login" className="underline">
-              Login
-            </Link>
-          </div>
+          <Auth
+            supabaseClient={supabase}
+            providers={[]}
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: 'hsl(var(--primary))',
+                    brandAccent: 'hsl(var(--primary-foreground))',
+                  },
+                },
+              },
+            }}
+            theme="light"
+            view="sign_up"
+          />
         </CardContent>
       </Card>
     </div>
