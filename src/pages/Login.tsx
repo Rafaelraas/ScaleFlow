@@ -10,7 +10,6 @@ import { Link, useLocation } from "react-router-dom";
 const Login = () => {
   const location = useLocation();
   const [initialView, setInitialView] = React.useState<'sign_in' | 'update_password'>('sign_in');
-  // Removed authRedirectTo state
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -23,7 +22,6 @@ const Login = () => {
     } else {
       setInitialView('sign_in');
     }
-    // Removed console.log for authRedirectTo
   }, [location.search, location.hash]);
 
   return (
@@ -49,7 +47,7 @@ const Login = () => {
             }}
             theme="light"
             view={initialView}
-            redirectTo="/login" // Definido para /login
+            redirectTo={window.location.origin} // Definido para a origem do aplicativo
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
