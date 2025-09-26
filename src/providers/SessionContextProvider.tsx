@@ -81,8 +81,11 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       let redirectToPath = '';
 
       // Check if we are in an auth flow that requires staying on the current page
+      // Check both query parameters (location.search) and hash parameters (location.hash)
       const urlParams = new URLSearchParams(location.search);
-      const authFlowType = urlParams.get('type');
+      const hashParams = new URLSearchParams(location.hash.substring(1)); // Remove '#'
+      
+      const authFlowType = urlParams.get('type') || hashParams.get('type');
       const isAuthFlowPage = location.pathname === '/login' || location.pathname === '/register';
 
       if (isAuthFlowPage && (authFlowType === 'recovery' || authFlowType === 'signup')) {
@@ -157,7 +160,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [navigate, location.pathname, location.search]); // Dependencies for useEffect, added location.search
+  }, [navigate, location.pathname, location.search, location.hash]); // Added location.hash to dependencies
 
   console.log("SessionContext Render - isLoading:", isLoading, "session:", !!session, "userProfile:", !!userProfile, "userRole:", userRole);
 
