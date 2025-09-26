@@ -23,6 +23,8 @@ jobs:
 
       - name: Build project 🏗️
         run: npm run build
+        env:
+          VITE_APP_BASE_PATH: /scaleflow/ # Set base path for GitHub Pages deployment
 
       - name: Deploy to GitHub Pages 🚀
         uses: peaceiris/actions-gh-pages@v4

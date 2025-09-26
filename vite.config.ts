@@ -3,17 +3,21 @@ import dyadComponentTagger from "@dyad-sh/react-vite-component-tagger";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
-export default defineConfig(() => ({
-  server: {
-    host: "::",
-    port: 8080,
-  },
-  plugins: [dyadComponentTagger(), react()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+export default defineConfig(({ mode }) => {
+  // Use VITE_APP_BASE_PATH environment variable, default to '/'
+  const basePath = process.env.VITE_APP_BASE_PATH || '/';
+
+  return {
+    server: {
+      host: "::",
+      port: 8080,
     },
-  },
-  // Add base path for GitHub Pages deployment
-  base:scaleflow, // IMPORTANT: Replace <YOUR_REPO_NAME> with your actual repository name
-}));
+    plugins: [dyadComponentTagger(), react()],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
+    base: basePath, // Use the configurable base path
+  };
+});
