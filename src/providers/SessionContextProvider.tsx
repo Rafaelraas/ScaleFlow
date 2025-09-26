@@ -48,9 +48,17 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setUserRole(null);
       return null;
     } else if (profileData) {
+      // Correctly access the role name from the array of roles
+      const roleName = (profileData.roles as { name: string }[] | null)?.[0]?.name || 'employee';
+
       const profileWithRoleName: UserProfile = {
-        ...profileData,
-        role_name: (profileData.roles as { name: string }).name,
+        id: profileData.id,
+        first_name: profileData.first_name,
+        last_name: profileData.last_name,
+        avatar_url: profileData.avatar_url,
+        company_id: profileData.company_id,
+        role_id: profileData.role_id,
+        role_name: roleName,
       };
       console.log("User profile fetched:", profileWithRoleName);
       setUserProfile(profileWithRoleName);
