@@ -17,22 +17,19 @@ const Login = () => {
     const hashParams = new URLSearchParams(location.hash.substring(1));
     
     const authFlowType = urlParams.get('type') || hashParams.get('type');
-    const redirectToParam = urlParams.get('redirect_to') || hashParams.get('redirect_to');
+    let newRedirectTo: string;
 
     if (authFlowType === 'recovery') {
       setInitialView('update_password');
+      // Para recuperação, redirecionar para a URL completa atual para garantir que o Auth UI processe os tokens
+      newRedirectTo = window.location.href;
     } else {
       setInitialView('sign_in');
+      // Para outros fluxos, redirecionar para a origem
+      newRedirectTo = window.location.origin;
     }
-
-    // Set redirectTo for Auth component
-    if (redirectToParam) {
-      setAuthRedirectTo(redirectToParam);
-    } else {
-      setAuthRedirectTo(window.location.origin); // Fallback to app's origin
-    }
-
-    console.log("[Login.tsx Debug] authRedirectTo set to:", redirectToParam || window.location.origin);
+    setAuthRedirectTo(newRedirectTo);
+    console.log("[Login.tsx Debug] authRedirectTo set to:", newRedirectTo);
 
   }, [location.search, location.hash]);
 
@@ -59,7 +56,7 @@ const Login = () => {
             }}
             theme="light"
             view={initialView}
-            redirectTo={authRedirectTo} // Use the dynamically determined redirect URL
+            redirectTo={authRedirectTo} // Usar a URL de redirecionamento determinada dinamicamente
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
