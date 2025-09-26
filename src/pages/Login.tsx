@@ -5,7 +5,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useLocation } from "react-router-dom"; // Import useLocation
+import { Link, useLocation } from "react-router-dom";
 
 const Login = () => {
   const location = useLocation();
@@ -42,8 +42,8 @@ const Login = () => {
               },
             }}
             theme="light"
-            view={initialView} // Use the dynamically set view
-            redirectTo={window.location.origin}
+            view={initialView}
+            // redirectTo={window.location.origin} // REMOVED: Let SessionContextProvider handle redirects
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}

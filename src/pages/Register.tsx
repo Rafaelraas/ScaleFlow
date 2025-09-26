@@ -5,7 +5,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom"; // Import Link
+import { Link } from "react-router-dom";
 
 const Register = () => {
   return (
@@ -17,7 +17,7 @@ const Register = () => {
         <CardContent>
           <Auth
             supabaseClient={supabase}
-            providers={[]} // Corrected to an empty array for email/magic link
+            providers={[]}
             appearance={{
               theme: ThemeSupa,
               variables: {
@@ -29,9 +29,9 @@ const Register = () => {
                 },
               },
             }}
-            theme="light" // Use light theme by default
+            theme="light"
             // view="sign_up" // Removido para permitir detecção dinâmica da visualização
-            redirectTo={window.location.origin} // Redirect to home after registration
+            // redirectTo={window.location.origin} // REMOVED: Let SessionContextProvider handle redirects
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{" "}

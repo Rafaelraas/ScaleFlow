@@ -88,6 +88,11 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       const authFlowType = urlParams.get('type') || hashParams.get('type');
       const isAuthFlowPage = location.pathname === '/login' || location.pathname === '/register';
 
+      console.log(`[SessionContext Debug] Current Path: ${location.pathname}, Search: ${location.search}, Hash: ${location.hash}`);
+      console.log(`[SessionContext Debug] Detected authFlowType: ${authFlowType}, isAuthFlowPage: ${isAuthFlowPage}`);
+      console.log(`[SessionContext Debug] Current Session: ${!!currentSession}, User Profile: ${!!profile}, Company ID: ${profile?.company_id}`);
+
+
       if (isAuthFlowPage && (authFlowType === 'recovery' || authFlowType === 'signup')) {
         // If we are on an auth page and in a recovery/signup flow, DO NOT redirect away.
         // The user needs to complete the action on this page.
@@ -104,6 +109,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         if (!isAuthFlowPage) { // Already checked above, but good for clarity
           shouldRedirect = true;
           redirectToPath = '/login';
+          console.log("[SessionContext Debug] No session, redirecting to /login");
         }
       } else if (profile) {
         // Session exists and profile loaded
@@ -112,12 +118,14 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
           if (location.pathname !== '/create-company') {
             shouldRedirect = true;
             redirectToPath = '/create-company';
+            console.log("[SessionContext Debug] Session exists, no company_id, redirecting to /create-company");
           }
         } else {
           // User has a company: redirect to dashboard if on auth/create-company pages
           if (location.pathname === '/create-company' || isAuthFlowPage) {
             shouldRedirect = true;
             redirectToPath = '/dashboard';
+            console.log("[SessionContext Debug] Session exists, has company_id, redirecting to /dashboard");
           }
         }
       }
