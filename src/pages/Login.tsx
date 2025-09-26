@@ -10,27 +10,20 @@ import { Link, useLocation } from "react-router-dom";
 const Login = () => {
   const location = useLocation();
   const [initialView, setInitialView] = React.useState<'sign_in' | 'update_password'>('sign_in');
-  const [authRedirectTo, setAuthRedirectTo] = React.useState<string | undefined>(undefined);
+  // Removed authRedirectTo state as it's no longer dynamically determined for redirectTo prop
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const hashParams = new URLSearchParams(location.hash.substring(1));
     
     const authFlowType = urlParams.get('type') || hashParams.get('type');
-    let newRedirectTo: string;
 
     if (authFlowType === 'recovery') {
       setInitialView('update_password');
-      // Para recuperação, redirecionar para a URL completa atual para garantir que o Auth UI processe os tokens
-      newRedirectTo = window.location.href;
     } else {
       setInitialView('sign_in');
-      // Para outros fluxos, redirecionar para a origem
-      newRedirectTo = window.location.origin;
     }
-    setAuthRedirectTo(newRedirectTo);
-    console.log("[Login.tsx Debug] authRedirectTo set to:", newRedirectTo);
-
+    // Removed console.log for authRedirectTo as it's now static
   }, [location.search, location.hash]);
 
   return (
@@ -56,7 +49,7 @@ const Login = () => {
             }}
             theme="light"
             view={initialView}
-            redirectTo={authRedirectTo} // Usar a URL de redirecionamento determinada dinamicamente
+            redirectTo="/login" // Definido para /login
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
