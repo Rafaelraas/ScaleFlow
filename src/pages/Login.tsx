@@ -1,28 +1,29 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react"; // Removed useEffect
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom"; // useLocation is still useful for debugging if needed, but not for setting initialView
 
 const Login = () => {
-  const location = useLocation();
-  const [initialView, setInitialView] = React.useState<'sign_in' | 'update_password'>('sign_in');
+  // Removed initialView state and useEffect
+  // const location = useLocation();
+  // const [initialView, setInitialView] = React.useState<'sign_in' | 'update_password'>('sign_in');
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const hashParams = new URLSearchParams(location.hash.substring(1));
+  // useEffect(() => {
+  //   const urlParams = new URLSearchParams(location.search);
+  //   const hashParams = new URLSearchParams(location.hash.substring(1));
     
-    const authFlowType = urlParams.get('type') || hashParams.get('type');
+  //   const authFlowType = urlParams.get('type') || hashParams.get('type');
 
-    if (authFlowType === 'recovery') {
-      setInitialView('update_password');
-    } else {
-      setInitialView('sign_in');
-    }
-  }, [location.search, location.hash]); // Adicionado location.search às dependências
+  //   if (authFlowType === 'recovery') {
+  //     setInitialView('update_password');
+  //   } else {
+  //     setInitialView('sign_in');
+  //   }
+  // }, [location.search, location.hash]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -46,8 +47,9 @@ const Login = () => {
               },
             }}
             theme="light"
-            view={initialView} // Use the dynamically set view
-            redirectTo={window.location.origin} // Re-added redirectTo to ensure proper session handling by Auth UI
+            // Removed view prop, let Auth UI infer it from URL
+            // view={initialView} 
+            redirectTo={window.location.origin} // Keep redirectTo
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
