@@ -80,9 +80,25 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       let shouldRedirect = false;
       let redirectToPath = '';
 
+      // Check if we are in an auth flow that requires staying on the current page
+      const urlParams = new URLSearchParams(location.search);
+      const authFlowType = urlParams.get('type');
+      const isAuthFlowPage = location.pathname === '/login' || location.pathname === '/register';
+
+      if (isAuthFlowPage && (authFlowType === 'recovery' || authFlowType === 'signup')) {
+        // If we are on an auth page and in a recovery/signup flow, DO NOT redirect away.
+        // The user needs to complete the action on this page.
+        console.log(`SessionContextProvider: Staying on auth page for type=${authFlowType}.`);
+        if (isMounted) {
+          setIsLoading(false); // Ensure loading state is cleared
+        }
+        return; // Exit early, prevent further redirection logic
+      }
+
+      // Original redirection logic (only if not in a special auth flow)
       if (!currentSession) {
         // No session: redirect to login/register if not already there
-        if (location.pathname !== '/login' && location.pathname !== '/register') {
+        if (!isAuthFlowPage) { // Already checked above, but good for clarity
           shouldRedirect = true;
           redirectToPath = '/login';
         }
@@ -96,7 +112,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
           }
         } else {
           // User has a company: redirect to dashboard if on auth/create-company pages
-          if (location.pathname === '/create-company' || location.pathname === '/login' || location.pathname === '/register') {
+          if (location.pathname === '/create-company' || isAuthFlowPage) {
             shouldRedirect = true;
             redirectToPath = '/dashboard';
           }
@@ -141,7 +157,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [navigate, location.pathname]); // Dependencies for useEffect
+  }, [navigate, location.pathname, location.search]); // Dependencies for useEffect, added location.search
 
   console.log("SessionContext Render - isLoading:", isLoading, "session:", !!session, "userProfile:", !!userProfile, "userRole:", userRole);
 
