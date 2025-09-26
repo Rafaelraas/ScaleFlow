@@ -123,11 +123,21 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       } else if (profile) {
         // Session exists and profile loaded
         if (!profile.company_id) {
-          // User has no company: redirect to create-company if not already there
-          if (location.pathname !== '/create-company') {
-            shouldRedirect = true;
-            redirectToPath = '/create-company';
-            console.log("[SessionContext Debug] Session exists, no company_id, redirecting to /create-company");
+          // User has no company:
+          if (profile.role_name === 'system_admin') {
+            // System admin without a company_id should go to dashboard (which will show admin content)
+            if (location.pathname === '/create-company' || isAuthFlowPage) {
+              shouldRedirect = true;
+              redirectToPath = '/dashboard';
+              console.log("[SessionContext Debug] System admin without company_id, redirecting to /dashboard");
+            }
+          } else {
+            // Other roles (manager, employee) without a company_id must create one
+            if (location.pathname !== '/create-company') {
+              shouldRedirect = true;
+              redirectToPath = '/create-company';
+              console.log("[SessionContext Debug] Non-admin user without company_id, redirecting to /create-company");
+            }
           }
         } else {
           // User has a company: redirect to dashboard if on auth/create-company pages
