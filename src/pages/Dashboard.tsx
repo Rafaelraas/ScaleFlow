@@ -45,16 +45,47 @@ const Dashboard = () => {
   const [myPendingSwapRequestsCount, setMyPendingSwapRequestsCount] = useState(0);
   const [loadingDashboard, setLoadingDashboard] = useState(true);
 
+  // Admin-specific states
+  const [totalCompanies, setTotalCompanies] = useState<number | null>(null);
+  const [totalUsers, setTotalUsers] = useState<number | null>(null);
+
   useEffect(() => {
     const fetchDashboardData = async () => {
-      if (!session?.user?.id || !userProfile?.company_id) {
+      if (!session?.user?.id) { // Removed userProfile?.company_id check here to allow system_admin without company_id
         setLoadingDashboard(false);
         return;
       }
 
       setLoadingDashboard(true);
 
-      if (userRole === 'manager') {
+      if (userRole === 'system_admin') {
+        // Fetch total companies
+        const { count: companiesCount, error: companiesError } = await supabase
+          .from('companies')
+          .select('id', { count: 'exact' });
+
+        if (companiesError) {
+          showError("Failed to fetch total companies: " + companiesError.message);
+        } else {
+          setTotalCompanies(companiesCount);
+        }
+
+        // Fetch total users (profiles)
+        const { count: usersCount, error: usersError } = await supabase
+          .from('profiles')
+          .select('id', { count: 'exact' });
+
+        if (usersError) {
+          showError("Failed to fetch total users: " + usersError.message);
+        } else {
+          setTotalUsers(usersCount);
+        }
+
+      } else if (userRole === 'manager') {
+        if (!userProfile?.company_id) { // Manager must have a company
+          setLoadingDashboard(false);
+          return;
+        }
         // Fetch pending employee preferences for managers
         const { data: prefsData, error: prefsError } = await supabase
           .from('preferences')
@@ -101,6 +132,10 @@ const Dashboard = () => {
         }
 
       } else if (userRole === 'employee') {
+        if (!userProfile?.company_id) { // Employee must have a company
+          setLoadingDashboard(false);
+          return;
+        }
         // Fetch next upcoming shift for employees
         const { data: shiftsData, error: shiftsError } = await supabase
           .from('shifts')
@@ -190,6 +225,37 @@ const Dashboard = () => {
       <h1 className="text-3xl font-bold mb-6">
         Welcome, {userProfile?.first_name || session?.user?.email}!
       </h1>
+
+      {userRole === 'system_admin' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Companies</CardTitle>
+              <CardDescription>Number of companies registered on the platform.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold mb-4">{totalCompanies !== null ? totalCompanies : <Skeleton className="h-10 w-1/4" />}</p>
+              <Button asChild className="w-full">
+                <Link to="/admin/companies">Manage Companies</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Users</CardTitle>
+              <CardDescription>Number of user profiles across all companies.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold mb-4">{totalUsers !== null ? totalUsers : <Skeleton className="h-10 w-1/4" />}</p>
+              <Button asChild className="w-full">
+                <Link to="/admin/users">Manage All Users</Link>
+              </Button>
+            </CardContent>
+          </Card>
+          {/* Add more system_admin-specific cards here */}
+        </div>
+      )}
 
       {userRole === 'manager' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

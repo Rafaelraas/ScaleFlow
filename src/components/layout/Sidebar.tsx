@@ -4,7 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Users, Settings, LayoutDashboard, Repeat, ListChecks, User, Building, Clock } from "lucide-react"; // Added Clock icon
+import { CalendarDays, Users, Settings, LayoutDashboard, Repeat, ListChecks, User, Building, Clock, Briefcase, UserCog } from "lucide-react"; // Added Briefcase and UserCog icons
 import { useSession } from "@/providers/SessionContextProvider";
 
 interface SidebarProps {
@@ -28,10 +28,10 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       roles: ["manager", "system_admin"],
     },
     {
-      name: "Shift Templates", // New item
+      name: "Shift Templates",
       href: "/shift-templates",
-      icon: Clock, // Using Clock icon
-      roles: ["manager", "system_admin"], // Visible to managers and system admins
+      icon: Clock,
+      roles: ["manager", "system_admin"],
     },
     {
       name: "Employees",
@@ -74,6 +74,18 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       href: "/company-settings",
       icon: Building,
       roles: ["manager", "system_admin"],
+    },
+    {
+      name: "Admin Companies", // New item for system admin
+      href: "/admin/companies",
+      icon: Briefcase, // Using Briefcase icon
+      roles: ["system_admin"],
+    },
+    {
+      name: "Admin Users", // New item for system admin
+      href: "/admin/users",
+      icon: UserCog, // Using UserCog icon
+      roles: ["system_admin"],
     },
   ];
 

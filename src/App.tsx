@@ -17,7 +17,9 @@ import Preferences from "./pages/Preferences";
 import SwapRequests from "./pages/SwapRequests";
 import ProfileSettings from "./pages/ProfileSettings";
 import CompanySettings from "./pages/CompanySettings";
-import ShiftTemplates from "./pages/ShiftTemplates"; // Import new page
+import ShiftTemplates from "./pages/ShiftTemplates";
+import AdminCompanyManagement from "./pages/AdminCompanyManagement"; // Import new admin page
+import AdminUserManagement from "./pages/AdminUserManagement";     // Import new admin page
 import { Layout } from "./components/layout/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { MadeWithDyad } from "./components/made-with-dyad";
@@ -48,7 +50,7 @@ const App = () => {
           {/* Manager-specific routes */}
           <Route element={<ProtectedRoute allowedRoles={['manager', 'system_admin']} />}>
             <Route path="/schedules" element={<Layout><Schedules /></Layout>} />
-            <Route path="/shift-templates" element={<Layout><ShiftTemplates /></Layout>} /> {/* New route */}
+            <Route path="/shift-templates" element={<Layout><ShiftTemplates /></Layout>} />
             <Route path="/employees" element={<Layout><Employees /></Layout>} />
             <Route path="/employee-preferences" element={<Layout><EmployeePreferences /></Layout>} />
             <Route path="/company-settings" element={<Layout><CompanySettings /></Layout>} />
@@ -58,6 +60,12 @@ const App = () => {
           <Route element={<ProtectedRoute allowedRoles={['employee', 'manager', 'system_admin']} />}>
             <Route path="/my-schedule" element={<Layout><MySchedule /></Layout>} />
             <Route path="/preferences" element={<Layout><Preferences /></Layout>} />
+          </Route>
+
+          {/* System Admin-specific routes */}
+          <Route element={<ProtectedRoute allowedRoles={['system_admin']} />}>
+            <Route path="/admin/companies" element={<Layout><AdminCompanyManagement /></Layout>} />
+            <Route path="/admin/users" element={<Layout><AdminUserManagement /></Layout>} />
           </Route>
 
           {/* Catch-all for 404 */}
