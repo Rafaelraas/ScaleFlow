@@ -46,7 +46,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       showError("Failed to load user profile.");
       setUserProfile(null);
       setUserRole(null);
-      return null; // Return null on error
+      return null;
     } else if (profileData) {
       const profileWithRoleName: UserProfile = {
         ...profileData,
@@ -55,68 +55,93 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       console.log("User profile fetched:", profileWithRoleName);
       setUserProfile(profileWithRoleName);
       setUserRole(profileWithRoleName.role_name);
-      return profileWithRoleName; // Return the fetched profile
+      return profileWithRoleName;
     }
     return null;
   };
 
   useEffect(() => {
-    console.log("SessionContextProvider useEffect triggered.");
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      console.log("Auth state change event:", event, "Session:", currentSession);
-      if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-        setSession(currentSession);
-        if (currentSession?.user?.id) {
-          const profile = await fetchUserProfileAndRole(currentSession.user.id);
-          // Redirect from login/register to dashboard after successful auth
-          if (profile && (location.pathname === '/login' || location.pathname === '/register')) {
-            navigate('/dashboard');
-            showSuccess("Logged in successfully!");
-          } else if (profile && !profile.company_id && location.pathname !== '/create-company') {
-            // If user has no company and is not on create-company page, redirect
-            navigate('/create-company');
-          } else if (profile && profile.company_id && (location.pathname === '/create-company' || location.pathname === '/login' || location.pathname === '/register')) {
-            // If user has a company and is on an auth/create-company page, redirect to dashboard
-            navigate('/dashboard');
-          }
-        }
-      } else if (event === 'SIGNED_OUT') {
-        setSession(null);
+    let isMounted = true; // Flag to prevent state updates on unmounted component
+
+    const handleSessionAndProfile = async (currentSession: Session | null, event?: string) => {
+      if (!isMounted) return;
+
+      setSession(currentSession);
+      let profile: UserProfile | null = null;
+
+      if (currentSession?.user?.id) {
+        profile = await fetchUserProfileAndRole(currentSession.user.id);
+      } else {
         setUserProfile(null);
         setUserRole(null);
-        // Redirect to login if signed out and not already on login/register
+      }
+
+      // --- Redirection Logic ---
+      let shouldRedirect = false;
+      let redirectToPath = '';
+
+      if (!currentSession) {
+        // No session: redirect to login/register if not already there
         if (location.pathname !== '/login' && location.pathname !== '/register') {
-          navigate('/login');
+          shouldRedirect = true;
+          redirectToPath = '/login';
+        }
+      } else if (profile) {
+        // Session exists and profile loaded
+        if (!profile.company_id) {
+          // User has no company: redirect to create-company if not already there
+          if (location.pathname !== '/create-company') {
+            shouldRedirect = true;
+            redirectToPath = '/create-company';
+          }
+        } else {
+          // User has a company: redirect to dashboard if on auth/create-company pages
+          if (location.pathname === '/create-company' || location.pathname === '/login' || location.pathname === '/register') {
+            shouldRedirect = true;
+            redirectToPath = '/dashboard';
+          }
+        }
+      }
+      // If session exists but profile is null (e.g., RLS error or new user without profile yet)
+      // The `fetchUserProfileAndRole` already handles error and sets profile/role to null.
+      // The `ProtectedRoute` will then handle access denial based on missing profile/role.
+
+      if (shouldRedirect && redirectToPath !== location.pathname) {
+        navigate(redirectToPath);
+        if (event === 'SIGNED_IN') {
+          showSuccess("Logged in successfully!");
+        } else if (event === 'SIGNED_OUT') {
           showSuccess("Logged out successfully!");
         }
       }
-      setIsLoading(false);
-      console.log("Auth state change processed. isLoading set to false.");
-    });
 
-    // Initial session check on component mount
+      if (isMounted) {
+        setIsLoading(false); // Ensure isLoading is set to false after all checks
+      }
+    };
+
+    // Initial session check
     supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       console.log("Initial getSession result:", initialSession);
-      setSession(initialSession);
-      if (initialSession?.user?.id) {
-        const profile = await fetchUserProfileAndRole(initialSession.user.id);
-        if (profile && !profile.company_id && location.pathname !== '/create-company') {
-          navigate('/create-company');
-        } else if (profile && profile.company_id && (location.pathname === '/create-company' || location.pathname === '/login' || location.pathname === '/register')) {
-          navigate('/dashboard');
-        }
-      }
-      setIsLoading(false);
-      console.log("Initial session check completed. isLoading set to false.");
-      
-      // Only redirect to login if no session and not already on an auth page
-      if (!initialSession && location.pathname !== '/login' && location.pathname !== '/register') {
-        navigate('/login');
+      await handleSessionAndProfile(initialSession);
+    }).catch(error => {
+      console.error("Error during initial getSession:", error);
+      if (isMounted) {
+        setIsLoading(false); // Ensure loading state is cleared even on error
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [navigate, location.pathname]);
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      console.log("Auth state change event:", event, "Session:", currentSession);
+      await handleSessionAndProfile(currentSession, event);
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, [navigate, location.pathname]); // Dependencies for useEffect
 
   console.log("SessionContext Render - isLoading:", isLoading, "session:", !!session, "userProfile:", !!userProfile, "userRole:", userRole);
 
