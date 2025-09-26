@@ -10,18 +10,30 @@ import { Link, useLocation } from "react-router-dom";
 const Login = () => {
   const location = useLocation();
   const [initialView, setInitialView] = React.useState<'sign_in' | 'update_password'>('sign_in');
+  const [authRedirectTo, setAuthRedirectTo] = React.useState<string | undefined>(undefined);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const hashParams = new URLSearchParams(location.hash.substring(1));
     
     const authFlowType = urlParams.get('type') || hashParams.get('type');
+    const redirectToParam = urlParams.get('redirect_to') || hashParams.get('redirect_to');
 
     if (authFlowType === 'recovery') {
       setInitialView('update_password');
     } else {
       setInitialView('sign_in');
     }
+
+    // Set redirectTo for Auth component
+    if (redirectToParam) {
+      setAuthRedirectTo(redirectToParam);
+    } else {
+      setAuthRedirectTo(window.location.origin); // Fallback to app's origin
+    }
+
+    console.log("[Login.tsx Debug] authRedirectTo set to:", redirectToParam || window.location.origin);
+
   }, [location.search, location.hash]);
 
   return (
@@ -47,7 +59,7 @@ const Login = () => {
             }}
             theme="light"
             view={initialView}
-            redirectTo="/" // Definido para a raiz do aplicativo
+            redirectTo={authRedirectTo} // Use the dynamically determined redirect URL
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
