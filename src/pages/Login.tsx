@@ -1,29 +1,28 @@
 "use client";
 
-import React from "react"; // Removed useEffect
+import React, { useEffect } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useLocation } from "react-router-dom"; // useLocation is still useful for debugging if needed, but not for setting initialView
+import { Link, useLocation } from "react-router-dom";
 
 const Login = () => {
-  // Removed initialView state and useEffect
-  // const location = useLocation();
-  // const [initialView, setInitialView] = React.useState<'sign_in' | 'update_password'>('sign_in');
+  const location = useLocation();
+  const [initialView, setInitialView] = React.useState<'sign_in' | 'update_password'>('sign_in');
 
-  // useEffect(() => {
-  //   const urlParams = new URLSearchParams(location.search);
-  //   const hashParams = new URLSearchParams(location.hash.substring(1));
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const hashParams = new URLSearchParams(location.hash.substring(1));
     
-  //   const authFlowType = urlParams.get('type') || hashParams.get('type');
+    const authFlowType = urlParams.get('type') || hashParams.get('type');
 
-  //   if (authFlowType === 'recovery') {
-  //     setInitialView('update_password');
-  //   } else {
-  //     setInitialView('sign_in');
-  //   }
-  // }, [location.search, location.hash]);
+    if (authFlowType === 'recovery') {
+      setInitialView('update_password');
+    } else {
+      setInitialView('sign_in');
+    }
+  }, [location.search, location.hash]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -47,9 +46,8 @@ const Login = () => {
               },
             }}
             theme="light"
-            // Removed view prop, let Auth UI infer it from URL
-            // view={initialView} 
-            redirectTo={window.location.origin} // Keep redirectTo
+            view={initialView}
+            redirectTo="/" // Definido para a raiz do aplicativo
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
