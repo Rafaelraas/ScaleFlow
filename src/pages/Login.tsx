@@ -30,7 +30,7 @@ const Login = () => {
               },
             }}
             theme="light" // Use light theme by default
-            view="sign_in" // Explicitly set view to sign_in
+            // view="sign_in" // Removido para permitir detecção dinâmica da visualização
             redirectTo={window.location.origin} // Redirect to home after login
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">

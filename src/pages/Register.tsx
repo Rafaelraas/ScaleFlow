@@ -30,7 +30,7 @@ const Register = () => {
               },
             }}
             theme="light" // Use light theme by default
-            view="sign_up" // Explicitly set view to sign_up
+            // view="sign_up" // Removido para permitir detecção dinâmica da visualização
             redirectTo={window.location.origin} // Redirect to home after registration
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
