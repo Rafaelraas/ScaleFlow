@@ -12,13 +12,17 @@ const Login = () => {
   const [initialView, setInitialView] = React.useState<'sign_in' | 'update_password'>('sign_in');
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
     const hashParams = new URLSearchParams(location.hash.substring(1));
-    if (hashParams.get('type') === 'recovery') {
+    
+    const authFlowType = urlParams.get('type') || hashParams.get('type');
+
+    if (authFlowType === 'recovery') {
       setInitialView('update_password');
     } else {
       setInitialView('sign_in');
     }
-  }, [location.hash]);
+  }, [location.search, location.hash]); // Adicionado location.search às dependências
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -42,7 +46,7 @@ const Login = () => {
               },
             }}
             theme="light"
-            view={initialView}
+            view={initialView} // Use the dynamically set view
             // redirectTo={window.location.origin} // REMOVED: Let SessionContextProvider handle redirects
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
