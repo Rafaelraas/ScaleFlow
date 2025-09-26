@@ -86,7 +86,8 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       const hashParams = new URLSearchParams(location.hash.substring(1)); // Remove '#'
       
       const authFlowType = urlParams.get('type') || hashParams.get('type');
-      const isAuthFlowPage = location.pathname === '/login' || location.pathname === '/register';
+      // IMPORTANT: Added '/verify' to the list of auth flow pages
+      const isAuthFlowPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/verify';
 
       console.log(`[SessionContext Debug] Current Path: ${location.pathname}, Search: ${location.search}, Hash: ${location.hash}`);
       console.log(`[SessionContext Debug] Detected authFlowType: ${authFlowType}, isAuthFlowPage: ${isAuthFlowPage}`);
