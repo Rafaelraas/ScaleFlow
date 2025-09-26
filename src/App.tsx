@@ -47,6 +47,7 @@ const AppContent = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/create-company" element={<CreateCompany />} />
       <Route path="/index" element={<Layout><Index /></Layout>} />
+      <Route path="/verify" element={<Login />} /> {/* NEW: Route for Supabase verification/recovery */}
 
       {/* Protected routes */}
       <Route element={<ProtectedRoute />}>
