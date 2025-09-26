@@ -47,7 +47,7 @@ const Login = () => {
             }}
             theme="light"
             view={initialView} // Use the dynamically set view
-            // redirectTo={window.location.origin} // REMOVED: Let SessionContextProvider handle redirects
+            redirectTo={window.location.origin} // Re-added redirectTo to ensure proper session handling by Auth UI
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
