@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ProfileForm from './ProfileForm';
 import { useSession } from '@/providers/SessionContextProvider';
@@ -30,10 +30,10 @@ vi.mock('@/utils/toast', () => ({
   showError: vi.fn(),
 }));
 
-const mockUseSession = useSession as vi.Mock;
-const mockSupabaseFrom = supabase.from as vi.Mock;
-const mockShowSuccess = showSuccess as vi.Mock;
-const mockShowError = showError as vi.Mock;
+const mockUseSession = useSession as Mock;
+const mockSupabaseFrom = supabase.from as Mock;
+const mockShowSuccess = showSuccess as Mock;
+const mockShowError = showError as Mock;
 
 describe('ProfileForm', () => {
   const mockSession = {

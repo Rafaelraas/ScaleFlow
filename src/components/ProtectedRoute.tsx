@@ -8,9 +8,10 @@ import { MadeWithDyad } from "./made-with-dyad";
 interface ProtectedRouteProps {
   requiresCompany?: boolean;
   allowedRoles?: string[];
+  children?: React.ReactNode; // Adicionado children prop
 }
 
-const ProtectedRoute = ({ requiresCompany = true, allowedRoles }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ requiresCompany = true, allowedRoles, children }: ProtectedRouteProps) => {
   const { session, userProfile, userRole, isLoading } = useSession(); // Get isLoading here
   const location = useLocation();
 
@@ -52,7 +53,8 @@ const ProtectedRoute = ({ requiresCompany = true, allowedRoles }: ProtectedRoute
 
   // Se todas as verificações passarem, renderizar as rotas filhas
   console.log("ProtectedRoute: Access granted, rendering Outlet.");
-  return <Outlet />;
+  // Para testes, renderizamos children diretamente se fornecido. Em uso normal, Outlet é para rotas aninhadas.
+  return children ? <>{children}</> : <Outlet />;
 };
 
 export default ProtectedRoute;

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
@@ -9,7 +9,7 @@ vi.mock('@/providers/SessionContextProvider', () => ({
   useSession: vi.fn(),
 }));
 
-const mockUseSession = useSession as vi.Mock;
+const mockUseSession = useSession as Mock;
 
 // Componente dummy para simular o conteúdo protegido
 const ProtectedContent = () => <div>Protected Content</div>;

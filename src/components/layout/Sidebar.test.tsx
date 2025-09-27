@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, type Mock } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
@@ -9,7 +9,7 @@ vi.mock('@/providers/SessionContextProvider', () => ({
   useSession: vi.fn(),
 }));
 
-const mockUseSession = useSession as vi.Mock;
+const mockUseSession = useSession as Mock;
 
 describe('Sidebar', () => {
   it('should render correct navigation items for a system_admin', () => {
@@ -29,7 +29,7 @@ describe('Sidebar', () => {
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Schedules')).toBeInTheDocument();
     expect(screen.getByText('Shift Templates')).toBeInTheDocument();
-    expect(screen.getByText('Employees')).toBeInTheTheDocument();
+    expect(screen.getByText('Employees')).toBeInTheDocument();
     expect(screen.getByText('Employee Preferences')).toBeInTheDocument();
     expect(screen.queryByText('My Schedule')).not.toBeInTheDocument(); // Employee specific
     expect(screen.queryByText('Preferences')).not.toBeInTheDocument(); // Employee specific
@@ -110,9 +110,7 @@ describe('Sidebar', () => {
       </MemoryRouter>
     );
 
-    // Expect only the "ScaleFlow" brand link if not in mobile mode, otherwise nothing
-    // In this test, we are rendering the Sidebar directly, not within Layout, so the brand link is not part of it.
-    // We expect no navigation items to be rendered.
+    // Expect no navigation items to be rendered.
     expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
     expect(screen.queryByText('Schedules')).not.toBeInTheDocument();
     expect(screen.queryByText('My Schedule')).not.toBeInTheDocument();
