@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, type Mock } from 'vitest';
 import { toast } from 'sonner';
 import { showSuccess, showError, showLoading, dismissToast } from './toast';
 
@@ -14,19 +14,21 @@ vi.mock('sonner', () => ({
 
 describe('Toast Utilities', () => {
   it('showSuccess should call toast.success with the correct message', () => {
-    showSuccess('Operation successful!');
-    expect(toast.success).toHaveBeenCalledWith('Operation successful!');
+    const message = 'Operation successful!';
+    showSuccess(message);
+    expect(toast.success).toHaveBeenCalledWith(message);
   });
 
   it('showError should call toast.error with the correct message', () => {
-    showError('Operation failed!');
-    expect(toast.error).toHaveBeenCalledWith('Operation failed!');
+    const message = 'Operation failed!';
+    showError(message);
+    expect(toast.error).toHaveBeenCalledWith(message);
   });
 
   it('showLoading should call toast.loading with the correct message and return its ID', () => {
     const message = 'Loading data...';
     const mockToastId = 'loading-123';
-    (toast.loading as vi.MockedFunction<typeof toast.loading>).mockReturnValue(mockToastId);
+    (toast.loading as Mock).mockReturnValue(mockToastId); // Alterado de vi.MockedFunction para Mock
 
     const result = showLoading(message);
     expect(toast.loading).toHaveBeenCalledWith(message);
