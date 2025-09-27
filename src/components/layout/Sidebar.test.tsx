@@ -1,0 +1,140 @@
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { Sidebar } from './Sidebar';
+import { useSession } from '@/providers/SessionContextProvider';
+
+// Mock do useSession
+vi.mock('@/providers/SessionContextProvider', () => ({
+  useSession: vi.fn(),
+}));
+
+const mockUseSession = useSession as vi.Mock;
+
+describe('Sidebar', () => {
+  it('should render correct navigation items for a system_admin', () => {
+    mockUseSession.mockReturnValue({
+      userRole: 'system_admin',
+      isLoading: false,
+      session: {},
+      userProfile: { company_id: 'any-company-id' },
+    });
+
+    render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    expect(screen.getByText('Schedules')).toBeInTheDocument();
+    expect(screen.getByText('Shift Templates')).toBeInTheDocument();
+    expect(screen.getByText('Employees')).toBeInTheTheDocument();
+    expect(screen.getByText('Employee Preferences')).toBeInTheDocument();
+    expect(screen.queryByText('My Schedule')).not.toBeInTheDocument(); // Employee specific
+    expect(screen.queryByText('Preferences')).not.toBeInTheDocument(); // Employee specific
+    expect(screen.getByText('Swap Requests')).toBeInTheDocument();
+    expect(screen.getByText('Profile Settings')).toBeInTheDocument();
+    expect(screen.getByText('Company Settings')).toBeInTheDocument();
+    expect(screen.getByText('Admin Companies')).toBeInTheDocument();
+    expect(screen.getByText('Admin Users')).toBeInTheDocument();
+  });
+
+  it('should render correct navigation items for a manager', () => {
+    mockUseSession.mockReturnValue({
+      userRole: 'manager',
+      isLoading: false,
+      session: {},
+      userProfile: { company_id: 'company-123' },
+    });
+
+    render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    expect(screen.getByText('Schedules')).toBeInTheDocument();
+    expect(screen.getByText('Shift Templates')).toBeInTheDocument();
+    expect(screen.getByText('Employees')).toBeInTheDocument();
+    expect(screen.getByText('Employee Preferences')).toBeInTheDocument();
+    expect(screen.queryByText('My Schedule')).not.toBeInTheDocument();
+    expect(screen.queryByText('Preferences')).not.toBeInTheDocument();
+    expect(screen.getByText('Swap Requests')).toBeInTheDocument();
+    expect(screen.getByText('Profile Settings')).toBeInTheDocument();
+    expect(screen.getByText('Company Settings')).toBeInTheDocument();
+    expect(screen.queryByText('Admin Companies')).not.toBeInTheDocument(); // Admin specific
+    expect(screen.queryByText('Admin Users')).not.toBeInTheDocument();     // Admin specific
+  });
+
+  it('should render correct navigation items for an employee', () => {
+    mockUseSession.mockReturnValue({
+      userRole: 'employee',
+      isLoading: false,
+      session: {},
+      userProfile: { company_id: 'company-123' },
+    });
+
+    render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    expect(screen.queryByText('Schedules')).not.toBeInTheDocument(); // Manager specific
+    expect(screen.queryByText('Shift Templates')).not.toBeInTheDocument(); // Manager specific
+    expect(screen.queryByText('Employees')).not.toBeInTheDocument(); // Manager specific
+    expect(screen.queryByText('Employee Preferences')).not.toBeInTheDocument(); // Manager specific
+    expect(screen.getByText('My Schedule')).toBeInTheDocument();
+    expect(screen.getByText('Preferences')).toBeInTheDocument();
+    expect(screen.getByText('Swap Requests')).toBeInTheDocument();
+    expect(screen.getByText('Profile Settings')).toBeInTheDocument();
+    expect(screen.queryByText('Company Settings')).not.toBeInTheDocument(); // Manager specific
+    expect(screen.queryByText('Admin Companies')).not.toBeInTheDocument();
+    expect(screen.queryByText('Admin Users')).not.toBeInTheDocument();
+  });
+
+  it('should render no navigation items when userRole is null (unauthenticated)', () => {
+    mockUseSession.mockReturnValue({
+      userRole: null,
+      isLoading: false,
+      session: null,
+      userProfile: null,
+    });
+
+    render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    );
+
+    // Expect only the "ScaleFlow" brand link if not in mobile mode, otherwise nothing
+    // In this test, we are rendering the Sidebar directly, not within Layout, so the brand link is not part of it.
+    // We expect no navigation items to be rendered.
+    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
+    expect(screen.queryByText('Schedules')).not.toBeInTheDocument();
+    expect(screen.queryByText('My Schedule')).not.toBeInTheDocument();
+    expect(screen.queryByText('Profile Settings')).not.toBeInTheDocument();
+  });
+
+  it('should render nothing when isLoading is true', () => {
+    mockUseSession.mockReturnValue({
+      userRole: null,
+      isLoading: true,
+      session: null,
+      userProfile: null,
+    });
+
+    const { container } = render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    );
+
+    // Expect the sidebar container to be present, but no navigation items inside
+    expect(container.querySelector('nav')).toBeInTheDocument();
+    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
+  });
+});
