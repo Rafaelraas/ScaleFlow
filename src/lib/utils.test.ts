@@ -1,0 +1,34 @@
+import { describe, it, expect } from 'vitest';
+import { cn } from './utils';
+
+describe('cn', () => {
+  it('should return an empty string for no arguments', () => {
+    expect(cn()).toBe('');
+  });
+
+  it('should combine class names correctly', () => {
+    expect(cn('class1', 'class2')).toBe('class1 class2');
+  });
+
+  it('should handle conditional class names', () => {
+    expect(cn('class1', true && 'class2', false && 'class3')).toBe('class1 class2');
+  });
+
+  it('should merge Tailwind classes correctly', () => {
+    // tailwind-merge handles conflicts, e.g., 'p-4' and 'p-8' results in 'p-8'
+    expect(cn('p-4', 'p-8')).toBe('p-8');
+    expect(cn('text-red-500', 'text-blue-500')).toBe('text-blue-500');
+  });
+
+  it('should handle mixed arguments including objects and arrays', () => {
+    expect(cn('foo', { bar: true, baz: false }, ['qux', 'quux'])).toBe('foo bar qux quux');
+  });
+
+  it('should return unique classes when duplicates are provided', () => {
+    expect(cn('class1', 'class1', 'class2')).toBe('class1 class2');
+  });
+
+  it('should handle empty strings and null/undefined values gracefully', () => {
+    expect(cn('class1', '', null, undefined, 'class2')).toBe('class1 class2');
+  });
+});
