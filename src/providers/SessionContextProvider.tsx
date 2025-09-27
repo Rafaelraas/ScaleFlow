@@ -48,8 +48,9 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setUserRole(null);
       return null;
     } else if (profileData) {
-      // Correctly access the role name from the array of roles
-      const roleName = (profileData.roles as { name: string }[] | null)?.[0]?.name || 'employee';
+      // Correctly access the role name from the joined 'roles' object
+      // If 'roles' is a direct foreign key, it will be an object, not an array.
+      const roleName = (profileData.roles as { name: string } | null)?.name || 'employee';
 
       const profileWithRoleName: UserProfile = {
         id: profileData.id,
@@ -61,6 +62,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         role_name: roleName,
       };
       console.log("User profile fetched:", profileWithRoleName);
+      console.log("Raw profileData from Supabase:", profileData); // Added for debugging
       setUserProfile(profileWithRoleName);
       setUserRole(profileWithRoleName.role_name);
       return profileWithRoleName;

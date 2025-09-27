@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom"; // Adicionado useLocation para logs
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSession } from "@/providers/SessionContextProvider";
 import { MadeWithDyad } from "./made-with-dyad";
 
@@ -11,13 +11,18 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ requiresCompany = true, allowedRoles }: ProtectedRouteProps) => {
-  const { session, userProfile, userRole } = useSession();
-  const location = useLocation(); // Obter a localização atual para logs
+  const { session, userProfile, userRole, isLoading } = useSession(); // Get isLoading here
+  const location = useLocation();
 
-  console.log("ProtectedRoute Render - session:", !!session, "userProfile:", !!userProfile, "userRole:", userRole, "location:", location.pathname);
+  console.log("ProtectedRoute Render - session:", !!session, "userProfile:", userProfile, "userRole:", userRole, "isLoading:", isLoading, "location:", location.pathname);
+
+  // If session data is still loading, render nothing (or a loading spinner)
+  if (isLoading) {
+    console.log("ProtectedRoute: Session is still loading, rendering nothing.");
+    return null;
+  }
 
   // Se não há sessão, redirecionar para a página de login.
-  // O carregamento global já é tratado pelo AppContent.
   if (!session) {
     console.log("ProtectedRoute: No session, redirecting to /login");
     return <Navigate to="/login" replace />;
