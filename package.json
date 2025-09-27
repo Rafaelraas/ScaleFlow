@@ -87,6 +87,8 @@
     "vite": "^6.3.4",
     "vitest": "^2.0.5",
     "@vitest/ui": "^2.0.5",
-    "@testing-library/jest-dom": "^6.4.8"
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
+    "@types/testing-library__react": "^12.4.5"
   }
 }
