@@ -22,6 +22,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface EmployeeProfile {
   id: string;
@@ -31,6 +41,8 @@ interface EmployeeProfile {
   roles: { name: string } | null; // Corrected to single object
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const Employees = () => {
   const { userProfile, userRole } = useSession();
   const [employees, setEmployees] = useState<EmployeeProfile[]>([]);
@@ -38,6 +50,10 @@ const Employees = () => {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<EmployeeProfile | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   const fetchEmployees = async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
@@ -46,11 +62,29 @@ const Employees = () => {
     }
 
     setLoadingEmployees(true);
+    
+    // Get total count first
+    const { count, error: countError } = await supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .eq('company_id', userProfile.company_id);
+
+    if (countError) {
+      showError("Failed to fetch employee count: " + countError.message);
+    } else {
+      setTotalCount(count || 0);
+    }
+
+    // Fetch paginated data
+    const from = (currentPage - 1) * ITEMS_PER_PAGE;
+    const to = from + ITEMS_PER_PAGE - 1;
+
     const { data, error } = await supabase
       .from('profiles')
       .select('id, first_name, last_name, role_id, roles(name)')
       .eq('company_id', userProfile.company_id)
-      .order('last_name', { ascending: true });
+      .order('last_name', { ascending: true })
+      .range(from, to);
 
     if (error) {
       showError("Failed to fetch employees: " + error.message);
@@ -68,10 +102,11 @@ const Employees = () => {
 
   useEffect(() => {
     fetchEmployees();
-  }, [userProfile?.company_id, userRole]);
+  }, [userProfile?.company_id, userRole, currentPage]);
 
   const handleInviteSuccess = () => {
     setIsInviteDialogOpen(false);
+    setCurrentPage(1); // Reset to first page
     fetchEmployees(); // Re-fetch employees after a new one is invited
   };
 
@@ -135,7 +170,32 @@ const Employees = () => {
       </div>
 
       {loadingEmployees ? (
-        <p>Loading employees...</p>
+        <div className="rounded-md border">
+          <Table>
+            <TableCaption>Loading employees...</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(5)].map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end space-x-2">
+                      <Skeleton className="h-8 w-8" />
+                      <Skeleton className="h-8 w-8" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       ) : employees.length === 0 ? (
         <p className="text-center text-gray-500">No employees found for your company. Invite some to get started!</p>
       ) : (
@@ -184,6 +244,58 @@ const Employees = () => {
               ))}
             </TableBody>
           </Table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loadingEmployees && totalPages > 1 && (
+        <div className="mt-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              {[...Array(totalPages)].map((_, i) => {
+                const page = i + 1;
+                // Show first page, last page, and pages around current page
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPage(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                } else if (
+                  (page === 2 && currentPage > 3) ||
+                  (page === totalPages - 1 && currentPage < totalPages - 2)
+                ) {
+                  return <PaginationEllipsis key={page} />;
+                }
+                return null;
+              })}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+          <p className="text-center text-sm text-muted-foreground mt-2">
+            Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} employees
+          </p>
         </div>
       )}
 
