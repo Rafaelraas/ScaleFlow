@@ -3,7 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dyad-generated-app</title>
+    <title>ScaleFlow</title>
+    <script>
+      // Handle redirect from 404.html for GitHub Pages SPA routing
+      (function() {
+        const searchParams = new URLSearchParams(location.search);
+        const redirectPath = searchParams.get('p');
+        if (redirectPath) {
+          searchParams.delete('p');
+          const remainingSearch = searchParams.toString();
+          const newUrl = redirectPath + (remainingSearch ? '?' + remainingSearch : '');
+          history.replaceState(null, '', newUrl);
+        }
+      })();
+    </script>
   </head>
 
   <body>
