@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+    <script>
+      // Single Page App GitHub Pages redirect script
+      // This script takes the current URL and converts the path and query string
+      // into a format that can be redirected to the root with the path preserved
+      // as a query parameter, which the index.html can then process
+      const basePath = '/ScaleFlow';
+      
+      // Get the path relative to the base
+      let relativePath = location.pathname;
+      if (relativePath.startsWith(basePath)) {
+        relativePath = relativePath.slice(basePath.length);
+      }
+      
+      // Build the redirect URL with proper query string handling
+      const existingSearch = location.search ? '&' + location.search.slice(1) : '';
+      const redirectUrl = basePath + '/?p=' + encodeURIComponent(relativePath) + existingSearch;
+      location.replace(redirectUrl);
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>
