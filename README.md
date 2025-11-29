@@ -356,18 +356,18 @@ The build output will be in the `dist/` directory.
 
 ### High Priority 🔴
 
-- [ ] **Add unit tests** - Increase test coverage for critical components
-- [ ] **Implement error boundaries** - Better error handling and user feedback
-- [ ] **Add loading states** - Consistent skeleton loaders across all pages
-- [ ] **Implement pagination** - For large data sets (employees, shifts, etc.)
+- [x] **Add unit tests** - Increase test coverage for critical components ✅
+- [x] **Implement error boundaries** - Better error handling and user feedback ✅
+- [x] **Add loading states** - Consistent skeleton loaders across all pages ✅
+- [x] **Implement pagination** - For large data sets (employees, shifts, etc.) ✅
 
 ### Medium Priority 🟡
 
+- [x] **Dark mode toggle** - User preference for theme selection ✅
 - [ ] **Calendar view** - Visual calendar for schedule management
 - [ ] **Notifications system** - Real-time notifications for shift changes
 - [ ] **Export functionality** - Export schedules to PDF/Excel
 - [ ] **Bulk actions** - Select and modify multiple shifts at once
-- [ ] **Dark mode toggle** - User preference for theme selection
 - [ ] **Internationalization (i18n)** - Multi-language support
 
 ### Low Priority 🟢
@@ -381,7 +381,7 @@ The build output will be in the `dist/` directory.
 ### Technical Debt 🔧
 
 - [ ] **Fix TypeScript `any` types** - Replace with proper type definitions
-- [ ] **Add `jsdom` to devDependencies** - Fix test environment
+- [x] **Add `jsdom` to devDependencies** - Fix test environment ✅
 - [ ] **Code splitting** - Implement lazy loading for routes
 - [ ] **Bundle size optimization** - Reduce main chunk size
 - [ ] **Add Storybook** - Component documentation and testing

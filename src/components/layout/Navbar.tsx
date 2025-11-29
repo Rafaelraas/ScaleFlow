@@ -9,6 +9,7 @@ import { Sidebar } from "./Sidebar";
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
+import { ModeToggle } from "@/components/ModeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,6 +64,7 @@ export const Navbar = () => {
           </Link>
         </div>
         <div className="flex items-center space-x-4">
+          <ModeToggle />
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
