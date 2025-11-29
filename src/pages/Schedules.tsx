@@ -32,6 +32,16 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface Shift {
   id: string;
@@ -56,6 +66,8 @@ interface RoleOption {
   name: string;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const Schedules = () => {
   const { userProfile, userRole } = useSession();
   const [shifts, setShifts] = useState<Shift[]>([]);
@@ -63,6 +75,10 @@ const Schedules = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
   const [loadingShifts, setLoadingShifts] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   // Filter states
   const [filterEmployeeId, setFilterEmployeeId] = useState<string | null>(null);
@@ -122,48 +138,79 @@ const Schedules = () => {
     }
 
     setLoadingShifts(true);
-    let query = supabase
-      .from('shifts')
-      .select('*, profiles(first_name, last_name), roles(name)')
-      .eq('company_id', userProfile.company_id)
-      .order('start_time', { ascending: true });
 
-    // Apply filters
-    if (filterEmployeeId) {
-      query = query.eq('employee_id', filterEmployeeId);
-    }
-    if (filterRoleId) {
-      query = query.eq('role_id', filterRoleId);
-    }
-    if (filterPublished !== null) {
-      query = query.eq('published', filterPublished === 'true');
-    }
-    if (filterStartDate) {
-      query = query.gte('start_time', format(filterStartDate, 'yyyy-MM-dd'));
-    }
-    if (filterEndDate) {
-      query = query.lte('end_time', format(filterEndDate, 'yyyy-MM-ddT23:59:59.999Z')); // End of day
+    const from = (currentPage - 1) * ITEMS_PER_PAGE;
+    const to = from + ITEMS_PER_PAGE - 1;
+
+    // Helper function to apply filters to a query
+    const applyFilters = <T extends { eq: Function; gte: Function; lte: Function }>(query: T): T => {
+      let filteredQuery = query;
+      if (filterEmployeeId) {
+        filteredQuery = filteredQuery.eq('employee_id', filterEmployeeId);
+      }
+      if (filterRoleId) {
+        filteredQuery = filteredQuery.eq('role_id', filterRoleId);
+      }
+      if (filterPublished !== null) {
+        filteredQuery = filteredQuery.eq('published', filterPublished === 'true');
+      }
+      if (filterStartDate) {
+        filteredQuery = filteredQuery.gte('start_time', format(filterStartDate, 'yyyy-MM-dd'));
+      }
+      if (filterEndDate) {
+        filteredQuery = filteredQuery.lte('end_time', format(filterEndDate, 'yyyy-MM-ddT23:59:59.999Z'));
+      }
+      return filteredQuery;
+    };
+
+    // Build and execute both queries in parallel
+    const countQuery = applyFilters(
+      supabase
+        .from('shifts')
+        .select('id', { count: 'exact', head: true })
+        .eq('company_id', userProfile.company_id)
+    );
+
+    const dataQuery = applyFilters(
+      supabase
+        .from('shifts')
+        .select('*, profiles(first_name, last_name), roles(name)')
+        .eq('company_id', userProfile.company_id)
+        .order('start_time', { ascending: true })
+        .range(from, to)
+    );
+
+    const [countResult, dataResult] = await Promise.all([countQuery, dataQuery]);
+
+    if (countResult.error) {
+      showError("Failed to fetch shift count: " + countResult.error.message);
+    } else {
+      setTotalCount(countResult.count || 0);
     }
 
-    const { data, error } = await query;
-
-    if (error) {
-      showError("Failed to fetch shifts: " + error.message);
+    if (dataResult.error) {
+      showError("Failed to fetch shifts: " + dataResult.error.message);
       setShifts([]);
     } else {
-      setShifts(data as Shift[] || []);
+      setShifts(dataResult.data as Shift[] || []);
     }
     setLoadingShifts(false);
   };
 
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterEmployeeId, filterRoleId, filterPublished, filterStartDate, filterEndDate]);
+
   useEffect(() => {
     fetchShifts();
-  }, [userProfile?.company_id, userRole, filterEmployeeId, filterRoleId, filterPublished, filterStartDate, filterEndDate]);
+  }, [userProfile?.company_id, userRole, filterEmployeeId, filterRoleId, filterPublished, filterStartDate, filterEndDate, currentPage]);
 
   const handleShiftFormSuccess = () => {
     setIsCreateDialogOpen(false);
     setIsEditDialogOpen(false);
     setEditingShift(null);
+    setCurrentPage(1); // Reset to first page
     fetchShifts(); // Re-fetch shifts after create/update
   };
 
@@ -307,7 +354,40 @@ const Schedules = () => {
       </div>
 
       {loadingShifts || loadingFilterOptions ? (
-        <p>Loading shifts...</p>
+        <div className="rounded-md border">
+          <Table>
+            <TableCaption>Loading shifts...</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Start Time</TableHead>
+                <TableHead>End Time</TableHead>
+                <TableHead>Employee</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Notes</TableHead>
+                <TableHead>Published</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(5)].map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end space-x-2">
+                      <Skeleton className="h-8 w-8" />
+                      <Skeleton className="h-8 w-8" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       ) : shifts.length === 0 ? (
         <p className="text-center text-gray-500">No shifts found matching your criteria.</p>
       ) : (
@@ -366,6 +446,58 @@ const Schedules = () => {
               ))}
             </TableBody>
           </Table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loadingShifts && !loadingFilterOptions && totalPages > 1 && (
+        <div className="mt-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              {[...Array(totalPages)].map((_, i) => {
+                const page = i + 1;
+                // Show first page, last page, and pages around current page
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPage(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                } else if (
+                  (page === 2 && currentPage > 3) ||
+                  (page === totalPages - 1 && currentPage < totalPages - 2)
+                ) {
+                  return <PaginationEllipsis key={`ellipsis-${page}`} />;
+                }
+                return null;
+              })}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+          <p className="text-center text-sm text-muted-foreground mt-2">
+            Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} shifts
+          </p>
         </div>
       )}
 

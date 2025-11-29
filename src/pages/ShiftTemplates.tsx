@@ -21,6 +21,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface ShiftTemplate {
   id: string;
@@ -32,6 +42,8 @@ interface ShiftTemplate {
   default_notes: string | null;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const ShiftTemplates = () => {
   const { userProfile, userRole, isLoading } = useSession();
   const [templates, setTemplates] = useState<ShiftTemplate[]>([]);
@@ -39,6 +51,10 @@ const ShiftTemplates = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<ShiftTemplate | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   const fetchShiftTemplates = async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
@@ -47,17 +63,35 @@ const ShiftTemplates = () => {
     }
 
     setLoadingTemplates(true);
-    const { data, error } = await supabase
-      .from('shift_templates')
-      .select('*, roles(name)')
-      .eq('company_id', userProfile.company_id)
-      .order('name', { ascending: true });
 
-    if (error) {
-      showError("Failed to fetch shift templates: " + error.message);
+    const from = (currentPage - 1) * ITEMS_PER_PAGE;
+    const to = from + ITEMS_PER_PAGE - 1;
+
+    // Execute count and data queries in parallel
+    const [countResult, dataResult] = await Promise.all([
+      supabase
+        .from('shift_templates')
+        .select('id', { count: 'exact', head: true })
+        .eq('company_id', userProfile.company_id),
+      supabase
+        .from('shift_templates')
+        .select('*, roles(name)')
+        .eq('company_id', userProfile.company_id)
+        .order('name', { ascending: true })
+        .range(from, to)
+    ]);
+
+    if (countResult.error) {
+      showError("Failed to fetch template count: " + countResult.error.message);
+    } else {
+      setTotalCount(countResult.count || 0);
+    }
+
+    if (dataResult.error) {
+      showError("Failed to fetch shift templates: " + dataResult.error.message);
       setTemplates([]);
     } else {
-      const formattedTemplates = (data || []).map(template => ({
+      const formattedTemplates = (dataResult.data || []).map(template => ({
         ...template,
         roles: template.roles?.[0] || null,
       }));
@@ -70,12 +104,13 @@ const ShiftTemplates = () => {
     if (!isLoading) {
       fetchShiftTemplates();
     }
-  }, [userProfile?.company_id, userRole, isLoading]);
+  }, [userProfile?.company_id, userRole, isLoading, currentPage]);
 
   const handleFormSuccess = () => {
     setIsCreateDialogOpen(false);
     setIsEditDialogOpen(false);
     setEditingTemplate(null);
+    setCurrentPage(1); // Reset to first page
     fetchShiftTemplates(); // Re-fetch templates after create/update
   };
 
@@ -130,7 +165,38 @@ const ShiftTemplates = () => {
       </div>
 
       {loadingTemplates ? (
-        <p>Loading shift templates...</p>
+        <div className="rounded-md border">
+          <Table>
+            <TableCaption>Loading shift templates...</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Duration</TableHead>
+                <TableHead>Start Time</TableHead>
+                <TableHead>Default Role</TableHead>
+                <TableHead>Notes</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(5)].map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end space-x-2">
+                      <Skeleton className="h-8 w-8" />
+                      <Skeleton className="h-8 w-8" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       ) : templates.length === 0 ? (
         <p className="text-center text-gray-500">No shift templates found for your company. Create one to get started!</p>
       ) : (
@@ -185,6 +251,58 @@ const ShiftTemplates = () => {
               ))}
             </TableBody>
           </Table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loadingTemplates && totalPages > 1 && (
+        <div className="mt-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              {[...Array(totalPages)].map((_, i) => {
+                const page = i + 1;
+                // Show first page, last page, and pages around current page
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPage(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                } else if (
+                  (page === 2 && currentPage > 3) ||
+                  (page === totalPages - 1 && currentPage < totalPages - 2)
+                ) {
+                  return <PaginationEllipsis key={`ellipsis-${page}`} />;
+                }
+                return null;
+              })}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+          <p className="text-center text-sm text-muted-foreground mt-2">
+            Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} templates
+          </p>
         </div>
       )}
 

@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Verify from "./pages/Verify";
 import { Layout } from "./components/layout/Layout";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
+import ErrorBoundary from "./components/ErrorBoundary"; // Import ErrorBoundary
 import Dashboard from "./pages/Dashboard"; // Import Dashboard
 import Schedules from "./pages/Schedules"; // Import Schedules
 import Employees from "./pages/Employees"; // Import Employees
@@ -32,8 +33,9 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      {/* BrowserRouter removido daqui, pois já está em main.tsx */}
-      <Routes>
+      <ErrorBoundary>
+        {/* BrowserRouter removido daqui, pois já está em main.tsx */}
+        <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<Verify />} />
@@ -73,6 +75,7 @@ const App = () => (
         {/* Rota catch-all para 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </ErrorBoundary>
     </TooltipProvider>
   </QueryClientProvider>
 );
