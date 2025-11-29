@@ -3,7 +3,7 @@ import App from "./App.tsx";
 import "./globals.css";
 import { SessionContextProvider } from "./providers/SessionContextProvider.tsx";
 import { BrowserRouter } from "react-router-dom"; // Import BrowserRouter aqui
-import { ThemeProvider } from "./components/ThemeProvider.tsx"; // Import ThemeProvider
+import { ThemeProvider } from "./components/ThemeProvider"; // Import ThemeProvider
 
 // Determine o caminho base dinamicamente.
 // Para o GitHub Pages, VITE_APP_BASE_PATH será '/scaleflow/'.
