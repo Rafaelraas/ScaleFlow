@@ -12,12 +12,17 @@
         if (redirectPath) {
           searchParams.delete('p');
           const remainingSearch = searchParams.toString();
-          const newUrl = redirectPath + (remainingSearch ? '?' + remainingSearch : '');
+          // Get the current base path from the URL (e.g., /ScaleFlow)
+          // Extract base path from current location to preserve the deployment base
+          const pathParts = location.pathname.split('/').filter(Boolean);
+          const basePath = pathParts.length > 0 ? '/' + pathParts[0] : '';
+          // Build the new URL with the base path prefix
+          const newUrl = basePath + redirectPath + (remainingSearch ? '?' + remainingSearch : '');
           history.replaceState(null, '', newUrl);
         }
       })();
     </script>
-    <script type="module" crossorigin src="/ScaleFlow/assets/index--ZNx3Vug.js"></script>
+    <script type="module" crossorigin src="/ScaleFlow/assets/index-CRVLBr6l.js"></script>
     <link rel="stylesheet" crossorigin href="/ScaleFlow/assets/index-Byjx2cyl.css">
   </head>
 
