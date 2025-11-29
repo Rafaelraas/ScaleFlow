@@ -63,35 +63,35 @@ const Employees = () => {
 
     setLoadingEmployees(true);
     
-    // Get total count first
-    const { count, error: countError } = await supabase
-      .from('profiles')
-      .select('id', { count: 'exact', head: true })
-      .eq('company_id', userProfile.company_id);
-
-    if (countError) {
-      showError("Failed to fetch employee count: " + countError.message);
-    } else {
-      setTotalCount(count || 0);
-    }
-
-    // Fetch paginated data
     const from = (currentPage - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, first_name, last_name, role_id, roles(name)')
-      .eq('company_id', userProfile.company_id)
-      .order('last_name', { ascending: true })
-      .range(from, to);
+    // Execute count and data queries in parallel
+    const [countResult, dataResult] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .eq('company_id', userProfile.company_id),
+      supabase
+        .from('profiles')
+        .select('id, first_name, last_name, role_id, roles(name)')
+        .eq('company_id', userProfile.company_id)
+        .order('last_name', { ascending: true })
+        .range(from, to)
+    ]);
 
-    if (error) {
-      showError("Failed to fetch employees: " + error.message);
+    if (countResult.error) {
+      showError("Failed to fetch employee count: " + countResult.error.message);
+    } else {
+      setTotalCount(countResult.count || 0);
+    }
+
+    if (dataResult.error) {
+      showError("Failed to fetch employees: " + dataResult.error.message);
       setEmployees([]);
     } else {
       // Map to ensure roles is a single object
-      const formattedEmployees = (data || []).map(emp => ({
+      const formattedEmployees = (dataResult.data || []).map(emp => ({
         ...emp,
         roles: emp.roles?.[0] || null,
       }));
@@ -281,7 +281,7 @@ const Employees = () => {
                   (page === 2 && currentPage > 3) ||
                   (page === totalPages - 1 && currentPage < totalPages - 2)
                 ) {
-                  return <PaginationEllipsis key={page} />;
+                  return <PaginationEllipsis key={`ellipsis-${page}`} />;
                 }
                 return null;
               })}

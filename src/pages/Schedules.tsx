@@ -139,71 +139,60 @@ const Schedules = () => {
 
     setLoadingShifts(true);
 
-    // Build count query with filters
-    let countQuery = supabase
-      .from('shifts')
-      .select('id', { count: 'exact', head: true })
-      .eq('company_id', userProfile.company_id);
-
-    if (filterEmployeeId) {
-      countQuery = countQuery.eq('employee_id', filterEmployeeId);
-    }
-    if (filterRoleId) {
-      countQuery = countQuery.eq('role_id', filterRoleId);
-    }
-    if (filterPublished !== null) {
-      countQuery = countQuery.eq('published', filterPublished === 'true');
-    }
-    if (filterStartDate) {
-      countQuery = countQuery.gte('start_time', format(filterStartDate, 'yyyy-MM-dd'));
-    }
-    if (filterEndDate) {
-      countQuery = countQuery.lte('end_time', format(filterEndDate, 'yyyy-MM-ddT23:59:59.999Z'));
-    }
-
-    const { count, error: countError } = await countQuery;
-
-    if (countError) {
-      showError("Failed to fetch shift count: " + countError.message);
-    } else {
-      setTotalCount(count || 0);
-    }
-
-    // Build data query with filters and pagination
     const from = (currentPage - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
-    let query = supabase
-      .from('shifts')
-      .select('*, profiles(first_name, last_name), roles(name)')
-      .eq('company_id', userProfile.company_id)
-      .order('start_time', { ascending: true })
-      .range(from, to);
+    // Helper function to apply filters to a query
+    const applyFilters = <T extends { eq: Function; gte: Function; lte: Function }>(query: T): T => {
+      let filteredQuery = query;
+      if (filterEmployeeId) {
+        filteredQuery = filteredQuery.eq('employee_id', filterEmployeeId);
+      }
+      if (filterRoleId) {
+        filteredQuery = filteredQuery.eq('role_id', filterRoleId);
+      }
+      if (filterPublished !== null) {
+        filteredQuery = filteredQuery.eq('published', filterPublished === 'true');
+      }
+      if (filterStartDate) {
+        filteredQuery = filteredQuery.gte('start_time', format(filterStartDate, 'yyyy-MM-dd'));
+      }
+      if (filterEndDate) {
+        filteredQuery = filteredQuery.lte('end_time', format(filterEndDate, 'yyyy-MM-ddT23:59:59.999Z'));
+      }
+      return filteredQuery;
+    };
 
-    // Apply filters
-    if (filterEmployeeId) {
-      query = query.eq('employee_id', filterEmployeeId);
-    }
-    if (filterRoleId) {
-      query = query.eq('role_id', filterRoleId);
-    }
-    if (filterPublished !== null) {
-      query = query.eq('published', filterPublished === 'true');
-    }
-    if (filterStartDate) {
-      query = query.gte('start_time', format(filterStartDate, 'yyyy-MM-dd'));
-    }
-    if (filterEndDate) {
-      query = query.lte('end_time', format(filterEndDate, 'yyyy-MM-ddT23:59:59.999Z')); // End of day
+    // Build and execute both queries in parallel
+    const countQuery = applyFilters(
+      supabase
+        .from('shifts')
+        .select('id', { count: 'exact', head: true })
+        .eq('company_id', userProfile.company_id)
+    );
+
+    const dataQuery = applyFilters(
+      supabase
+        .from('shifts')
+        .select('*, profiles(first_name, last_name), roles(name)')
+        .eq('company_id', userProfile.company_id)
+        .order('start_time', { ascending: true })
+        .range(from, to)
+    );
+
+    const [countResult, dataResult] = await Promise.all([countQuery, dataQuery]);
+
+    if (countResult.error) {
+      showError("Failed to fetch shift count: " + countResult.error.message);
+    } else {
+      setTotalCount(countResult.count || 0);
     }
 
-    const { data, error } = await query;
-
-    if (error) {
-      showError("Failed to fetch shifts: " + error.message);
+    if (dataResult.error) {
+      showError("Failed to fetch shifts: " + dataResult.error.message);
       setShifts([]);
     } else {
-      setShifts(data as Shift[] || []);
+      setShifts(dataResult.data as Shift[] || []);
     }
     setLoadingShifts(false);
   };
@@ -494,7 +483,7 @@ const Schedules = () => {
                   (page === 2 && currentPage > 3) ||
                   (page === totalPages - 1 && currentPage < totalPages - 2)
                 ) {
-                  return <PaginationEllipsis key={page} />;
+                  return <PaginationEllipsis key={`ellipsis-${page}`} />;
                 }
                 return null;
               })}

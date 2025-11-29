@@ -64,34 +64,34 @@ const ShiftTemplates = () => {
 
     setLoadingTemplates(true);
 
-    // Get total count first
-    const { count, error: countError } = await supabase
-      .from('shift_templates')
-      .select('id', { count: 'exact', head: true })
-      .eq('company_id', userProfile.company_id);
-
-    if (countError) {
-      showError("Failed to fetch template count: " + countError.message);
-    } else {
-      setTotalCount(count || 0);
-    }
-
-    // Fetch paginated data
     const from = (currentPage - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
-    const { data, error } = await supabase
-      .from('shift_templates')
-      .select('*, roles(name)')
-      .eq('company_id', userProfile.company_id)
-      .order('name', { ascending: true })
-      .range(from, to);
+    // Execute count and data queries in parallel
+    const [countResult, dataResult] = await Promise.all([
+      supabase
+        .from('shift_templates')
+        .select('id', { count: 'exact', head: true })
+        .eq('company_id', userProfile.company_id),
+      supabase
+        .from('shift_templates')
+        .select('*, roles(name)')
+        .eq('company_id', userProfile.company_id)
+        .order('name', { ascending: true })
+        .range(from, to)
+    ]);
 
-    if (error) {
-      showError("Failed to fetch shift templates: " + error.message);
+    if (countResult.error) {
+      showError("Failed to fetch template count: " + countResult.error.message);
+    } else {
+      setTotalCount(countResult.count || 0);
+    }
+
+    if (dataResult.error) {
+      showError("Failed to fetch shift templates: " + dataResult.error.message);
       setTemplates([]);
     } else {
-      const formattedTemplates = (data || []).map(template => ({
+      const formattedTemplates = (dataResult.data || []).map(template => ({
         ...template,
         roles: template.roles?.[0] || null,
       }));
@@ -288,7 +288,7 @@ const ShiftTemplates = () => {
                   (page === 2 && currentPage > 3) ||
                   (page === totalPages - 1 && currentPage < totalPages - 2)
                 ) {
-                  return <PaginationEllipsis key={page} />;
+                  return <PaginationEllipsis key={`ellipsis-${page}`} />;
                 }
                 return null;
               })}
