@@ -1,0 +1,355 @@
+# ScaleFlow - AI Development Rules
+
+## Project Overview
+ScaleFlow is a modern SaaS shift scheduling and workforce management platform built with React, TypeScript, and Supabase. It provides role-based access for System Admins, Managers, and Employees with features for schedule management, employee management, and shift coordination.
+
+## Tech Stack & Libraries
+
+### Core Technologies
+- **React 18.3** - UI library with functional components and hooks
+- **TypeScript 5.5** - Type-safe JavaScript with strict mode enabled
+- **Vite 6.3** - Build tool and development server
+- **React Router DOM 6** - Client-side routing (routes in src/App.tsx)
+
+### UI & Styling
+- **Tailwind CSS 3.4** - Utility-first CSS framework (REQUIRED for all styling)
+- **shadcn/ui** - Prebuilt accessible components (import from @/components/ui/*)
+- **Radix UI** - Accessible component primitives (already installed)
+- **Lucide React** - Icon library (use for all icons)
+- **next-themes** - Dark/light mode theming
+
+### Backend & Data
+- **Supabase** - Backend-as-a-Service (PostgreSQL, Auth, RLS)
+- **TanStack Query** - Server state management and caching
+- **React Hook Form** - Form handling
+- **Zod** - Schema validation
+
+### Testing
+- **Vitest** - Test runner with jsdom
+- **@testing-library/react** - Component testing
+- **@testing-library/jest-dom** - DOM assertions
+
+## Architecture Rules
+
+### File Organization
+```
+src/
+├── components/        # Reusable components
+│   ├── layout/       # Layout components (Navbar, Sidebar, Layout)
+│   └── ui/           # shadcn/ui components (DO NOT EDIT)
+├── pages/            # Page components (one per route)
+├── hooks/            # Custom React hooks
+├── integrations/     # External service integrations (Supabase)
+├── lib/              # Utility functions
+├── providers/        # React context providers
+└── utils/            # Helper utilities
+```
+
+### Routing
+- **ALWAYS** keep routes in `src/App.tsx`
+- Use `<Layout>` wrapper for authenticated pages
+- Use `<ProtectedRoute>` for role-based access control
+- Never move BrowserRouter from main.tsx
+
+### State Management
+- **Session Context** - User authentication and profile (src/providers/SessionContextProvider.tsx)
+- **TanStack Query** - Server state and caching
+- **Local State** - Component-level state with React hooks
+- Avoid prop drilling - use context for deeply nested data
+
+## Code Standards
+
+### TypeScript Rules
+1. **NO `any` types** - Always define proper types/interfaces
+2. **Export interfaces** - Make types reusable across components
+3. **Strict mode enabled** - Follow all TypeScript strict checks
+4. **Type imports** - Import types explicitly when needed
+
+Example:
+```typescript
+interface UserProfile {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  role_name: string;
+}
+```
+
+### React Component Structure
+```typescript
+// 1. Imports
+import React from 'react';
+import { Button } from '@/components/ui/button';
+
+// 2. Type definitions
+interface MyComponentProps {
+  title: string;
+  onSubmit: () => void;
+}
+
+// 3. Component definition
+export const MyComponent: React.FC<MyComponentProps> = ({ title, onSubmit }) => {
+  // 4. Hooks (in order: state, query, effects)
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // 5. Event handlers
+  const handleClick = () => {
+    // handler logic
+  };
+  
+  // 6. Return JSX
+  return (
+    <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold">{title}</h1>
+      <Button onClick={onSubmit}>Submit</Button>
+    </div>
+  );
+};
+```
+
+### Styling with Tailwind
+1. **ALWAYS use Tailwind classes** - Never write custom CSS
+2. **Responsive design** - Use `sm:`, `md:`, `lg:`, `xl:` breakpoints
+3. **Dark mode** - Use `dark:` prefix for dark mode styles
+4. **Spacing** - Use consistent spacing scale (`gap-4`, `p-6`, `mb-8`)
+5. **Component variants** - Use `class-variance-authority` for complex variants
+
+Common patterns:
+```tsx
+// Layout containers
+<div className="container mx-auto px-4 py-8">
+
+// Cards
+<div className="bg-card rounded-lg border p-6 shadow-sm">
+
+// Buttons with shadcn/ui
+<Button variant="default" size="lg">Click Me</Button>
+
+// Responsive grid
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+```
+
+### Forms with React Hook Form + Zod
+```typescript
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const formSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+});
+
+type FormData = z.infer<typeof formSchema>;
+
+const MyForm = () => {
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { email: '', name: '' },
+  });
+
+  const onSubmit = async (data: FormData) => {
+    // handle submission
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {/* form fields */}
+      </form>
+    </Form>
+  );
+};
+```
+
+### Supabase Data Fetching
+```typescript
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+
+const useEmployees = (companyId: string) => {
+  return useQuery({
+    queryKey: ['employees', companyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('company_id', companyId);
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+};
+```
+
+### Error Handling
+1. **Toast notifications** - Use `showSuccess()` and `showError()` from `@/utils/toast`
+2. **Loading states** - Show skeleton loaders during data fetching
+3. **Error boundaries** - Already implemented in App.tsx
+4. **Try-catch blocks** - Wrap async operations
+
+Example:
+```typescript
+try {
+  const { data, error } = await supabase.from('table').insert(values);
+  if (error) throw error;
+  showSuccess('Operation successful!');
+} catch (error) {
+  console.error('Error:', error);
+  showError('Failed to complete operation');
+}
+```
+
+## Testing Guidelines
+
+### Test Structure
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+
+describe('ComponentName', () => {
+  it('should render correctly', () => {
+    render(
+      <MemoryRouter>
+        <ComponentName />
+      </MemoryRouter>
+    );
+    
+    expect(screen.getByText('Expected Text')).toBeInTheDocument();
+  });
+});
+```
+
+### When to Write Tests
+- New components with complex logic
+- Form validation logic
+- Custom hooks
+- Utility functions
+- Protected routes and auth flows
+
+### Test Commands
+```bash
+npm run test          # Run all tests
+npm run test:ui       # Run with Vitest UI
+```
+
+## Development Commands
+
+```bash
+npm run dev           # Start dev server (localhost:5173)
+npm run build         # Production build
+npm run build:dev     # Development build
+npm run lint          # Run ESLint
+npm run preview       # Preview production build
+```
+
+## Common Patterns
+
+### Pagination
+```typescript
+const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 10;
+const start = (currentPage - 1) * itemsPerPage;
+const end = start + itemsPerPage - 1;
+
+const { data } = await supabase
+  .from('table')
+  .select('*')
+  .range(start, end);
+```
+
+### Role-based Rendering
+```typescript
+const { userRole } = useSession();
+
+{userRole === 'manager' && (
+  <Button>Manager Only Action</Button>
+)}
+```
+
+### Modal Dialogs
+```tsx
+import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+
+<Dialog open={isOpen} onOpenChange={setIsOpen}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Dialog Title</DialogTitle>
+    </DialogHeader>
+    {/* content */}
+  </DialogContent>
+</Dialog>
+```
+
+## Security Best Practices
+
+1. **Never commit secrets** - Use environment variables
+2. **Validate inputs** - Use Zod schemas for all forms
+3. **RLS policies** - Rely on Supabase Row-Level Security
+4. **Sanitize data** - Validate user input before database operations
+5. **Auth checks** - Use ProtectedRoute for authenticated pages
+
+## Performance Guidelines
+
+1. **Code splitting** - Use React.lazy() for large components
+2. **Memoization** - Use useMemo/useCallback for expensive operations
+3. **Query optimization** - Only fetch needed fields with Supabase select()
+4. **Image optimization** - Use appropriate image sizes and formats
+5. **Bundle size** - Keep main chunk under 500KB (currently 909KB - needs optimization)
+
+## Don't Do This
+
+❌ Edit shadcn/ui components in `src/components/ui/`
+❌ Use custom CSS files for styling
+❌ Move routes out of src/App.tsx
+❌ Use `any` type in TypeScript
+❌ Commit .env files
+❌ Skip error handling on async operations
+❌ Forget to wrap components in MemoryRouter during tests
+
+## Do This
+
+✅ Use Tailwind classes for all styling
+✅ Define proper TypeScript types/interfaces
+✅ Use TanStack Query for data fetching
+✅ Wrap forms with React Hook Form + Zod
+✅ Show loading states and error messages
+✅ Write tests for new functionality
+✅ Follow conventional commit messages
+✅ Check dark mode compatibility
+
+## AI Agent Optimization
+
+### When Creating New Features
+1. Check existing patterns in similar components
+2. Reuse existing UI components from shadcn/ui
+3. Follow the established file structure
+4. Add appropriate TypeScript types
+5. Include error handling and loading states
+6. Update routes in App.tsx if adding a page
+7. Update Sidebar.tsx for navigation
+8. Write tests for critical functionality
+
+### When Fixing Bugs
+1. Reproduce the issue first
+2. Check for TypeScript errors with `npm run lint`
+3. Verify build succeeds with `npm run build`
+4. Run tests with `npm run test`
+5. Test manually in the browser
+6. Consider edge cases and error scenarios
+
+### When Refactoring
+1. Ensure backward compatibility
+2. Update related tests
+3. Run full test suite
+4. Check that build size doesn't increase significantly
+5. Verify no TypeScript errors introduced
+
+## Questions?
+Refer to:
+- README.md for project overview
+- CONTRIBUTING.md for contribution guidelines
+- AI_RULES.md for additional tech stack rules
+- Official docs for each library in the tech stack
