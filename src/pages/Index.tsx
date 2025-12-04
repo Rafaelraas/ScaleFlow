@@ -145,7 +145,7 @@ const Index = () => {
               onClick={() => navigate("/login")}
               className="w-full sm:w-auto"
             >
-              View Demo
+              Sign In
             </Button>
           </div>
         </div>
