@@ -12,7 +12,7 @@
 
 **A modern, role-based shift scheduling and workforce management solution**
 
-[Features](#features) • [Getting Started](#getting-started) • [Architecture](#architecture) • [Roadmap](#roadmap) • [Contributing](#contributing)
+[Features](#features) • [Getting Started](#getting-started) • [Documentation](#-documentation) • [Roadmap](#roadmap) • [Contributing](#contributing)
 
 </div>
 
@@ -24,6 +24,7 @@
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
+- [Documentation](#-documentation)
 - [Project Structure](#project-structure)
 - [Architecture](#architecture)
 - [User Roles](#user-roles)
@@ -165,6 +166,49 @@
 | `npm run lint` | Run ESLint |
 | `npm run test` | Run tests with Vitest |
 | `npm run test:ui` | Run tests with UI |
+
+**Need help?** Check out the [Quick Start Guide](./QUICK_START.md) for a 5-minute setup tutorial.
+
+---
+
+## 📚 Documentation
+
+Comprehensive documentation is available to help you understand and contribute to ScaleFlow:
+
+### Core Documentation
+
+| Document | Description |
+|----------|-------------|
+| [📖 Documentation Index](./docs/INDEX.md) | Complete documentation overview and navigation |
+| [⚡ Quick Start Guide](./QUICK_START.md) | Get up and running in 5 minutes |
+| [🏗️ Architecture Guide](./docs/ARCHITECTURE.md) | System architecture and design patterns |
+| [🗄️ Database Schema](./docs/DATABASE.md) | Database structure and RLS policies |
+
+### Developer Guides
+
+| Document | Description |
+|----------|-------------|
+| [💻 Development Guide](./docs/DEVELOPMENT_GUIDE.md) | Complete setup and development workflow |
+| [🔌 API Guidelines](./docs/API_GUIDELINES.md) | Supabase integration patterns |
+| [🔒 Security Best Practices](./docs/SECURITY.md) | Security guidelines and vulnerability reporting |
+| [💡 Feature Ideas](./docs/FEATURE_IDEAS.md) | Future features and enhancement suggestions |
+
+### Contributing
+
+| Document | Description |
+|----------|-------------|
+| [🤝 Contributing Guidelines](./CONTRIBUTING.md) | How to contribute to the project |
+| [📜 Code of Conduct](./CODE_OF_CONDUCT.md) | Community standards and guidelines |
+| [📋 Changelog](./CHANGELOG.md) | Version history and release notes |
+
+### For AI Agents
+
+| File | Description |
+|------|-------------|
+| [🤖 .cursorrules](./.cursorrules) | AI-assisted development rules and patterns |
+| [🛠️ AI_RULES.md](./AI_RULES.md) | Tech stack and development guidelines |
+
+**📖 [View Complete Documentation Index](./docs/INDEX.md)**
 
 ---
 
