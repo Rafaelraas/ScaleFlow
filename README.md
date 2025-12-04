@@ -356,42 +356,317 @@ The build output will be in the `dist/` directory.
 
 ### High Priority 🔴
 
+#### Core Features
 - [x] **Add unit tests** - Increase test coverage for critical components ✅
 - [x] **Implement error boundaries** - Better error handling and user feedback ✅
 - [x] **Add loading states** - Consistent skeleton loaders across all pages ✅
 - [x] **Implement pagination** - For large data sets (employees, shifts, etc.) ✅
+- [ ] **Calendar view** - Interactive calendar interface for schedule visualization
+  - Monthly, weekly, and daily views
+  - Drag-and-drop shift scheduling
+  - Color-coded shifts by employee or department
+  - Quick shift creation from calendar
+- [ ] **Notifications system** - Real-time in-app and email notifications
+  - Shift assignments and changes
+  - Swap request approvals/rejections
+  - Preference review status updates
+  - Upcoming shift reminders
+- [ ] **Advanced search & filtering** - Enhanced search across all pages
+  - Filter shifts by date range, employee, status
+  - Search employees by name, role, availability
+  - Save and reuse filter presets
+
+#### Documentation & Developer Experience
+- [x] **Contributing guidelines** - Comprehensive CONTRIBUTING.md ✅
+- [x] **Code of conduct** - Community standards document ✅
+- [x] **AI development rules** - .cursorrules for AI-assisted development ✅
+- [x] **Architecture documentation** - Detailed technical documentation ✅
+- [x] **Database schema docs** - Complete database documentation ✅
+- [ ] **API documentation** - RESTful API documentation with examples
+- [ ] **Component documentation** - Storybook with component examples
+- [ ] **Video tutorials** - Setup and feature walkthrough videos
 
 ### Medium Priority 🟡
 
+#### User Experience Enhancements
 - [x] **Dark mode toggle** - User preference for theme selection ✅
-- [ ] **Calendar view** - Visual calendar for schedule management
-- [ ] **Notifications system** - Real-time notifications for shift changes
-- [ ] **Export functionality** - Export schedules to PDF/Excel
-- [ ] **Bulk actions** - Select and modify multiple shifts at once
+- [ ] **Export functionality** - Export data in multiple formats
+  - PDF schedules with company branding
+  - Excel/CSV exports for reporting
+  - iCal integration for calendar apps
+  - Print-friendly schedule views
+- [ ] **Bulk actions** - Batch operations for efficiency
+  - Select multiple shifts for editing/deletion
+  - Bulk shift assignment to employees
+  - Mass import shifts from CSV/Excel
+  - Bulk preference approvals
+- [ ] **Advanced shift templates** - More flexible templates
+  - Multi-day templates (e.g., 2-week rotation)
+  - Department-specific templates
+  - Seasonal shift patterns
+  - Template preview before application
+- [ ] **Employee availability calendar** - Visual availability tracking
+  - Graphical view of all employee availability
+  - Conflict detection when scheduling
+  - Integration with preference submissions
+  - Time-off request management
+
+#### Communication Features
+- [ ] **In-app messaging** - Direct communication between users
+  - Manager-to-employee messaging
+  - Team announcements
+  - Message threads for shift discussions
+  - Notification integration
+- [ ] **Shift notes & comments** - Collaborative shift information
+  - Add notes to individual shifts
+  - Comment threads for shift details
+  - @mention team members
+  - Attach files/documents to shifts
+
+#### Mobile & Accessibility
+- [ ] **Progressive Web App (PWA)** - Offline-capable web app
+  - Service worker for offline access
+  - Push notifications support
+  - Install to home screen
+  - Offline schedule viewing
+- [ ] **Mobile app** - React Native companion app
+  - iOS and Android support
+  - Push notifications
+  - Biometric authentication
+  - Quick shift check-in/out
+- [ ] **Accessibility improvements** - WCAG 2.1 Level AA compliance
+  - Screen reader optimization
+  - Keyboard navigation enhancements
+  - High contrast mode
+  - Reduced motion support
+
+### Medium Priority 🟡 (continued)
+
+#### Analytics & Reporting
+- [ ] **Analytics dashboard** - Comprehensive business intelligence
+  - Labor cost tracking and forecasting
+  - Employee hours and overtime reports
+  - Schedule adherence metrics
+  - Shift coverage analysis
+  - Export reports to PDF/Excel
+  - Custom date range selections
+  - Trend analysis and visualizations
+- [ ] **Time tracking integration** - Actual vs scheduled hours
+  - Clock in/out functionality
+  - Time sheet generation
+  - Overtime calculation
+  - Break time tracking
+
+#### Integration & Automation
 - [ ] **Internationalization (i18n)** - Multi-language support
+  - English, Spanish, Portuguese, French
+  - Right-to-left language support
+  - Locale-specific date/time formats
+  - Currency localization
+- [ ] **Integration webhooks** - Connect with external systems
+  - Slack/Teams notifications
+  - HRIS system integrations
+  - Payroll system exports
+  - Google Calendar sync
+  - Zapier integration
+- [ ] **Email templates** - Customizable notification emails
+  - Company branding in emails
+  - Template editor for managers
+  - Preview before sending
+  - Batch email scheduling
 
 ### Low Priority 🟢
 
-- [ ] **Analytics dashboard** - Detailed reports and insights
-- [ ] **Mobile app** - React Native companion app
-- [ ] **API documentation** - OpenAPI/Swagger documentation
-- [ ] **Audit logs** - Track changes and user actions
-- [ ] **Integration webhooks** - Connect with external systems
+#### Advanced Features
+- [ ] **Shift bidding system** - Employees bid on open shifts
+  - Post available shifts for bidding
+  - Automatic assignment based on seniority/preferences
+  - Waitlist for popular shifts
+  - Fair distribution algorithms
+- [ ] **Conflict detection & resolution** - Intelligent scheduling
+  - Overlap detection (double-bookings)
+  - Minimum rest period enforcement
+  - Maximum hours per week warnings
+  - Skill-based shift matching
+- [ ] **Recurring shifts** - Automated schedule patterns
+  - Weekly/monthly recurring shifts
+  - Rotation schedules (e.g., every other week)
+  - Exception handling for holidays
+  - Bulk generation of recurring shifts
+- [ ] **Shift marketplace** - Inter-company shift sharing
+  - Share open shifts with partner companies
+  - Temporary worker pool
+  - Cross-location shift coverage
+  - Rating system for borrowed workers
+- [ ] **Geolocation & check-in** - Location-based features
+  - GPS-verified shift check-in
+  - Geofencing for work locations
+  - Travel time calculation
+  - Multiple location support
+- [ ] **Audit logs** - Complete activity tracking
+  - Track all user actions
+  - Change history for all entities
+  - Compliance reporting
+  - Data export for audits
+- [ ] **Multi-department support** - Department-based scheduling
+  - Separate schedules per department
+  - Cross-department shift assignments
+  - Department-specific settings
+  - Manager delegation by department
+- [ ] **Skills & certifications tracking** - Qualification management
+  - Employee skill profiles
+  - Certification expiry tracking
+  - Skill-based shift matching
+  - Training requirement alerts
 
-### Technical Debt 🔧
+#### Platform Features
+- [ ] **White-label options** - Custom branding for resellers
+  - Custom domain support
+  - Logo and color customization
+  - Email branding
+  - Custom terms of service
+- [ ] **API v1.0** - Public REST API
+  - OAuth 2.0 authentication
+  - Rate limiting
+  - API documentation (OpenAPI/Swagger)
+  - Webhooks for real-time updates
+  - SDK for common languages
+- [ ] **Marketplace/Plugin system** - Extensibility
+  - Third-party integrations
+  - Custom module development
+  - Plugin marketplace
+  - Developer documentation
 
-- [ ] **Fix TypeScript `any` types** - Replace with proper type definitions
+### Technical Debt & Code Quality 🔧
+
+#### Code Improvements
+- [ ] **Fix TypeScript `any` types** - Replace with proper type definitions (15 instances)
+  - CompanySettingsForm.tsx (1)
+  - EditEmployeeForm.tsx (2)
+  - InitiateSwapForm.tsx (3)
+  - InviteEmployeeForm.tsx (2)
+  - ProfileForm.tsx (2)
+  - ShiftForm.tsx (2)
+  - ShiftTemplateForm.tsx (2)
+  - UpdatePasswordForm.tsx (1)
 - [x] **Add `jsdom` to devDependencies** - Fix test environment ✅
 - [ ] **Code splitting** - Implement lazy loading for routes
-- [ ] **Bundle size optimization** - Reduce main chunk size
+  - Route-based code splitting with React.lazy()
+  - Component-level code splitting
+  - Dynamic imports for heavy libraries
+  - Prefetching for better UX
+- [ ] **Bundle size optimization** - Reduce main chunk size (currently 909KB)
+  - Manual chunk splitting
+  - Tree shaking optimization
+  - Remove unused dependencies
+  - Optimize images and assets
+  - Implement dynamic imports
 - [ ] **Add Storybook** - Component documentation and testing
+  - Stories for all UI components
+  - Interactive component playground
+  - Accessibility testing
+  - Visual regression testing
+
+#### Testing & Quality Assurance
+- [ ] **Increase test coverage** - Target 80%+ coverage
+  - Add tests for all page components
+  - Integration tests for key user flows
+  - E2E tests with Playwright/Cypress
+  - Visual regression tests
+  - Performance testing
+- [ ] **Add pre-commit hooks** - Automate quality checks
+  - Husky for git hooks
+  - lint-staged for staged files
+  - Commitlint for commit messages
+  - Prettier for code formatting
+- [ ] **CI/CD improvements** - Enhanced automation
+  - Automated testing on PRs
+  - Automated deployment previews
+  - Performance benchmarking
+  - Security scanning
+  - Dependency updates automation
+
+#### Performance Optimization
+- [ ] **Database query optimization** - Faster data loading
+  - Add composite indexes
+  - Optimize complex queries
+  - Implement query result caching
+  - Use database views for complex joins
+- [ ] **Real-time optimization** - Efficient subscriptions
+  - Selective subscription scopes
+  - Debounce real-time updates
+  - Batch update processing
+  - Connection pooling
+- [ ] **Image optimization** - Faster page loads
+  - WebP format conversion
+  - Responsive images
+  - Lazy loading images
+  - CDN integration
+- [ ] **Caching strategy** - Reduce API calls
+  - Service worker caching
+  - IndexedDB for offline data
+  - Optimistic UI updates
+  - Stale-while-revalidate strategy
 
 ### Security Enhancements 🔐
 
+#### Authentication & Authorization
+- [ ] **Multi-factor authentication (MFA)** - Enhanced security
+  - TOTP-based 2FA
+  - SMS verification
+  - Backup codes
+  - Recovery options
+- [ ] **Session management** - Improved session handling
+  - Session timeout configuration
+  - Auto-logout on inactivity
+  - Concurrent session limits
+  - Device management
+- [ ] **Password policies** - Stronger password requirements
+  - Minimum complexity requirements
+  - Password expiration
+  - Password history
+  - Breach detection (HaveIBeenPwned)
+
+#### Data Protection
 - [ ] **Rate limiting** - Prevent abuse on API endpoints
+  - Per-user rate limits
+  - IP-based rate limits
+  - Graduated rate limit responses
+  - Rate limit headers
 - [ ] **Input sanitization** - Enhanced form validation
+  - XSS prevention
+  - SQL injection prevention
+  - CSRF token validation
+  - Content Security Policy
+- [ ] **Data encryption** - Enhanced data protection
+  - Encryption at rest for sensitive data
+  - Field-level encryption
+  - Secure credential storage
+  - PII anonymization options
+- [ ] **Audit trail** - Security event logging
+  - Login/logout tracking
+  - Failed authentication attempts
+  - Permission changes
+  - Data access logs
+  - Compliance reporting
+
+#### Compliance & Privacy
+- [ ] **GDPR compliance** - Data privacy regulations
+  - Data export functionality
+  - Right to be forgotten
+  - Cookie consent management
+  - Privacy policy updates
+  - Data retention policies
+- [ ] **SOC 2 compliance** - Security standards
+  - Security controls documentation
+  - Regular security audits
+  - Incident response plan
+  - Vendor risk management
 - [ ] **CORS configuration** - Proper cross-origin settings
-- [ ] **Session timeout** - Auto-logout on inactivity
+  - Whitelist allowed origins
+  - Restrict HTTP methods
+  - Credential handling
+  - Preflight request handling
 
 ---
 
