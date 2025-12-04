@@ -142,10 +142,10 @@ const Index = () => {
             <Button 
               size="lg"
               variant="outline"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/login")}
               className="w-full sm:w-auto"
             >
-              Explore Dashboard
+              View Demo
             </Button>
           </div>
         </div>
