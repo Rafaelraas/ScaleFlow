@@ -97,7 +97,9 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       
       const authFlowType = urlParams.get('type') || hashParams.get('type');
       // IMPORTANT: Added '/verify' to the list of auth flow pages
+      // Also added '/' to allow public access to the home page
       const isAuthFlowPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/verify';
+      const isPublicPage = location.pathname === '/';
 
       console.log(`[SessionContext Debug] Current Path: ${location.pathname}, Search: ${location.search}, Hash: ${location.hash}`);
       console.log(`[SessionContext Debug] Detected authFlowType: ${authFlowType}, isAuthFlowPage: ${isAuthFlowPage}`);
@@ -117,7 +119,8 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       // Original redirection logic (only if not in a special auth flow)
       if (!currentSession) {
         // No session: redirect to login/register if not already there
-        if (!isAuthFlowPage) { // Already checked above, but good for clarity
+        // Allow public access to the home page
+        if (!isAuthFlowPage && !isPublicPage) { // Already checked above, but good for clarity
           shouldRedirect = true;
           redirectToPath = '/login';
           console.log("[SessionContext Debug] No session, redirecting to /login");
