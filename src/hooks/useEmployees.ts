@@ -16,6 +16,7 @@ export function useEmployees(companyId?: string) {
   useEffect(() => {
     const fetchEmployees = async () => {
       if (!companyId) {
+        setEmployees([]);
         setLoading(false);
         return;
       }

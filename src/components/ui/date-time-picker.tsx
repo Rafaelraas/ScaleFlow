@@ -57,7 +57,7 @@ export function DateTimePicker({
             value={value ? format(value, "HH:mm") : ""}
             onChange={(e) => {
               const [hours, minutes] = e.target.value.split(":").map(Number);
-              const newDate = value || new Date();
+              const newDate = new Date(value || new Date());
               newDate.setHours(hours, minutes);
               onChange(newDate);
             }}
