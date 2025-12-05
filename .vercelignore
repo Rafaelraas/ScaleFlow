@@ -39,9 +39,15 @@ pnpm-debug.log*
 # GitHub
 .github
 
-# Documentation
-*.md
-!README.md
+# Documentation (exclude development docs)
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+CHANGELOG.md
+*TROUBLESHOOTING.md
+*SETUP.md
+*SUMMARY.md
+VERCEL_FIX_SUMMARY.md
+ACTION_REQUIRED.md
 
 # Supabase
 supabase/
