@@ -231,6 +231,13 @@ Comprehensive documentation is available to help you understand and contribute t
 | [🔒 Security Best Practices](./docs/SECURITY.md) | Security guidelines and vulnerability reporting |
 | [💡 Feature Ideas](./docs/FEATURE_IDEAS.md) | Future features and enhancement suggestions |
 
+### Troubleshooting
+
+| Document | Description |
+|----------|-------------|
+| [🚨 CodeQL Setup Fix](./CODEQL_TROUBLESHOOTING.md) | **Quick fix for CodeQL "default setup" conflict** |
+| [🛡️ CodeQL Setup Guide](./docs/CODEQL_SETUP.md) | Comprehensive CodeQL configuration guide |
+
 ### Contributing
 
 | Document | Description |
