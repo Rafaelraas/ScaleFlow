@@ -21,36 +21,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout 🛎️
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies
+      - name: Install dependencies 📦
         run: npm ci
 
-      - name: Typecheck
-        run: npm run typecheck --if-present
+      - name: Lint 🔎
+        run: npm run lint
+        continue-on-error: false
 
-      - name: Lint
-        run: npm run lint --if-present
-
-      - name: Test
-        run: npm test --if-present
+      - name: Test 🧪
+        run: npm test
         env:
           CI: true
+        continue-on-error: false
 
-      - name: Build
+      - name: Build project 🏗️
         run: npm run build
+        env:
+          # This is picked up by your vite.config.ts
+          VITE_APP_BASE_PATH: /ScaleFlow/
 
-      - name: Upload Pages artifact
+      - name: Upload Pages artifact 📦
         uses: actions/upload-pages-artifact@v3
         with:
-          # Vite default output directory; change if different
           path: dist
 
   deploy:
@@ -62,6 +63,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages 🚀
         id: deployment
         uses: actions/deploy-pages@v4
