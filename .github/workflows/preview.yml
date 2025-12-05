@@ -55,7 +55,13 @@ jobs:
         id: deploy
         run: |
           npm install --global vercel@latest
-          DEPLOYMENT_URL=$(vercel deploy --yes --token ${{ secrets.VERCEL_TOKEN }} 2>&1 | grep -E 'https://[^[:space:]]+' | tail -1)
+          OUTPUT=$(vercel deploy --yes --token ${{ secrets.VERCEL_TOKEN }} 2>&1)
+          echo "$OUTPUT"
+          DEPLOYMENT_URL=$(echo "$OUTPUT" | grep -E 'https://[^[:space:]]+' | tail -1)
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "::error::Failed to extract deployment URL from Vercel output"
+            exit 1
+          fi
           echo "preview-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
