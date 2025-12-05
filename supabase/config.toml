@@ -1,0 +1,38 @@
+# Supabase Configuration for ScaleFlow
+# This file is used by the Supabase CLI for local development and deployment
+# 
+# For different environments, create separate config files:
+# - config.toml (default/production)
+# - config.dev.toml (development)
+# - config.staging.toml (staging)
+# 
+# Or use environment variables: SUPABASE_PROJECT_ID
+
+project_id = "ttgntuaffrondfxybxmi"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
+extra_search_path = ["public"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+# JWT expiry time
+jwt_expiry = 3600
+# Enable email confirmations
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
