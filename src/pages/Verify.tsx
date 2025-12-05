@@ -52,7 +52,7 @@ const Verify = () => {
             }}
             theme="light"
             view={initialView}
-            redirectTo="/login" // Redirect to login after successful verification/password update
+            redirectTo={`${window.location.origin}${window.location.pathname}#/login`}
           />
         </CardContent>
       </Card>

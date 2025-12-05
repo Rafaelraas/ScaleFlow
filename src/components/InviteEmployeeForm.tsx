@@ -70,7 +70,7 @@ const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) =>
           company_id: userProfile.company_id,
           role_id: values.role_id,
         },
-        redirectTo: `${window.location.origin}/login`, // Redirect invited user to login after setting password
+        redirectTo: `${window.location.origin}${window.location.pathname}#/login`,
       });
 
       if (error) {

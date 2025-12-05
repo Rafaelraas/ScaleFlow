@@ -30,8 +30,8 @@ const Register = () => {
               },
             }}
             theme="light"
-            // view="sign_up" // Removido para permitir detecção dinâmica da visualização
-            // redirectTo={window.location.origin} // REMOVED: Let SessionContextProvider handle redirects
+            view="sign_up"
+            redirectTo={`${window.location.origin}${window.location.pathname}`}
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{" "}

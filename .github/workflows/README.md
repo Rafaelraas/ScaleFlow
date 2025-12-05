@@ -32,7 +32,7 @@ This directory contains GitHub Actions workflows for CI/CD, security scanning, a
 
 **Timeout:** 30 minutes
 
-**Required Secrets:** None
+**Required Secrets:** None (tests run in demo mode without Supabase)
 
 **Artifacts:**
 - `coverage-report`: Test coverage data (7 days retention)
@@ -59,7 +59,11 @@ This directory contains GitHub Actions workflows for CI/CD, security scanning, a
 - Build job: 30 minutes
 - Deploy job: 10 minutes
 
-**Required Secrets:** None (uses built-in GitHub Pages deployment)
+**Required Secrets:**
+- `VITE_SUPABASE_URL`: Your Supabase project URL
+- `VITE_SUPABASE_ANON_KEY`: Your Supabase anon/public key
+
+**Note**: Without these secrets, the app will build but authentication will not work (fails with "Failed to fetch" errors).
 
 **Environment:** `github-pages`
 
@@ -166,9 +170,30 @@ To enable preview deployments, add the following secrets to your repository:
 
 ### For GitHub Pages
 
-1. Go to **Settings** → **Pages**
-2. Set **Source** to "GitHub Actions"
-3. The workflow will automatically deploy to `https://<username>.github.io/ScaleFlow/`
+To enable GitHub Pages deployment with working authentication:
+
+1. **Enable GitHub Pages**
+   - Go to **Settings** → **Pages**
+   - Set **Source** to "GitHub Actions"
+
+2. **Configure Supabase Secrets**
+   - Go to **Settings** → **Secrets and variables** → **Actions**
+   - Add the following repository secrets:
+     - `VITE_SUPABASE_URL`: Your Supabase project URL (from Supabase Dashboard → Settings → API)
+     - `VITE_SUPABASE_ANON_KEY`: Your Supabase anon key (from Supabase Dashboard → Settings → API)
+
+3. **Configure Supabase Redirect URLs**
+   - Go to your [Supabase Dashboard](https://app.supabase.com/)
+   - Navigate to **Authentication** → **URL Configuration**
+   - Add your GitHub Pages URL to both **Site URL** and **Redirect URLs**:
+     - Format: `https://<username>.github.io/ScaleFlow/`
+   - Save changes
+
+4. **Deploy**
+   - Push to `main` branch or manually trigger the workflow
+   - The app will be available at `https://<username>.github.io/ScaleFlow/`
+
+For detailed instructions, see [docs/ENVIRONMENT_SETUP.md](../../docs/ENVIRONMENT_SETUP.md#github-pages-setup).
 
 ### For CodeQL Security Analysis
 

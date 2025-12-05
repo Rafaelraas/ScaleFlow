@@ -89,7 +89,7 @@ export async function getCurrentUser(): Promise<{ data: { user: User | null }; e
  */
 export async function resetPassword(email: string): Promise<{ error: AuthError | null }> {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
+    redirectTo: `${window.location.origin}${window.location.pathname}#/verify`,
   });
   return { error };
 }
