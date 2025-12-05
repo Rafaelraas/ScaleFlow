@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useNavigate } from "react-router-dom";
 import { Calendar, Users, Clock, CheckCircle, LayoutDashboard, Settings } from "lucide-react";
 
@@ -153,7 +152,6 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="border-t py-8">
-        <MadeWithDyad />
       </footer>
     </div>
   );

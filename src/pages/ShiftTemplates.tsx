@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ShiftTemplateForm from "@/components/ShiftTemplateForm";
@@ -142,7 +141,6 @@ const ShiftTemplates = () => {
             You do not have permission to view this page.
           </p>
         </div>
-        <MadeWithDyad />
       </div>
     );
   }
@@ -320,7 +318,6 @@ const ShiftTemplates = () => {
           </DialogContent>
         </Dialog>
       )}
-      <MadeWithDyad />
     </div>
   );
 };

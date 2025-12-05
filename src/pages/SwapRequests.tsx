@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import InitiateSwapForm from "@/components/InitiateSwapForm";
@@ -197,7 +196,6 @@ const SwapRequests = () => {
     return (
       <div className="flex flex-col items-center justify-center h-full p-4">
         <p className="text-xl text-gray-600 dark:text-gray-400">Loading swap requests...</p>
-        <MadeWithDyad />
       </div>
     );
   }
@@ -275,7 +273,6 @@ const SwapRequests = () => {
           </Table>
         </div>
       )}
-      <MadeWithDyad />
     </div>
   );
 };

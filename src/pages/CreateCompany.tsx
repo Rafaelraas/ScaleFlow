@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 
 const CreateCompany = () => {
   const [companyName, setCompanyName] = useState("");
@@ -106,7 +105,6 @@ const CreateCompany = () => {
           </form>
         </CardContent>
       </Card>
-      <MadeWithDyad />
     </div>
   );
 };

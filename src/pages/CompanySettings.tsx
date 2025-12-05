@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import CompanySettingsForm from "@/components/CompanySettingsForm";
 import { useSession } from "@/providers/SessionContextProvider";
@@ -51,7 +50,6 @@ const CompanySettings = () => {
     return (
       <div className="flex flex-col items-center justify-center h-full p-4">
         <p className="text-xl text-gray-600 dark:text-gray-400">Loading company settings...</p>
-        <MadeWithDyad />
       </div>
     );
   }
@@ -65,7 +63,6 @@ const CompanySettings = () => {
             You do not have permission to view this page or are not the company owner.
           </p>
         </div>
-        <MadeWithDyad />
       </div>
     );
   }
@@ -87,7 +84,6 @@ const CompanySettings = () => {
           )}
         </CardContent>
       </Card>
-      <MadeWithDyad />
     </div>
   );
 };

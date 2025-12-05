@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
@@ -147,7 +146,6 @@ const Employees = () => {
             You do not have permission to view this page.
           </p>
         </div>
-        <MadeWithDyad />
       </div>
     );
   }
@@ -313,7 +311,6 @@ const Employees = () => {
           </DialogContent>
         </Dialog>
       )}
-      <MadeWithDyad />
     </div>
   );
 };
