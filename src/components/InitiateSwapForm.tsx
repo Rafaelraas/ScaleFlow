@@ -27,6 +27,19 @@ import { useSession } from "@/providers/SessionContextProvider";
 import { showError, showSuccess } from "@/utils/toast";
 import { format } from "date-fns";
 
+interface Shift {
+  id: string;
+  start_time: string;
+  end_time: string;
+  roles: { name: string } | null;
+}
+
+interface Employee {
+  id: string;
+  first_name: string;
+  last_name: string;
+}
+
 const formSchema = z.object({
   requested_shift_id: z.string().uuid({ message: "Please select a shift you want to give away." }),
   target_employee_id: z.string().uuid().nullable().optional(),
@@ -50,9 +63,9 @@ interface InitiateSwapFormProps {
 
 const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
   const { session, userProfile } = useSession();
-  const [myShifts, setMyShifts] = useState<any[]>([]);
-  const [otherEmployees, setOtherEmployees] = useState<any[]>([]);
-  const [targetEmployeeShifts, setTargetEmployeeShifts] = useState<any[]>([]);
+  const [myShifts, setMyShifts] = useState<Shift[]>([]);
+  const [otherEmployees, setOtherEmployees] = useState<Employee[]>([]);
+  const [targetEmployeeShifts, setTargetEmployeeShifts] = useState<Shift[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

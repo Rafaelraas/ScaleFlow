@@ -42,8 +42,13 @@ interface EditEmployeeFormProps {
   onCancel: () => void;
 }
 
+interface Role {
+  id: string;
+  name: string;
+}
+
 const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormProps) => {
-  const [roles, setRoles] = useState<any[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [loadingRoles, setLoadingRoles] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -94,9 +99,10 @@ const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormPro
 
       showSuccess(`Employee ${values.first_name || ''} ${values.last_name || ''}'s profile updated!`);
       onSuccess();
-    } catch (error: any) {
-      console.error("Error updating employee:", error.message);
-      showError("Failed to update employee: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Error updating employee:", errorMessage);
+      showError("Failed to update employee: " + errorMessage);
     } finally {
       setIsSubmitting(false);
     }

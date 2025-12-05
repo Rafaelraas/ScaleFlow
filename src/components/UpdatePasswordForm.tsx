@@ -50,9 +50,10 @@ const UpdatePasswordForm = () => {
 
       showSuccess("Password updated successfully!");
       form.reset(); // Clear form fields on success
-    } catch (error: any) {
-      console.error("Error updating password:", error.message);
-      showError("Failed to update password: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Error updating password:", errorMessage);
+      showError("Failed to update password: " + errorMessage);
     } finally {
       setIsSubmitting(false);
     }

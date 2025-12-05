@@ -59,9 +59,10 @@ const CompanySettingsForm = ({ companyId, initialCompanyName, onSuccess }: Compa
 
       showSuccess("Company name updated successfully!");
       onSuccess();
-    } catch (error: any) {
-      console.error("Error updating company name:", error.message);
-      showError("Failed to update company name: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Error updating company name:", errorMessage);
+      showError("Failed to update company name: " + errorMessage);
     } finally {
       setIsSubmitting(false);
     }

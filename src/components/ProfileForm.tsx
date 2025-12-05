@@ -76,9 +76,10 @@ const ProfileForm = () => {
 
       showSuccess("Profile updated successfully!");
       // The SessionContextProvider will re-fetch the profile on USER_UPDATED event
-    } catch (error: any) {
-      console.error("Error updating profile:", error.message);
-      showError("Failed to update profile: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Error updating profile:", errorMessage);
+      showError("Failed to update profile: " + errorMessage);
     } finally {
       setIsSubmitting(false);
     }

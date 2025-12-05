@@ -151,7 +151,7 @@ describe('ProfileForm', () => {
 
   it('should disable button during submission', async () => {
     // Simulate a pending Supabase call
-    let resolveSupabaseCall: (value: any) => void;
+    let resolveSupabaseCall: ((value: { data: null; error: null }) => void) | undefined;
     mockSupabaseFrom.mockReturnValue({
       update: vi.fn(() => ({
         eq: vi.fn(() => new Promise(resolve => { resolveSupabaseCall = resolve; })),

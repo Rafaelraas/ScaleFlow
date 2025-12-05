@@ -160,9 +160,10 @@ const SwapRequests = () => {
 
       showSuccess("Shift swap approved and shifts updated!");
       fetchSwapRequests(); // Re-fetch to update UI
-    } catch (error: any) {
-      console.error("Error approving swap:", error.message);
-      showError("Failed to approve swap: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Error approving swap:", errorMessage);
+      showError("Failed to approve swap: " + errorMessage);
     }
   };
 
@@ -177,9 +178,10 @@ const SwapRequests = () => {
 
       showSuccess("Shift swap denied.");
       fetchSwapRequests(); // Re-fetch to update UI
-    } catch (error: any) {
-      console.error("Error denying swap:", error.message);
-      showError("Failed to deny swap: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Error denying swap:", errorMessage);
+      showError("Failed to deny swap: " + errorMessage);
     }
   };
 

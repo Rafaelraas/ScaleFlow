@@ -48,9 +48,14 @@ interface ShiftTemplateFormProps {
   };
 }
 
+interface Role {
+  id: string;
+  name: string;
+}
+
 const ShiftTemplateForm = ({ onSuccess, onCancel, initialData }: ShiftTemplateFormProps) => {
   const { userProfile } = useSession();
-  const [roles, setRoles] = useState<any[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [loadingRoles, setLoadingRoles] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -124,9 +129,10 @@ const ShiftTemplateForm = ({ onSuccess, onCancel, initialData }: ShiftTemplateFo
         showSuccess("Shift template created successfully!");
       }
       onSuccess();
-    } catch (error: any) {
-      console.error("Error saving shift template:", error.message);
-      showError("Failed to save shift template: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Error saving shift template:", errorMessage);
+      showError("Failed to save shift template: " + errorMessage);
     } finally {
       setIsSubmitting(false);
     }

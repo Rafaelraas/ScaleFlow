@@ -142,7 +142,7 @@ const Schedules = () => {
     const to = from + ITEMS_PER_PAGE - 1;
 
     // Helper function to apply filters to a query
-    const applyFilters = <T extends { eq: Function; gte: Function; lte: Function }>(query: T): T => {
+    const applyFilters = <T extends { eq: (column: string, value: unknown) => T; gte: (column: string, value: string) => T; lte: (column: string, value: string) => T }>(query: T): T => {
       let filteredQuery = query;
       if (filterEmployeeId) {
         filteredQuery = filteredQuery.eq('employee_id', filterEmployeeId);
