@@ -1,4 +1,4 @@
-name: Deploy ScaleFlow to GitHub Pages
+name: 🚀 Deploy to GitHub Pages
 
 on:
   push:
@@ -17,52 +17,54 @@ concurrency:
 
 jobs:
   build:
-    name: Build
+    name: 🏗️ Build
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
-      - name: Checkout 🛎️
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies 📦
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Lint 🔎
+      - name: 🧹 Lint code
         run: npm run lint
         continue-on-error: false
 
-      - name: Test 🧪
+      - name: 🧪 Run tests
         run: npm test
         env:
           CI: true
         continue-on-error: false
 
-      - name: Build project 🏗️
+      - name: 🏗️ Build project
         run: npm run build
         env:
-          # This is picked up by your vite.config.ts
+          NODE_ENV: production
           VITE_APP_BASE_PATH: /ScaleFlow/
 
-      - name: Upload Pages artifact 📦
+      - name: 📦 Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
-    name: Deploy
+    name: 🚀 Deploy
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy to GitHub Pages 🚀
+      - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

@@ -1,12 +1,16 @@
-name: CI
+name: 🔍 CI Pipeline
 
 on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
   group: scaleflow-ci-${{ github.ref }}
@@ -14,30 +18,55 @@ concurrency:
 
 jobs:
   ci:
+    name: 🧪 Lint, Test & Build
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
     steps:
-      - name: Checkout
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Typecheck
+      - name: 🔍 Type check
         run: npm run typecheck --if-present
+        continue-on-error: false
 
-      - name: Lint
-        run: npm run lint --if-present
+      - name: 🧹 Lint code
+        run: npm run lint
+        continue-on-error: false
 
-      - name: Test
-        run: npm test --if-present
+      - name: 🧪 Run tests
+        run: npm test -- --coverage --reporter=verbose
         env:
           CI: true
+        continue-on-error: false
 
-      - name: Build
+      - name: 📊 Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+      - name: 🏗️ Build project
         run: npm run build
+        env:
+          NODE_ENV: production
+        continue-on-error: false
+
+      - name: 📦 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 7
