@@ -38,9 +38,14 @@ interface InviteEmployeeFormProps {
   onCancel: () => void;
 }
 
+interface Role {
+  id: string;
+  name: string;
+}
+
 const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) => {
   const { userProfile } = useSession();
-  const [roles, setRoles] = useState<any[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [loadingRoles, setLoadingRoles] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -98,9 +103,10 @@ const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) =>
 
       showSuccess(`Invitation sent to ${values.email}!`);
       onSuccess();
-    } catch (error: any) {
-      console.error("Error inviting employee:", error.message);
-      showError("Failed to send invitation: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Error inviting employee:", errorMessage);
+      showError("Failed to send invitation: " + errorMessage);
     } finally {
       setIsSubmitting(false);
     }

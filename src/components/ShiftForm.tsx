@@ -8,6 +8,17 @@ import { format, setHours, setMinutes, addHours, parse } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+
+interface Employee {
+  id: string;
+  first_name: string;
+  last_name: string;
+}
+
+interface Role {
+  id: string;
+  name: string;
+}
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -71,8 +82,8 @@ interface ShiftTemplate {
 
 const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
   const { userProfile } = useSession();
-  const [employees, setEmployees] = useState<any[]>([]);
-  const [roles, setRoles] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [shiftTemplates, setShiftTemplates] = useState<ShiftTemplate[]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -68,9 +68,10 @@ const CreateCompany = () => {
 
       showSuccess(`Company "${companyName}" created successfully! You are now a manager.`);
       navigate('/dashboard'); // Redirect to dashboard after successful creation
-    } catch (error: any) {
-      console.error("Error creating company:", error.message);
-      showError("Failed to create company: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Error creating company:", errorMessage);
+      showError("Failed to create company: " + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
