@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Redirecting...</title>
     <script>
-      // Single Page App GitHub Pages redirect script
-      // This script takes the current URL and converts the path and query string
-      // into a format that can be redirected to the root with the path preserved
-      // as a query parameter, which the index.html can then process
+      // Redirect to HashRouter format for GitHub Pages
+      // With HashRouter, all routes work through the hash fragment
+      // Note: This base path must match VITE_APP_BASE_PATH in .github/workflows/pages.yml
       const basePath = '/ScaleFlow';
       
       // Get the path relative to the base
@@ -17,10 +16,14 @@
         relativePath = relativePath.slice(basePath.length);
       }
       
-      // Build the redirect URL with proper query string handling
-      const existingSearch = location.search ? '&' + location.search.slice(1) : '';
-      const redirectUrl = basePath + '/?p=' + encodeURIComponent(relativePath) + existingSearch;
-      location.replace(redirectUrl);
+      // If we have a path, redirect to index with hash
+      // Otherwise just go to the base
+      if (relativePath && relativePath !== '/') {
+        const search = location.search || '';
+        location.replace(basePath + '/#' + relativePath + search);
+      } else {
+        location.replace(basePath + '/');
+      }
     </script>
   </head>
   <body>
