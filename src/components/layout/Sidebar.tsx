@@ -61,7 +61,7 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       name: "Swap Requests",
       href: "/swap-requests",
       icon: Repeat,
-      roles: ["employee", "manager"],
+      roles: ["employee", "manager", "system_admin"],
     },
     {
       name: "Profile Settings",
