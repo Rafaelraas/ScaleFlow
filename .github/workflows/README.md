@@ -147,8 +147,8 @@ This directory contains GitHub Actions workflows for CI/CD, security scanning, a
 This is an **advanced** CodeQL configuration. You must:
 - Use "Advanced" setup in GitHub settings (not "Default" setup)
 - Default and Advanced setups cannot run simultaneously
-- See [`docs/CODEQL_SETUP.md`](../../docs/CODEQL_SETUP.md) for detailed setup instructions
-- If you see "analyses from advanced configurations cannot be processed when the default setup is enabled", follow the troubleshooting guide in CODEQL_SETUP.md
+- 🚨 **Having issues?** See [Quick Fix Guide](../../CODEQL_TROUBLESHOOTING.md) for the most common setup error
+- Full details in [`docs/CODEQL_SETUP.md`](../../docs/CODEQL_SETUP.md)
 
 ---
 
@@ -180,9 +180,9 @@ To enable preview deployments, add the following secrets to your repository:
 4. **If code scanning is not enabled:** Click "Set up" and select "Advanced" (not "Default")
 5. The existing workflow (`.github/workflows/codeql.yml`) will be automatically recognized
 
-**Common Error:** If you see "analyses from advanced configurations cannot be processed when the default setup is enabled":
-- You must disable default setup and switch to advanced setup
-- See detailed instructions in [`docs/CODEQL_SETUP.md`](../../docs/CODEQL_SETUP.md)
+**🚨 Common Error:** If you see "analyses from advanced configurations cannot be processed when the default setup is enabled":
+- **Quick Fix:** See [CODEQL_TROUBLESHOOTING.md](../../CODEQL_TROUBLESHOOTING.md) (5 steps, takes 1 minute)
+- **Full Guide:** See [docs/CODEQL_SETUP.md](../../docs/CODEQL_SETUP.md) for comprehensive instructions
 
 ---
 

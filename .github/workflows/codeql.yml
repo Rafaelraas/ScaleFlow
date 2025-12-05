@@ -1,13 +1,25 @@
 name: 🛡️ CodeQL Security Analysis
 
-# IMPORTANT: This is an ADVANCED CodeQL configuration.
-# To use this workflow, you must:
-# 1. Enable "Advanced" setup in GitHub Settings > Code security and analysis
-# 2. Disable "Default" setup if it's currently enabled
-# 3. Default and Advanced setups CANNOT run simultaneously
-# 
-# If you see error "analyses from advanced configurations cannot be processed 
-# when the default setup is enabled", follow instructions in docs/CODEQL_SETUP.md
+# ⚠️ CRITICAL SETUP REQUIREMENT ⚠️
+# This is an ADVANCED CodeQL configuration that REQUIRES manual repository setup.
+#
+# 🚨 IF YOU SEE THIS ERROR:
+# "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled"
+#
+# 🔧 SOLUTION (Repository Admin Required):
+# 1. Go to: Repository Settings → Code security and analysis
+# 2. Find "Code scanning" section
+# 3. If "Default" setup is enabled → Click dropdown → Select "Advanced"
+# 4. This switches from automatic default setup to this custom workflow
+#
+# 📖 Detailed Guide: See docs/CODEQL_SETUP.md
+# 🔗 Quick Reference: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning-for-a-repository#switching-to-advanced-setup
+#
+# ℹ️ Why Advanced Setup?
+# - Custom query suites (security-and-quality)
+# - Scheduled weekly scans
+# - Fine-grained control over analysis
+# - Consistent CI/CD integration
 
 on:
   push:
@@ -41,6 +53,26 @@ jobs:
         language: ['javascript-typescript']
 
     steps:
+      - name: ⚠️ Setup Instructions
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🛡️  CodeQL Security Analysis - Advanced Setup"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "⚠️  IF THIS WORKFLOW FAILS WITH:"
+          echo "   'analyses from advanced configurations cannot be"
+          echo "    processed when the default setup is enabled'"
+          echo ""
+          echo "🔧 SOLUTION (Requires Repository Admin):"
+          echo "   1. Go to: Settings → Code security and analysis"
+          echo "   2. Find 'Code scanning' section"
+          echo "   3. Disable 'Default' setup"
+          echo "   4. Enable 'Advanced' setup"
+          echo ""
+          echo "📖 Full Guide: docs/CODEQL_SETUP.md"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 

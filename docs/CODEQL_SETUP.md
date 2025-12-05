@@ -1,5 +1,7 @@
 # CodeQL Setup Guide
 
+> 🚨 **Quick Fix Needed?** See [CODEQL_TROUBLESHOOTING.md](../CODEQL_TROUBLESHOOTING.md) for a fast 5-step solution to the most common setup issue.
+
 ## Common Issues
 
 ### Issue 1: Default Setup Conflict (Current Issue)

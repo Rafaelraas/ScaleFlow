@@ -6,6 +6,9 @@ contact_links:
   - name: 📚 Documentation
     url: https://github.com/Rafaelraas/ScaleFlow#readme
     about: Read the project documentation and guides
+  - name: 🚨 CodeQL Setup Issue
+    url: https://github.com/Rafaelraas/ScaleFlow/blob/main/CODEQL_TROUBLESHOOTING.md
+    about: Fix "analyses from advanced configurations cannot be processed" error
   - name: 🔒 Security Issue
     url: https://github.com/Rafaelraas/ScaleFlow/security/advisories/new
     about: Report a security vulnerability privately
