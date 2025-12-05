@@ -1,23 +1,74 @@
 # CodeQL Setup Guide
 
-## Issue
-The CodeQL Security Analysis workflow is failing with the following error:
+## Common Issues
 
+### Issue 1: Default Setup Conflict (Current Issue)
+
+**Error Message:**
+```
+Code Scanning could not process the submitted SARIF file:
+CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled
+```
+
+**Root Cause:**
+GitHub's default CodeQL setup is enabled in the repository settings, which conflicts with the advanced/custom CodeQL workflow configuration in `.github/workflows/codeql.yml`. When default setup is enabled, GitHub automatically manages CodeQL analysis and rejects SARIF uploads from advanced workflow configurations.
+
+**Solution:**
+Disable the default setup and use the advanced workflow configuration instead.
+
+#### Steps to Disable Default Setup
+
+1. **Navigate to Repository Settings**
+   - Go to your repository on GitHub
+   - Click on "Settings" tab
+
+2. **Access Code Security Settings**
+   - In the left sidebar, click on "Code security and analysis"
+
+3. **Disable Default CodeQL Setup**
+   - Find the "Code scanning" section
+   - If you see "CodeQL analysis" with a "Configure" dropdown showing "Default"
+   - Click on the dropdown and select "Advanced"
+   - OR if there's a "Disable" option, click it to disable default setup
+
+4. **Enable Advanced Setup**
+   - GitHub should recognize the existing workflow file (`.github/workflows/codeql.yml`)
+   - Select "Advanced" setup when prompted
+   - This will use the workflow file for CodeQL analysis instead of default setup
+
+5. **Verify Configuration**
+   - After switching to advanced setup, the workflow should run successfully
+   - Check the Actions tab to see the CodeQL workflow run
+   - Future pushes and PRs will use the advanced workflow configuration
+
+**Why Use Advanced Setup?**
+The advanced workflow configuration provides:
+- Custom query suites (security-and-quality)
+- Scheduled weekly scans
+- Fine-grained control over analysis
+- Custom build steps if needed
+- Consistent CI/CD integration
+
+---
+
+### Issue 2: Code Scanning Not Enabled
+
+**Error Message:**
 ```
 Code scanning is not enabled for this repository. 
 Please enable code scanning in the repository settings.
 ```
 
-## Root Cause
+**Root Cause:**
 This is a **configuration issue**, not a code problem. The CodeQL workflow file (`.github/workflows/codeql.yml`) is correctly configured, but GitHub Advanced Security features need to be enabled at the repository level.
 
-## Solution
+### Solution
 
-### Prerequisites
+#### Prerequisites
 - Repository administrator access
 - GitHub Advanced Security license (included with GitHub Team/Enterprise, or available for public repositories)
 
-### Steps to Enable Code Scanning
+#### Steps to Enable Code Scanning
 
 1. **Navigate to Repository Settings**
    - Go to your repository on GitHub
@@ -28,15 +79,18 @@ This is a **configuration issue**, not a code problem. The CodeQL workflow file 
    - Find the "GitHub Advanced Security" section
    - Click "Enable" if not already enabled (for private repositories)
 
-3. **Enable Code Scanning**
+3. **Enable Code Scanning (Advanced Setup)**
    - In the same section, find "Code scanning"
    - Click "Set up" or "Enable"
+   - **Important:** Select "Advanced" setup (not "Default")
    - Select "GitHub Actions" as the analysis tool
    - The existing CodeQL workflow (`.github/workflows/codeql.yml`) will be automatically recognized
 
 4. **Verify Configuration**
    - After enabling, the CodeQL workflow should run automatically on the next push or pull request
    - You can manually trigger it from the Actions tab if needed
+
+---
 
 ## Workflow Details
 
@@ -57,6 +111,12 @@ Once enabled, you should see:
 
 ## Troubleshooting
 
+### "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled"
+**Solution:** Disable default setup and switch to advanced setup (see Issue 1 above)
+- This error occurs when GitHub default setup is active
+- You must switch to "Advanced" setup to use the custom workflow
+- Default and Advanced setups cannot run simultaneously
+
 ### "Advanced Security not available"
 - For private repositories: Requires GitHub Team or Enterprise plan
 - For public repositories: Available for free
@@ -65,11 +125,21 @@ Once enabled, you should see:
 - Check workflow permissions in Settings > Actions > General
 - Ensure `security-events: write` permission is granted
 - Verify the workflow file syntax is correct
+- Confirm you're using "Advanced" setup, not "Default" setup
 
 ### "No alerts appearing"
 - CodeQL may not find any security issues (which is good!)
 - Check the workflow logs to confirm successful analysis
 - Visit Security > Code scanning > Tool status for overview
+
+### Switching from Default to Advanced Setup
+If you previously enabled default setup:
+1. Go to Settings > Code security and analysis
+2. Find "Code scanning" section
+3. Look for a configure/manage button or dropdown
+4. Select "Advanced" or "Switch to advanced"
+5. Confirm the change
+6. Re-run the workflow from Actions tab
 
 ## Additional Resources
 

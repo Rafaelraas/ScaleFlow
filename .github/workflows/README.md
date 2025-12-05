@@ -143,6 +143,13 @@ This directory contains GitHub Actions workflows for CI/CD, security scanning, a
 
 **Results:** Available in GitHub Security → Code scanning alerts
 
+**⚠️ Important Setup Note:**
+This is an **advanced** CodeQL configuration. You must:
+- Use "Advanced" setup in GitHub settings (not "Default" setup)
+- Default and Advanced setups cannot run simultaneously
+- See [`docs/CODEQL_SETUP.md`](../../docs/CODEQL_SETUP.md) for detailed setup instructions
+- If you see "analyses from advanced configurations cannot be processed when the default setup is enabled", follow the troubleshooting guide in CODEQL_SETUP.md
+
 ---
 
 ## 🔧 Setup Instructions
