@@ -6,7 +6,7 @@
 
 **Error Message:**
 ```
-Code Scanning could not process the submitted SARIF file:
+Code scanning could not process the submitted SARIF file:
 CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled
 ```
 
@@ -84,7 +84,8 @@ This is a **configuration issue**, not a code problem. The CodeQL workflow file 
    - Click "Set up" or "Enable"
    - **Important:** Select "Advanced" setup (not "Default")
    - Select "GitHub Actions" as the analysis tool
-   - The existing CodeQL workflow (`.github/workflows/codeql.yml`) will be automatically recognized
+   - If the CodeQL workflow file (`.github/workflows/codeql.yml`) exists in your repository, GitHub will automatically recognize and use it
+   - If you don't have a workflow file yet, you can use the workflow template or commit the codeql.yml file from this repository
 
 4. **Verify Configuration**
    - After enabling, the CodeQL workflow should run automatically on the next push or pull request
