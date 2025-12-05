@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
+import { useRoles } from "@/hooks/useRoles";
 
 const formSchema = z.object({
   first_name: z.string().optional(),
@@ -42,14 +43,8 @@ interface EditEmployeeFormProps {
   onCancel: () => void;
 }
 
-interface Role {
-  id: string;
-  name: string;
-}
-
 const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormProps) => {
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loadingRoles, setLoadingRoles] = useState(true);
+  const { roles, loading: loadingRoles } = useRoles({ excludeSystemAdmin: true });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -60,25 +55,6 @@ const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormPro
       role_id: employee.role_id,
     },
   });
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      setLoadingRoles(true);
-      const { data, error } = await supabase
-        .from('roles')
-        .select('id, name')
-        .neq('name', 'system_admin'); // Managers shouldn't assign system admins
-
-      if (error) {
-        showError("Failed to fetch roles: " + error.message);
-      } else {
-        setRoles(data || []);
-      }
-      setLoadingRoles(false);
-    };
-
-    fetchRoles();
-  }, []);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
