@@ -77,7 +77,9 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     if (!isSupabaseConfigured) {
       console.log("Running in demo mode - Supabase not configured");
       setIsLoading(false);
-      return;
+      return () => {
+        isMounted = false;
+      };
     }
 
     const handleSessionAndProfile = async (currentSession: Session | null, event?: string) => {
