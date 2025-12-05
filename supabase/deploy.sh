@@ -22,9 +22,15 @@ ENV=${1:-production}
 echo -e "Environment: ${YELLOW}${ENV}${NC}"
 
 # Check if supabase CLI is installed
-if ! command -v supabase &> /dev/null; then
+SUPABASE_CMD=""
+if command -v supabase &> /dev/null; then
+    SUPABASE_CMD="supabase"
+elif [ -f "$PROJECT_ROOT/bin/supabase" ]; then
+    SUPABASE_CMD="$PROJECT_ROOT/bin/supabase"
+else
     echo -e "${RED}Error: Supabase CLI is not installed${NC}"
-    echo "Install it with: npm install -g supabase"
+    echo "Run: bash scripts/setup-backend.sh"
+    echo "Or install manually: https://github.com/supabase/cli#install-the-cli"
     exit 1
 fi
 
@@ -72,7 +78,7 @@ echo ""
 if [ "$ENV" = "production" ]; then
     PROJECT_REF=$(grep 'project_id' "$SCRIPT_DIR/config.toml" | cut -d'"' -f2)
     echo "Linking to Supabase project: $PROJECT_REF..."
-    supabase link --project-ref "$PROJECT_REF" || true
+    $SUPABASE_CMD link --project-ref "$PROJECT_REF" || true
 fi
 
 # Deploy migrations
@@ -81,14 +87,14 @@ echo -e "${GREEN}Deploying migrations...${NC}"
 if [ "$ENV" = "local" ]; then
     # For local development
     echo "Starting local Supabase..."
-    supabase start
+    $SUPABASE_CMD start
     
     echo "Running migrations locally..."
-    supabase db push
+    $SUPABASE_CMD db push
 else
     # For production
     echo "Running migrations on production..."
-    supabase db push
+    $SUPABASE_CMD db push
 fi
 
 # Verify deployment
@@ -96,18 +102,18 @@ echo ""
 echo -e "${GREEN}Verifying deployment...${NC}"
 
 # Check if we can query the database
-if supabase db query "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;" > /dev/null 2>&1; then
+if $SUPABASE_CMD db query "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;" > /dev/null 2>&1; then
     echo -e "${GREEN}✓ Database connection successful${NC}"
     
     # List all tables
     echo ""
     echo "Tables in database:"
-    supabase db query "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;"
+    $SUPABASE_CMD db query "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;"
     
     # Check RLS status
     echo ""
     echo "RLS Status:"
-    supabase db query "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;"
+    $SUPABASE_CMD db query "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;"
 else
     echo -e "${RED}✗ Could not verify database connection${NC}"
     exit 1
