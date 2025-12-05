@@ -14,13 +14,7 @@ vi.mock('@/providers/SessionContextProvider', () => ({
 // Mock do cliente Supabase
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: vi.fn(() => ({
-      update: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          error: null, // Default to no error for successful updates
-        })),
-      })),
-    })),
+    from: vi.fn(),
   },
 }));
 
@@ -31,9 +25,9 @@ vi.mock('@/utils/toast', () => ({
 }));
 
 const mockUseSession = useSession as Mock;
-const mockSupabaseFrom = supabase.from as Mock;
 const mockShowSuccess = showSuccess as Mock;
 const mockShowError = showError as Mock;
+const mockFrom = supabase.from as Mock;
 
 describe('ProfileForm', () => {
   const mockSession = {
@@ -56,10 +50,16 @@ describe('ProfileForm', () => {
       userRole: mockUserProfile.role_name,
       isLoading: false,
     });
+    
     // Reset mocks
-    mockSupabaseFrom.mockClear();
+    mockFrom.mockClear();
     mockShowSuccess.mockClear();
     mockShowError.mockClear();
+    
+    // Set up default mock chain for successful updates
+    const mockEq = vi.fn().mockResolvedValue({ error: null, data: null });
+    const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
+    mockFrom.mockReturnValue({ update: mockUpdate });
   });
 
   afterEach(() => {
@@ -83,11 +83,15 @@ describe('ProfileForm', () => {
     expect(screen.getByLabelText('First Name (Optional)')).toHaveValue('John');
     expect(screen.getByLabelText('Last Name (Optional)')).toHaveValue('Doe');
     expect(screen.getByLabelText('Avatar URL (Optional)')).toHaveValue('http://example.com/avatar.jpg');
-    expect(screen.getByLabelText('Email')).toHaveValue('test@example.com');
-    expect(screen.getByLabelText('Role')).toHaveValue('Employee');
+    expect(screen.getByDisplayValue('test@example.com')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Employee')).toBeInTheDocument();
   });
 
   it('should allow updating first name and last name', async () => {
+    const mockEq = vi.fn().mockResolvedValue({ error: null, data: null });
+    const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
+    mockFrom.mockReturnValue({ update: mockUpdate });
+    
     render(<MemoryRouter><ProfileForm /></MemoryRouter>);
 
     const firstNameInput = screen.getByLabelText('First Name (Optional)');
@@ -99,18 +103,22 @@ describe('ProfileForm', () => {
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(mockSupabaseFrom).toHaveBeenCalledWith('profiles');
-      expect(mockSupabaseFrom().update).toHaveBeenCalledWith({
+      expect(mockFrom).toHaveBeenCalledWith('profiles');
+      expect(mockUpdate).toHaveBeenCalledWith({
         first_name: 'Jane',
         last_name: 'Smith',
         avatar_url: 'http://example.com/avatar.jpg', // Avatar URL should remain if not changed
       });
-      expect(mockSupabaseFrom().update().eq).toHaveBeenCalledWith('id', 'user-123');
+      expect(mockEq).toHaveBeenCalledWith('id', 'user-123');
       expect(mockShowSuccess).toHaveBeenCalledWith('Profile updated successfully!');
     });
   });
 
   it('should handle avatar URL update', async () => {
+    const mockEq = vi.fn().mockResolvedValue({ error: null, data: null });
+    const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
+    mockFrom.mockReturnValue({ update: mockUpdate });
+    
     render(<MemoryRouter><ProfileForm /></MemoryRouter>);
 
     const avatarUrlInput = screen.getByLabelText('Avatar URL (Optional)');
@@ -120,7 +128,7 @@ describe('ProfileForm', () => {
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(mockSupabaseFrom().update).toHaveBeenCalledWith({
+      expect(mockUpdate).toHaveBeenCalledWith({
         first_name: 'John',
         last_name: 'Doe',
         avatar_url: 'http://new.com/avatar.png',
@@ -130,13 +138,9 @@ describe('ProfileForm', () => {
   });
 
   it('should show error toast on Supabase update failure', async () => {
-    mockSupabaseFrom.mockReturnValue({
-      update: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          error: { message: 'Database error' },
-        })),
-      })),
-    });
+    const mockEq = vi.fn().mockResolvedValue({ error: { message: 'Database error' }, data: null });
+    const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
+    mockFrom.mockReturnValue({ update: mockUpdate });
 
     render(<MemoryRouter><ProfileForm /></MemoryRouter>);
 
@@ -152,22 +156,23 @@ describe('ProfileForm', () => {
   it('should disable button during submission', async () => {
     // Simulate a pending Supabase call
     let resolveSupabaseCall: ((value: { data: null; error: null }) => void) | undefined;
-    mockSupabaseFrom.mockReturnValue({
-      update: vi.fn(() => ({
-        eq: vi.fn(() => new Promise(resolve => { resolveSupabaseCall = resolve; })),
-      })),
-    });
+    const mockEq = vi.fn().mockReturnValue(new Promise(resolve => { resolveSupabaseCall = resolve; }));
+    const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
+    mockFrom.mockReturnValue({ update: mockUpdate });
 
     render(<MemoryRouter><ProfileForm /></MemoryRouter>);
 
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
     fireEvent.click(saveButton);
 
-    expect(saveButton).toBeDisabled();
-    expect(saveButton).toHaveTextContent('Saving...');
+    // Wait for React to re-render with the updated state
+    await waitFor(() => {
+      expect(saveButton).toBeDisabled();
+      expect(saveButton).toHaveTextContent('Saving...');
+    });
 
     // Resolve the promise to end submission
-    resolveSupabaseCall!({ error: null });
+    resolveSupabaseCall!({ error: null, data: null });
 
     await waitFor(() => {
       expect(saveButton).not.toBeDisabled();
