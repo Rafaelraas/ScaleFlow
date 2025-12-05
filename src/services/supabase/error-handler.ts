@@ -88,7 +88,14 @@ export function handleSupabaseError(
  * Check if an error is a specific type
  */
 export function isAuthError(error: unknown): error is AuthError {
-  return typeof error === 'object' && error !== null && 'status' in error && 'name' in error;
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'status' in error &&
+    'name' in error &&
+    'message' in error &&
+    typeof (error as { status: unknown }).status === 'number'
+  );
 }
 
 export function isPostgrestError(error: unknown): error is PostgrestError {

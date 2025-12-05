@@ -126,7 +126,7 @@ export interface SwapRequest {
 
 // Joined/extended types for queries with relations
 export interface ProfileWithRole extends Profile {
-  roles: Role | null;
+  roles: { name: string } | null;
 }
 
 export interface ShiftWithDetails extends Shift {

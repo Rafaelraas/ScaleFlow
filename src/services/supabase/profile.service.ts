@@ -29,7 +29,7 @@ export async function getProfileById(userId: string): Promise<ProfileResult> {
   // Transform the data to match ProfileWithRole type
   const profile: ProfileWithRole = {
     ...data,
-    roles: data.roles as { name: string } | null,
+    roles: data.roles ? { name: (data.roles as { name: string }).name } : null,
   };
 
   return { data: profile, error: null };
