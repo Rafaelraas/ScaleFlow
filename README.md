@@ -428,8 +428,15 @@ npm run test:ui
 The project includes a `vercel.json` configuration for easy deployment:
 
 1. Connect your repository to Vercel
-2. Configure environment variables
+2. Configure environment variables in Vercel dashboard:
+   - `VITE_SUPABASE_URL` - Your Supabase project URL
+   - `VITE_SUPABASE_ANON_KEY` - Your Supabase anonymous key
 3. Deploy automatically on push
+
+**Note:** The `vercel.json` file configures:
+- SPA routing (all routes redirected to index.html)
+- Asset caching with 1-year cache headers
+- Vite framework integration
 
 ### Manual Build
 
