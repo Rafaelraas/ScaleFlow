@@ -87,6 +87,8 @@ This directory contains GitHub Actions workflows for CI/CD, security scanning, a
 - `VERCEL_TOKEN`: Vercel API token
 - `VERCEL_ORG_ID`: Vercel organization ID
 - `VERCEL_PROJECT_ID`: Vercel project ID
+- `VITE_SUPABASE_URL`: Supabase project URL
+- `VITE_SUPABASE_ANON_KEY`: Supabase anonymous key
 
 **Environment:** `preview`
 
@@ -163,6 +165,10 @@ To enable preview deployments, add the following secrets to your repository:
    - `VERCEL_TOKEN`: Get from [Vercel Account Settings](https://vercel.com/account/tokens)
    - `VERCEL_ORG_ID`: Find in Vercel project settings → General
    - `VERCEL_PROJECT_ID`: Find in Vercel project settings → General
+   - `VITE_SUPABASE_URL`: Your Supabase project URL (from Supabase Dashboard)
+   - `VITE_SUPABASE_ANON_KEY`: Your Supabase anonymous key (from Supabase Dashboard)
+
+📚 **Detailed Guide:** See [docs/VERCEL_DEPLOYMENT.md](../../docs/VERCEL_DEPLOYMENT.md) for comprehensive setup instructions
 
 ### For GitHub Pages
 
