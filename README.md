@@ -138,25 +138,52 @@
    pnpm install
    ```
 
-3. **Configure environment variables**
+3. **Configure backend** (🆕 Automated Setup)
    
-   Create a `.env` file in the root directory:
+   Run the automated backend setup script:
+   ```bash
+   npm run backend:setup
+   # or
+   bash scripts/setup-backend.sh
+   ```
+   
+   This will:
+   - ✓ Install Supabase CLI locally
+   - ✓ Create `.env` files from templates
+   - ✓ Validate database migrations
+   - ✓ Provide next steps for deployment
+   
+   **For detailed backend configuration**, see [BACKEND_SETUP.md](./BACKEND_SETUP.md)
+
+4. **Configure environment variables**
+   
+   Edit the `.env` file created in step 3:
    ```env
    VITE_SUPABASE_URL=your_supabase_project_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
+   
+   Get these values from [Supabase Dashboard](https://app.supabase.com/project/ttgntuaffrondfxybxmi/settings/api)
 
-4. **Start the development server**
+5. **Deploy database migrations**
+   ```bash
+   npm run backend:deploy
+   # or
+   cd supabase && bash deploy.sh production
+   ```
+
+6. **Start the development server**
    ```bash
    npm run dev
    ```
 
-5. **Open your browser**
+7. **Open your browser**
    
    Navigate to `http://localhost:5173`
 
 ### Available Scripts
 
+#### Development Scripts
 | Script | Description |
 |--------|-------------|
 | `npm run dev` | Start development server |
@@ -166,6 +193,16 @@
 | `npm run lint` | Run ESLint |
 | `npm run test` | Run tests with Vitest |
 | `npm run test:ui` | Run tests with UI |
+
+#### Backend Scripts (🆕)
+| Script | Description |
+|--------|-------------|
+| `npm run backend:setup` | Setup backend infrastructure |
+| `npm run backend:deploy` | Deploy database migrations |
+| `npm run backend:start` | Start local Supabase (requires Docker) |
+| `npm run backend:stop` | Stop local Supabase |
+| `npm run backend:status` | Check Supabase status |
+| `npm run backend:link` | Link to Supabase project |
 
 **Need help?** Check out the [Quick Start Guide](./QUICK_START.md) for a 5-minute setup tutorial.
 
@@ -181,6 +218,7 @@ Comprehensive documentation is available to help you understand and contribute t
 |----------|-------------|
 | [📖 Documentation Index](./docs/INDEX.md) | Complete documentation overview and navigation |
 | [⚡ Quick Start Guide](./QUICK_START.md) | Get up and running in 5 minutes |
+| [🔧 Backend Setup Guide](./BACKEND_SETUP.md) | **🆕 Complete backend configuration guide** |
 | [🏗️ Architecture Guide](./docs/ARCHITECTURE.md) | System architecture and design patterns |
 | [🗄️ Database Schema](./docs/DATABASE.md) | Database structure and RLS policies |
 

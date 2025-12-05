@@ -10,7 +10,14 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "_comment": "Backend scripts require bash (Git Bash on Windows). Windows users should use WSL or Git Bash.",
+    "backend:setup": "bash scripts/setup-backend.sh",
+    "backend:deploy": "bash scripts/backend-commands.sh deploy",
+    "backend:start": "bash scripts/backend-commands.sh start",
+    "backend:stop": "bash scripts/backend-commands.sh stop",
+    "backend:status": "bash scripts/backend-commands.sh status",
+    "backend:link": "bash scripts/backend-commands.sh link"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
