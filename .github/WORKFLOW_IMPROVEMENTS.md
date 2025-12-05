@@ -83,11 +83,12 @@ This document outlines the comprehensive improvements made to the GitHub Actions
 ### 4. Modernized Preview Deployments (`preview.yml`)
 
 **New Features:**
-- ✅ **Official Vercel Action**: Replaced manual CLI with `amondnet/vercel-action@v25`
+- ✅ **Improved Vercel Deployment**: Enhanced manual CLI deployment with proper output capture
 - ✅ **Automated PR Comments**: Posts preview URL directly in PR
 - ✅ **Build Status Summary**: Shows lint/test/build results in PR comment
-- ✅ **Enhanced Security**: Uses GitHub environment context instead of exposing secrets
+- ✅ **Enhanced Security**: Uses GitHub environment context and minimal secret exposure
 - ✅ **Deployment Write Permission**: Properly tracks deployment status
+- ✅ **URL Extraction**: Automatically extracts and outputs preview URL from Vercel CLI
 
 **Before:**
 ```yaml
@@ -103,12 +104,14 @@ This document outlines the comprehensive improvements made to the GitHub Actions
 ```yaml
 - name: 🚀 Deploy to Vercel
   id: deploy
-  uses: amondnet/vercel-action@v25
-  with:
-    vercel-token: ${{ secrets.VERCEL_TOKEN }}
+  run: |
+    npm install --global vercel@latest
+    DEPLOYMENT_URL=$(vercel deploy --yes --token ${{ secrets.VERCEL_TOKEN }} 2>&1 | grep -oP 'https://[^\s]+' | tail -1)
+    echo "preview-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
     
 - name: 💬 Comment PR with preview URL
   uses: actions/github-script@v7
+  if: success() && steps.deploy.outputs.preview-url != ''
   script: |
     github.rest.issues.createComment({
       body: `## 🚀 Preview Deployment Ready!

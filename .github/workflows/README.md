@@ -78,8 +78,8 @@ This directory contains GitHub Actions workflows for CI/CD, security scanning, a
 1. 🧹 Lints the codebase
 2. 🧪 Runs tests
 3. 🏗️ Builds project
-4. 🚀 Deploys preview to Vercel
-5. 💬 Comments on PR with preview URL and build status
+4. 🚀 Deploys preview to Vercel using Vercel CLI
+5. 💬 Comments on PR with preview URL and build status (if deployment successful)
 
 **Timeout:** 30 minutes
 
