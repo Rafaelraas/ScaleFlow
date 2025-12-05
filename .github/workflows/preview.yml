@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 30
     environment:
       name: preview
-      url: ${{ steps.deploy.outputs.url }}
+      url: ${{ steps.deploy.outputs.preview-url }}
 
     steps:
       - name: 📥 Checkout code
@@ -55,7 +55,7 @@ jobs:
         id: deploy
         run: |
           npm install --global vercel@latest
-          DEPLOYMENT_URL=$(vercel deploy --yes --token ${{ secrets.VERCEL_TOKEN }} 2>&1 | grep -oP 'https://[^\s]+' | tail -1)
+          DEPLOYMENT_URL=$(vercel deploy --yes --token ${{ secrets.VERCEL_TOKEN }} 2>&1 | grep -E 'https://[^[:space:]]+' | tail -1)
           echo "preview-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
