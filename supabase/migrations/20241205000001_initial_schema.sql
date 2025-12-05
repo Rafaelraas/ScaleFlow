@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS public.shift_templates (
   company_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   duration_hours INTEGER NOT NULL,
-  default_start_time TEXT NOT NULL,
+  default_start_time TEXT NOT NULL CHECK (default_start_time ~ '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'),
   default_role_id UUID REFERENCES public.roles(id) ON DELETE SET NULL,
   default_notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

@@ -78,12 +78,32 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 COMMENT ON FUNCTION public.handle_new_user() IS 'Automatically creates a profile entry when a new user signs up';
 
--- Create trigger for new user signup
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW
-  EXECUTE FUNCTION public.handle_new_user();
+-- Note: In Supabase, you typically create this trigger via the Supabase Dashboard
+-- under Database > Database Webhooks, or via SQL if you have sufficient permissions.
+-- If the following trigger creation fails, create it manually in the Supabase Dashboard:
+-- Database > Database > Triggers > New Trigger
+-- Or use Supabase's built-in user management webhooks.
+
+-- Attempt to create trigger for new user signup
+-- This may require elevated permissions in some Supabase environments
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables 
+    WHERE table_schema = 'auth' AND table_name = 'users'
+  ) THEN
+    DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+    CREATE TRIGGER on_auth_user_created
+      AFTER INSERT ON auth.users
+      FOR EACH ROW
+      EXECUTE FUNCTION public.handle_new_user();
+  END IF;
+EXCEPTION
+  WHEN insufficient_privilege THEN
+    RAISE NOTICE 'Insufficient privileges to create trigger on auth.users. Please create manually via Supabase Dashboard.';
+  WHEN OTHERS THEN
+    RAISE NOTICE 'Could not create trigger on auth.users: %. Please create manually if needed.', SQLERRM;
+END $$;
 
 -- =====================================================
 -- HELPER FUNCTIONS

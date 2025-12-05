@@ -54,7 +54,7 @@ fi
 if [ "$ENV" = "production" ]; then
     echo ""
     echo -e "${YELLOW}WARNING: You are about to deploy to PRODUCTION${NC}"
-    echo "This will modify the database at: ttgntuaffrondfxybxmi.supabase.co"
+    echo "This will modify the database at: $(grep 'project_id' $SCRIPT_DIR/config.toml | cut -d'"' -f2).supabase.co"
     echo ""
     read -p "Are you sure you want to continue? (yes/no): " -r
     echo
@@ -70,8 +70,9 @@ echo ""
 
 # Link to project (if not already linked)
 if [ "$ENV" = "production" ]; then
-    echo "Linking to Supabase project..."
-    supabase link --project-ref ttgntuaffrondfxybxmi || true
+    PROJECT_REF=$(grep 'project_id' "$SCRIPT_DIR/config.toml" | cut -d'"' -f2)
+    echo "Linking to Supabase project: $PROJECT_REF..."
+    supabase link --project-ref "$PROJECT_REF" || true
 fi
 
 # Deploy migrations

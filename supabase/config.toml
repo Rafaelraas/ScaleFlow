@@ -1,5 +1,12 @@
 # Supabase Configuration for ScaleFlow
 # This file is used by the Supabase CLI for local development and deployment
+# 
+# For different environments, create separate config files:
+# - config.toml (default/production)
+# - config.dev.toml (development)
+# - config.staging.toml (staging)
+# 
+# Or use environment variables: SUPABASE_PROJECT_ID
 
 project_id = "ttgntuaffrondfxybxmi"
 
