@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import ProfileForm from "@/components/ProfileForm";
 import UpdatePasswordForm from "@/components/UpdatePasswordForm"; // Import the new component
@@ -15,7 +14,6 @@ const ProfileSettings = () => {
     return (
       <div className="flex flex-col items-center justify-center h-full p-4">
         <p className="text-xl text-gray-600 dark:text-gray-400">Loading profile settings...</p>
-        <MadeWithDyad />
       </div>
     );
   }
@@ -29,7 +27,6 @@ const ProfileSettings = () => {
             You must be logged in to view this page.
           </p>
         </div>
-        <MadeWithDyad />
       </div>
     );
   }
@@ -55,7 +52,6 @@ const ProfileSettings = () => {
           <UpdatePasswordForm />
         </CardContent>
       </Card>
-      <MadeWithDyad />
     </div>
   );
 };

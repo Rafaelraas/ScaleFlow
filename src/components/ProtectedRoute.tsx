@@ -3,7 +3,6 @@
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSession } from "@/providers/SessionContextProvider";
-import { MadeWithDyad } from "./made-with-dyad";
 
 interface ProtectedRouteProps {
   requiresCompany?: boolean;
@@ -46,7 +45,6 @@ const ProtectedRoute = ({ requiresCompany = true, allowedRoles, children }: Prot
             You do not have the necessary permissions to view this page.
           </p>
         </div>
-        <MadeWithDyad />
       </div>
     );
   }

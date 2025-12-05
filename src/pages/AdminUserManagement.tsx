@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -26,7 +25,6 @@ const AdminUserManagement = () => {
           {/* Future: Table of all users, edit/delete actions, company assignment */}
         </CardContent>
       </Card>
-      <MadeWithDyad />
     </div>
   );
 };

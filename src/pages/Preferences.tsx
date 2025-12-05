@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import PreferenceForm from "@/components/PreferenceForm"; // Import the new PreferenceForm
@@ -70,7 +69,6 @@ const Preferences = () => {
             You do not have permission to view this page.
           </p>
         </div>
-        <MadeWithDyad />
       </div>
     );
   }
@@ -146,7 +144,6 @@ const Preferences = () => {
           </Table>
         </div>
       )}
-      <MadeWithDyad />
     </div>
   );
 };
