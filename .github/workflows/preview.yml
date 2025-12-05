@@ -1,4 +1,4 @@
-name: Preview Deploy (ScaleFlow)
+name: 🔍 Preview Deployment
 
 on:
   pull_request:
@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
+  deployments: write
 
 concurrency:
   group: scaleflow-preview-${{ github.head_ref || github.ref }}
@@ -14,36 +16,83 @@ concurrency:
 
 jobs:
   preview:
+    name: 🚀 Deploy Preview
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.preview-url }}
 
     steps:
-      - name: Checkout
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+          cache: npm
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: 🧹 Lint code
+        run: npm run lint
+        continue-on-error: false
 
-      - name: Deploy Preview to Vercel
+      - name: 🧪 Run tests
+        run: npm test
+        env:
+          CI: true
+        continue-on-error: false
+
+      - name: 🏗️ Build project
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 🚀 Deploy to Vercel
+        id: deploy
         run: |
           npm install --global vercel@latest
-          # --prebuilt to reuse the build if your setup supports it,
-          # otherwise just 'vercel --token ...' and let Vercel build.
-          vercel \
-            --token ${{ secrets.VERCEL_TOKEN }} \
-            --scope ${{ secrets.VERCEL_ORG_ID }} \
-            --yes \
-            --env GITHUB_PR_NUMBER=${{ github.event.number }} \
-            --meta githubPrNumber=${{ github.event.number }}
+          OUTPUT=$(vercel deploy --yes --token ${{ secrets.VERCEL_TOKEN }} 2>&1)
+          echo "$OUTPUT"
+          DEPLOYMENT_URL=$(echo "$OUTPUT" | grep -E 'https://[^[:space:]]+' | tail -1)
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "::error::Failed to extract deployment URL from Vercel output"
+            exit 1
+          fi
+          echo "preview-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: 💬 Comment PR with preview URL
+        uses: actions/github-script@v7
+        if: success() && steps.deploy.outputs.preview-url != ''
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const previewUrl = '${{ steps.deploy.outputs.preview-url }}';
+            const comment = `## 🚀 Preview Deployment Ready!
+            
+            Your preview deployment is ready for review:
+            
+            🔗 **Preview URL:** ${previewUrl}
+            
+            ---
+            
+            ### ✅ Build Status
+            - **Lint:** Passed
+            - **Tests:** Passed
+            - **Build:** Successful
+            
+            <sub>Deployed from commit \`${{ github.event.pull_request.head.sha }}\`</sub>`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
