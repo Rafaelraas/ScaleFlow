@@ -21,6 +21,7 @@ Welcome to the ScaleFlow documentation! This index provides an overview of all a
 | [DATABASE.md](./DATABASE.md) | Database schema, RLS policies, and queries | Backend Developers |
 | [API_GUIDELINES.md](./API_GUIDELINES.md) | API patterns and Supabase integration | Developers |
 | [SECURITY.md](./SECURITY.md) | Security best practices and guidelines | Everyone |
+| [CODEQL_SETUP.md](./CODEQL_SETUP.md) | CodeQL security scanning setup and troubleshooting | DevOps, Repository Admins |
 
 ### Planning & Strategy
 
@@ -170,6 +171,21 @@ Welcome to the ScaleFlow documentation! This index provides an overview of all a
 - Common vulnerabilities
 - Security best practices
 
+### [CODEQL_SETUP.md](./CODEQL_SETUP.md)
+**Size:** ~6KB  
+**Topics:**
+- CodeQL workflow configuration
+- Common setup issues and solutions
+- Default vs Advanced setup conflict
+- Troubleshooting guide
+- GitHub Advanced Security setup
+
+**Key Sections:**
+- Default setup conflict resolution
+- Step-by-step setup instructions
+- Troubleshooting common errors
+- Workflow configuration details
+
 ### [FEATURE_IDEAS.md](./FEATURE_IDEAS.md)
 **Size:** ~14KB  
 **Topics:**
@@ -295,6 +311,7 @@ Documentation should be updated when:
 | DEVELOPMENT_GUIDE.md | 2024-12-04 | ✅ Current | High |
 | API_GUIDELINES.md | 2024-12-04 | ✅ Current | Medium |
 | SECURITY.md | 2024-12-04 | ✅ Current | High |
+| CODEQL_SETUP.md | 2024-12-05 | ✅ Current | High |
 | FEATURE_IDEAS.md | 2024-12-04 | ✅ Current | Medium |
 | CONTRIBUTING.md | 2024-12-04 | ✅ Current | High |
 | CHANGELOG.md | 2024-12-04 | ✅ Current | Medium |

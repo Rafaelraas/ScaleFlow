@@ -143,6 +143,13 @@ This directory contains GitHub Actions workflows for CI/CD, security scanning, a
 
 **Results:** Available in GitHub Security → Code scanning alerts
 
+**⚠️ Important Setup Note:**
+This is an **advanced** CodeQL configuration. You must:
+- Use "Advanced" setup in GitHub settings (not "Default" setup)
+- Default and Advanced setups cannot run simultaneously
+- See [`docs/CODEQL_SETUP.md`](../../docs/CODEQL_SETUP.md) for detailed setup instructions
+- If you see "analyses from advanced configurations cannot be processed when the default setup is enabled", follow the troubleshooting guide in CODEQL_SETUP.md
+
 ---
 
 ## 🔧 Setup Instructions
@@ -162,6 +169,20 @@ To enable preview deployments, add the following secrets to your repository:
 1. Go to **Settings** → **Pages**
 2. Set **Source** to "GitHub Actions"
 3. The workflow will automatically deploy to `https://<username>.github.io/ScaleFlow/`
+
+### For CodeQL Security Analysis
+
+**⚠️ Important:** This repository uses **Advanced** CodeQL configuration. Follow these steps:
+
+1. Go to **Settings** → **Code security and analysis**
+2. Find the "Code scanning" section
+3. **If default setup is enabled:** Click the dropdown and select "Advanced" (or "Disable" then set up advanced)
+4. **If code scanning is not enabled:** Click "Set up" and select "Advanced" (not "Default")
+5. The existing workflow (`.github/workflows/codeql.yml`) will be automatically recognized
+
+**Common Error:** If you see "analyses from advanced configurations cannot be processed when the default setup is enabled":
+- You must disable default setup and switch to advanced setup
+- See detailed instructions in [`docs/CODEQL_SETUP.md`](../../docs/CODEQL_SETUP.md)
 
 ---
 
