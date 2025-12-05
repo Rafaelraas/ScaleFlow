@@ -21,6 +21,10 @@ echo "================================"
 ENV=${1:-production}
 echo -e "Environment: ${YELLOW}${ENV}${NC}"
 
+# Get the directory of this script
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
 # Check if supabase CLI is installed
 SUPABASE_CMD=""
 if command -v supabase &> /dev/null; then
@@ -33,10 +37,6 @@ else
     echo "Or install manually: https://github.com/supabase/cli#install-the-cli"
     exit 1
 fi
-
-# Get the directory of this script
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 echo "Project root: $PROJECT_ROOT"
 echo "Migrations directory: $SCRIPT_DIR/migrations"

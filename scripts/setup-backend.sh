@@ -141,8 +141,11 @@ else
     esac
     
     # Download Supabase CLI
-    DOWNLOAD_URL="https://github.com/supabase/cli/releases/latest/download/supabase_${OS}_${ARCH}.tar.gz"
-    print_info "Downloading from: $DOWNLOAD_URL"
+    # Use pinned version for reproducibility, can be updated as needed
+    SUPABASE_VERSION="v2.65.5"
+    DOWNLOAD_URL="https://github.com/supabase/cli/releases/download/${SUPABASE_VERSION}/supabase_${OS}_${ARCH}.tar.gz"
+    print_info "Downloading Supabase CLI ${SUPABASE_VERSION}..."
+    print_info "From: $DOWNLOAD_URL"
     
     if curl -fsSL "$DOWNLOAD_URL" | tar -xz; then
         chmod +x supabase

@@ -130,9 +130,14 @@ case "$1" in
     generate-types)
         echo -e "${BLUE}Generating TypeScript types from database...${NC}"
         cd "$PROJECT_ROOT"
-        mkdir -p src/types
-        $SUPABASE_CMD gen types typescript --local > src/types/supabase.ts
-        echo -e "${GREEN}✓ Types generated at: src/types/supabase.ts${NC}"
+        # Ensure types directory exists (already present in project)
+        if [ ! -d "src/types" ]; then
+            echo -e "${YELLOW}⚠ Creating src/types directory${NC}"
+            mkdir -p src/types
+        fi
+        $SUPABASE_CMD gen types typescript --local > src/types/supabase-generated.ts
+        echo -e "${GREEN}✓ Types generated at: src/types/supabase-generated.ts${NC}"
+        echo -e "${BLUE}ℹ You can import these types in your code${NC}"
         ;;
     
     logs)

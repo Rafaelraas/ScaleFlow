@@ -31,6 +31,7 @@ Antes de começar, certifique-se de ter:
 - [x] **npm** ou **pnpm** package manager
 - [x] **Conta Supabase** (gratuita em [supabase.com](https://supabase.com))
 - [x] **Projeto Supabase criado** (ID: `ttgntuaffrondfxybxmi`)
+- [x] **Bash shell** (Linux/macOS nativo, ou Git Bash/WSL no Windows)
 
 ## 🚀 Instalação Rápida
 
@@ -260,6 +261,23 @@ chmod +x supabase/test-migrations.sh
 - Certifique-se de estar autenticado
 - Verifique se seu usuário tem o role correto
 - Veja a documentação em `docs/DATABASE.md`
+
+### Problema: Scripts não funcionam no Windows
+
+**Solução (escolha uma):**
+
+1. **Usar Git Bash** (recomendado):
+   - Instale [Git for Windows](https://git-scm.com/download/win)
+   - Use Git Bash para executar os scripts
+   - Execute: `bash scripts/setup-backend.sh`
+
+2. **Usar WSL (Windows Subsystem for Linux)**:
+   - Instale [WSL](https://docs.microsoft.com/windows/wsl/install)
+   - Execute os comandos no terminal WSL
+
+3. **Executar comandos manualmente**:
+   - Siga o guia de configuração manual no `supabase/DEPLOYMENT_GUIDE.md`
+   - Use o Supabase Dashboard para executar as migrações
 
 ## 📚 Recursos Adicionais
 
