@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { showSuccess, showError } from "@/utils/toast";
 
@@ -72,6 +72,13 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
 
   useEffect(() => {
     let isMounted = true; // Flag to prevent state updates on unmounted component
+
+    // If Supabase is not configured, skip auth checks and allow demo mode
+    if (!isSupabaseConfigured) {
+      console.log("Running in demo mode - Supabase not configured");
+      setIsLoading(false);
+      return;
+    }
 
     const handleSessionAndProfile = async (currentSession: Session | null, event?: string) => {
       if (!isMounted) return;
