@@ -4,10 +4,9 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { format, setHours, setMinutes, addHours, parse } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { addHours } from "date-fns";
 
-import { cn } from "@/lib/utils";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 
 interface Employee {
   id: string;
@@ -29,8 +28,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -82,10 +79,10 @@ interface ShiftTemplate {
 
 const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
   const { userProfile } = useSession();
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [roles, setRoles] = useState<Role[]>([]);
+  const { employees, loading: loadingEmployees } = useEmployees(userProfile?.company_id);
+  const { roles, loading: loadingRoles } = useRoles();
   const [shiftTemplates, setShiftTemplates] = useState<ShiftTemplate[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingTemplates, setLoadingTemplates] = useState(true);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -100,50 +97,29 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
   });
 
   useEffect(() => {
-    const fetchDependencies = async () => {
+    const fetchTemplates = async () => {
       if (!userProfile?.company_id) {
         showError("Company ID not found for current user.");
-        setLoading(false);
+        setLoadingTemplates(false);
         return;
       }
 
-      setLoading(true);
-      const { data: employeesData, error: employeesError } = await supabase
-        .from('profiles')
-        .select('id, first_name, last_name')
-        .eq('company_id', userProfile.company_id);
-
-      const { data: rolesData, error: rolesError } = await supabase
-        .from('roles')
-        .select('id, name');
-
-      const { data: templatesData, error: templatesError } = await supabase
+      setLoadingTemplates(true);
+      const { data, error } = await supabase
         .from('shift_templates')
         .select('*')
         .eq('company_id', userProfile.company_id)
         .order('name', { ascending: true });
 
-      if (employeesError) {
-        showError("Failed to fetch employees: " + employeesError.message);
+      if (error) {
+        showError("Failed to fetch shift templates: " + error.message);
       } else {
-        setEmployees(employeesData || []);
+        setShiftTemplates(data || []);
       }
-
-      if (rolesError) {
-        showError("Failed to fetch roles: " + rolesError.message);
-      } else {
-        setRoles(rolesData || []);
-      }
-
-      if (templatesError) {
-        showError("Failed to fetch shift templates: " + templatesError.message);
-      } else {
-        setShiftTemplates(templatesData || []);
-      }
-      setLoading(false);
+      setLoadingTemplates(false);
     };
 
-    fetchDependencies();
+    fetchTemplates();
   }, [userProfile?.company_id]);
 
   const handleTemplateChange = (templateId: string) => {
@@ -151,7 +127,6 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
       // Clear template-related fields if "No template" is selected
       form.setValue("role_id", undefined);
       form.setValue("notes", "");
-      // Don't clear dates, as user might have picked them already
       return;
     }
 
@@ -161,11 +136,12 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
       const [hours, minutes] = selectedTemplate.default_start_time.split(':').map(Number);
       
       // Set start time to today's date with template's default time
-      let startTime = setHours(setMinutes(now, minutes), hours);
+      let startTime = new Date(now);
+      startTime.setHours(hours, minutes, 0, 0);
       
       // If the start time is in the past, set it for tomorrow
       if (startTime < now) {
-        startTime = addHours(startTime, 24); // Add 24 hours to make it tomorrow
+        startTime = addHours(startTime, 24);
       }
 
       const endTime = addHours(startTime, selectedTemplate.duration_hours);
@@ -226,7 +202,7 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
     }
   };
 
-  if (loading) {
+  if (loadingEmployees || loadingRoles || loadingTemplates) {
     return <div>Loading form data...</div>;
   }
 
@@ -260,48 +236,13 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Start Time</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? format(field.value, "PPP HH:mm") : <span>Pick a date and time</span>}
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={(date) => {
-                      if (date) {
-                        const existingTime = field.value || new Date();
-                        const newDateWithTime = setHours(setMinutes(date, existingTime.getMinutes()), existingTime.getHours());
-                        field.onChange(newDateWithTime);
-                      }
-                    }}
-                    initialFocus
-                  />
-                  <div className="p-3 border-t">
-                    <Input
-                      type="time"
-                      value={field.value ? format(field.value, "HH:mm") : ""}
-                      onChange={(e) => {
-                        const [hours, minutes] = e.target.value.split(':').map(Number);
-                        const newDate = field.value || new Date();
-                        newDate.setHours(hours, minutes);
-                        field.onChange(newDate);
-                      }}
-                    />
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <FormControl>
+                <DateTimePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Pick a date and time"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -312,48 +253,13 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>End Time</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? format(field.value, "PPP HH:mm") : <span>Pick a date and time</span>}
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={(date) => {
-                      if (date) {
-                        const existingTime = field.value || new Date();
-                        const newDateWithTime = setHours(setMinutes(date, existingTime.getMinutes()), existingTime.getHours());
-                        field.onChange(newDateWithTime);
-                      }
-                    }}
-                    initialFocus
-                  />
-                  <div className="p-3 border-t">
-                    <Input
-                      type="time"
-                      value={field.value ? format(field.value, "HH:mm") : ""}
-                      onChange={(e) => {
-                        const [hours, minutes] = e.target.value.split(':').map(Number);
-                        const newDate = field.value || new Date();
-                        newDate.setHours(hours, minutes);
-                        field.onChange(newDate);
-                      }}
-                    />
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <FormControl>
+                <DateTimePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Pick a date and time"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

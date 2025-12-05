@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -25,6 +25,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/providers/SessionContextProvider";
 import { showError, showSuccess } from "@/utils/toast";
+import { useRoles } from "@/hooks/useRoles";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -38,15 +39,9 @@ interface InviteEmployeeFormProps {
   onCancel: () => void;
 }
 
-interface Role {
-  id: string;
-  name: string;
-}
-
 const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) => {
   const { userProfile } = useSession();
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loadingRoles, setLoadingRoles] = useState(true);
+  const { roles, loading: loadingRoles } = useRoles({ excludeSystemAdmin: true });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,25 +53,6 @@ const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) =>
       role_id: "",
     },
   });
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      setLoadingRoles(true);
-      const { data, error } = await supabase
-        .from('roles')
-        .select('id, name')
-        .neq('name', 'system_admin'); // Managers shouldn't invite system admins
-
-      if (error) {
-        showError("Failed to fetch roles: " + error.message);
-      } else {
-        setRoles(data || []);
-      }
-      setLoadingRoles(false);
-    };
-
-    fetchRoles();
-  }, []);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!userProfile?.company_id) {

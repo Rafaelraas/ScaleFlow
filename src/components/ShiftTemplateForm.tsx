@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -26,6 +26,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/providers/SessionContextProvider";
 import { showError, showSuccess } from "@/utils/toast";
+import { useRoles } from "@/hooks/useRoles";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Template name is required." }),
@@ -48,15 +49,9 @@ interface ShiftTemplateFormProps {
   };
 }
 
-interface Role {
-  id: string;
-  name: string;
-}
-
 const ShiftTemplateForm = ({ onSuccess, onCancel, initialData }: ShiftTemplateFormProps) => {
   const { userProfile } = useSession();
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loadingRoles, setLoadingRoles] = useState(true);
+  const { roles, loading: loadingRoles } = useRoles();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -69,24 +64,6 @@ const ShiftTemplateForm = ({ onSuccess, onCancel, initialData }: ShiftTemplateFo
       default_notes: initialData?.default_notes || "",
     },
   });
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      setLoadingRoles(true);
-      const { data, error } = await supabase
-        .from('roles')
-        .select('id, name');
-
-      if (error) {
-        showError("Failed to fetch roles: " + error.message);
-      } else {
-        setRoles(data || []);
-      }
-      setLoadingRoles(false);
-    };
-
-    fetchRoles();
-  }, []);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!userProfile?.company_id) {
