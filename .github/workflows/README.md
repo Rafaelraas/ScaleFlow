@@ -170,6 +170,20 @@ To enable preview deployments, add the following secrets to your repository:
 2. Set **Source** to "GitHub Actions"
 3. The workflow will automatically deploy to `https://<username>.github.io/ScaleFlow/`
 
+### For CodeQL Security Analysis
+
+**⚠️ Important:** This repository uses **Advanced** CodeQL configuration. Follow these steps:
+
+1. Go to **Settings** → **Code security and analysis**
+2. Find the "Code scanning" section
+3. **If default setup is enabled:** Click the dropdown and select "Advanced" (or "Disable" then set up advanced)
+4. **If code scanning is not enabled:** Click "Set up" and select "Advanced" (not "Default")
+5. The existing workflow (`.github/workflows/codeql.yml`) will be automatically recognized
+
+**Common Error:** If you see "analyses from advanced configurations cannot be processed when the default setup is enabled":
+- You must disable default setup and switch to advanced setup
+- See detailed instructions in [`docs/CODEQL_SETUP.md`](../../docs/CODEQL_SETUP.md)
+
 ---
 
 ## 🛡️ Security Features
