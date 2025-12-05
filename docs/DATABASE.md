@@ -4,6 +4,13 @@
 
 ScaleFlow uses PostgreSQL through Supabase as its database. This document describes the database schema, relationships, and Row-Level Security (RLS) policies.
 
+> **📦 Ready-to-Deploy Migrations Available!**
+> 
+> Complete SQL migration files are available in the `/supabase/migrations/` directory. See:
+> - [Migration Summary](../supabase/MIGRATION_SUMMARY.md) - Overview of all migrations
+> - [Deployment Guide](../supabase/DEPLOYMENT_GUIDE.md) - Step-by-step deployment instructions
+> - [Quick Reference](../supabase/QUICK_REFERENCE.md) - Common queries and operations
+
 ## Entity Relationship Diagram
 
 ```
@@ -557,10 +564,16 @@ Using Zod schemas in the frontend:
 ```typescript
 // Example: Shift creation validation
 const shiftSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  start_time: z.date(),
-  end_time: z.date(),
-  assigned_to: z.string().uuid().optional(),
+  start_time: z.date({
+    required_error: "Start time is required.",
+  }),
+  end_time: z.date({
+    required_error: "End time is required.",
+  }),
+  employee_id: z.string().uuid().nullable().optional(),
+  role_id: z.string().uuid().nullable().optional(),
+  notes: z.string().max(500).optional(),
+  published: z.boolean().default(false),
 }).refine((data) => data.end_time > data.start_time, {
   message: 'End time must be after start time',
   path: ['end_time'],
@@ -590,16 +603,21 @@ ALTER TABLE preferences ADD CONSTRAINT check_max_hours
 ```sql
 -- Composite indexes for common queries
 CREATE INDEX idx_shifts_company_date ON shifts(company_id, start_time);
-CREATE INDEX idx_shifts_assigned_date ON shifts(assigned_to, start_time);
+CREATE INDEX idx_shifts_employee_date ON shifts(employee_id, start_time);
 
 -- Partial indexes for active records
-CREATE INDEX idx_active_preferences 
+CREATE INDEX idx_preferences_pending 
   ON preferences(profile_id, status) 
   WHERE status = 'pending';
 
-CREATE INDEX idx_pending_swaps 
-  ON swap_requests(shift_id) 
+CREATE INDEX idx_swap_requests_pending 
+  ON swap_requests(shift_id, status) 
   WHERE status = 'pending';
+
+-- Published shifts partial index
+CREATE INDEX idx_shifts_published_employee 
+  ON shifts(employee_id, start_time) 
+  WHERE published = true;
 ```
 
 ### Query Optimization Tips
