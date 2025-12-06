@@ -195,6 +195,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       subscription.unsubscribe();
     };
   }, [navigate, location.pathname, location.search, location.hash, fetchUserProfileAndRole, getRedirectPath]);
+  // Note: location.search and location.hash are needed to detect auth flow types (recovery, signup)
 
   return (
     <SessionContext.Provider value={{ session, isLoading, userProfile, userRole }}>
