@@ -11,14 +11,10 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ requiresCompany = true, allowedRoles, children }: ProtectedRouteProps) => {
-  const { session, userProfile, userRole, isLoading } = useSession(); // Get isLoading here
-  const location = useLocation();
+  const { session, userProfile, userRole, isLoading } = useSession();
 
-  console.log("ProtectedRoute Render - session:", !!session, "userProfile:", userProfile, "userRole:", userRole, "isLoading:", isLoading, "location:", location.pathname);
-
-  // If session data is still loading, show a loading spinner
+  // Show loading state while session data is being fetched
   if (isLoading) {
-    console.log("ProtectedRoute: Session is still loading, showing loading state.");
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -29,21 +25,18 @@ const ProtectedRoute = ({ requiresCompany = true, allowedRoles, children }: Prot
     );
   }
 
-  // Se não há sessão, redirecionar para a página de login.
+  // Redirect to login if no session exists
   if (!session) {
-    console.log("ProtectedRoute: No session, redirecting to /login");
     return <Navigate to="/login" replace />;
   }
 
-  // Se uma empresa é necessária e o perfil do usuário não tem company_id
+  // Redirect to create company page if company is required but user has none
   if (requiresCompany && !userProfile?.company_id) {
-    console.log("ProtectedRoute: No company_id, redirecting to /create-company");
     return <Navigate to="/create-company" replace />;
   }
 
-  // Se papéis específicos são permitidos e o papel do usuário não está entre eles
+  // Check role-based access
   if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-    console.log("ProtectedRoute: Access denied for role", userRole);
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
         <div className="text-center">
@@ -56,9 +49,7 @@ const ProtectedRoute = ({ requiresCompany = true, allowedRoles, children }: Prot
     );
   }
 
-  // Se todas as verificações passarem, renderizar as rotas filhas
-  console.log("ProtectedRoute: Access granted, rendering Outlet.");
-  // Para testes, renderizamos children diretamente se fornecido. Em uso normal, Outlet é para rotas aninhadas.
+  // Render children or outlet if all checks pass
   return children ? <>{children}</> : <Outlet />;
 };
 

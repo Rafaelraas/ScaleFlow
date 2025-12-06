@@ -50,11 +50,12 @@ export const Navbar = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
+        console.error("Logout error:", error);
         showError("Failed to log out: " + error.message);
       }
-      // The SessionContextProvider will handle navigation and success toast
+      // SessionContextProvider will handle navigation and success toast
     } catch (err) {
-      console.error("Logout error:", err);
+      console.error("Unexpected logout error:", err);
       showError("An error occurred during logout. Please try again.");
     }
   };
