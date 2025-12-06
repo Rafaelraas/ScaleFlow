@@ -116,7 +116,7 @@ describe('SessionContextProvider', () => {
         data: { session: mockSession },
       });
 
-      // Mock failed profile fetch
+      // Mock failed profile fetch - using non-retryable error code
       const mockSingle = vi.fn().mockResolvedValue({
         data: null,
         error: { message: 'Database error', code: '500', details: 'Connection failed' },
@@ -136,12 +136,12 @@ describe('SessionContextProvider', () => {
       // Wait for loading to complete
       await waitFor(() => {
         expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
-      });
+      }, { timeout: 5000 });
 
-      // Verify error was shown
+      // Verify error was shown after retries
       await waitFor(() => {
         expect(mockShowError).toHaveBeenCalledWith('Failed to load user profile.');
-      });
+      }, { timeout: 5000 });
 
       // Verify profile is null
       expect(screen.getByTestId('user-profile')).toHaveTextContent('No Profile');
@@ -154,7 +154,7 @@ describe('SessionContextProvider', () => {
         data: { session: mockSession },
       });
 
-      // Mock profile fetch that throws an error
+      // Mock profile fetch that throws an error (non-retryable)
       const mockSingle = vi.fn().mockResolvedValue({
         data: null,
         error: { message: 'Network error', code: 'NETWORK_ERROR' },
@@ -171,15 +171,15 @@ describe('SessionContextProvider', () => {
         </MemoryRouter>
       );
 
-      // Wait for loading to complete
+      // Wait for loading to complete (including retries)
       await waitFor(() => {
         expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
-      });
+      }, { timeout: 5000 });
 
-      // Verify error was shown
+      // Verify error was shown after retries
       await waitFor(() => {
         expect(mockShowError).toHaveBeenCalledWith('Failed to load user profile.');
-      });
+      }, { timeout: 5000 });
     });
 
     it('should handle missing role data gracefully', async () => {
@@ -218,6 +218,55 @@ describe('SessionContextProvider', () => {
       // Verify default role is used
       expect(screen.getByTestId('user-role')).toHaveTextContent('employee');
       expect(mockShowError).not.toHaveBeenCalled();
+    });
+
+    it('should retry and succeed when profile is not found initially (race condition)', async () => {
+      // Mock successful session
+      (supabase.auth.getSession as Mock).mockResolvedValue({
+        data: { session: mockSession },
+      });
+
+      // Mock profile fetch that fails first time (not found), then succeeds on retry
+      let callCount = 0;
+      const mockSingle = vi.fn().mockImplementation(() => {
+        callCount++;
+        if (callCount === 1) {
+          // First call - profile not found yet (race condition)
+          return Promise.resolve({
+            data: null,
+            error: { message: 'not found', code: 'PGRST116' },
+          });
+        }
+        // Second call - profile found
+        return Promise.resolve({
+          data: mockUserProfile,
+          error: null,
+        });
+      });
+      const mockEq = vi.fn().mockReturnValue({ single: mockSingle });
+      const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
+      (supabase.from as Mock).mockReturnValue({ select: mockSelect });
+
+      render(
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <SessionContextProvider>
+            <TestComponent />
+          </SessionContextProvider>
+        </MemoryRouter>
+      );
+
+      // Wait for loading to complete (including retry)
+      await waitFor(() => {
+        expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+      }, { timeout: 5000 });
+
+      // Verify profile was fetched successfully after retry
+      expect(screen.getByTestId('session-status')).toHaveTextContent('Authenticated');
+      expect(screen.getByTestId('user-role')).toHaveTextContent('employee');
+      expect(mockShowError).not.toHaveBeenCalled();
+      
+      // Verify it was called twice (initial + 1 retry)
+      expect(mockSingle).toHaveBeenCalledTimes(2);
     });
   });
 

@@ -69,14 +69,25 @@ CREATE TRIGGER update_swap_requests_updated_at
 -- Automatically creates a profile when a new user signs up
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+  default_role_id UUID;
 BEGIN
-  INSERT INTO public.profiles (id, created_at, updated_at)
-  VALUES (NEW.id, NOW(), NOW());
+  -- Get the 'employee' role ID
+  SELECT id INTO default_role_id FROM public.roles WHERE name = 'employee' LIMIT 1;
+  
+  -- Check if employee role exists
+  IF default_role_id IS NULL THEN
+    RAISE EXCEPTION 'Default employee role not found. Please ensure roles table is properly initialized.';
+  END IF;
+  
+  -- Insert profile with default employee role
+  INSERT INTO public.profiles (id, role_id, created_at, updated_at)
+  VALUES (NEW.id, default_role_id, NOW(), NOW());
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-COMMENT ON FUNCTION public.handle_new_user() IS 'Automatically creates a profile entry when a new user signs up';
+COMMENT ON FUNCTION public.handle_new_user() IS 'Automatically creates a profile entry with default employee role when a new user signs up';
 
 -- Note: In Supabase, you typically create this trigger via the Supabase Dashboard
 -- under Database > Database Webhooks, or via SQL if you have sufficient permissions.

@@ -8,6 +8,11 @@ import { showSuccess, showError } from "@/utils/toast";
 import { UserRole, isValidRole } from "@/types/roles";
 import { getUnauthenticatedPaths, isAuthFlowRoute } from "@/config/routes";
 
+// Constants
+const POSTGREST_NOT_FOUND_CODE = 'PGRST116';
+const MAX_PROFILE_FETCH_RETRIES = 3;
+const RETRY_BASE_DELAY_MS = 1000;
+
 interface UserProfile {
   id: string;
   first_name: string | null;
@@ -38,7 +43,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   const navigate = useNavigate();
   const location = useLocation();
 
-  const fetchUserProfileAndRole = useCallback(async (userId: string): Promise<UserProfile | null> => {
+  const fetchUserProfileAndRole = useCallback(async (userId: string, retryCount = 0): Promise<UserProfile | null> => {
     try {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
@@ -47,6 +52,16 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         .single();
 
       if (profileError) {
+        // Check if this is a "not found" error which might be a race condition
+        const isNotFoundError = profileError.code === POSTGREST_NOT_FOUND_CODE || profileError.message?.includes('not found');
+        
+        if (isNotFoundError && retryCount < MAX_PROFILE_FETCH_RETRIES) {
+          // Profile might not be created yet by trigger - retry after delay
+          console.info(`Profile not found, retrying... (attempt ${retryCount + 1}/${MAX_PROFILE_FETCH_RETRIES})`);
+          await new Promise(resolve => setTimeout(resolve, RETRY_BASE_DELAY_MS * (retryCount + 1)));
+          return fetchUserProfileAndRole(userId, retryCount + 1);
+        }
+        
         console.error("Error fetching user profile:", profileError);
         showError("Failed to load user profile.");
         setUserProfile(null);
@@ -76,6 +91,14 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       return null;
     } catch (error) {
       console.error("Unexpected error fetching user profile:", error);
+      
+      // Retry on unexpected errors too (network issues, etc.)
+      if (retryCount < MAX_PROFILE_FETCH_RETRIES) {
+        console.info(`Retrying after error... (attempt ${retryCount + 1}/${MAX_PROFILE_FETCH_RETRIES})`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_BASE_DELAY_MS * (retryCount + 1)));
+        return fetchUserProfileAndRole(userId, retryCount + 1);
+      }
+      
       showError("Failed to load user profile.");
       setUserProfile(null);
       setUserRole(null);
