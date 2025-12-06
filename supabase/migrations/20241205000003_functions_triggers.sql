@@ -75,6 +75,11 @@ BEGIN
   -- Get the 'employee' role ID
   SELECT id INTO default_role_id FROM public.roles WHERE name = 'employee' LIMIT 1;
   
+  -- Check if employee role exists
+  IF default_role_id IS NULL THEN
+    RAISE EXCEPTION 'Default employee role not found. Please ensure roles table is properly initialized.';
+  END IF;
+  
   -- Insert profile with default employee role
   INSERT INTO public.profiles (id, role_id, created_at, updated_at)
   VALUES (NEW.id, default_role_id, NOW(), NOW());
