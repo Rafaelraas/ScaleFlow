@@ -4,6 +4,7 @@
 
 import { describe, it, expect } from 'vitest';
 import {
+  type UserRole,
   isValidRole,
   roleRequiresCompany,
   canAccessAdminRoutes,
@@ -47,7 +48,7 @@ describe('Role Types', () => {
     it('should return true for invalid or missing roles', () => {
       expect(roleRequiresCompany(null)).toBe(true);
       expect(roleRequiresCompany(undefined)).toBe(true);
-      expect(roleRequiresCompany('invalid' as any)).toBe(true);
+      expect(roleRequiresCompany('invalid' as unknown as UserRole)).toBe(true);
     });
   });
 
@@ -67,7 +68,7 @@ describe('Role Types', () => {
     it('should return false for invalid or missing roles', () => {
       expect(canAccessAdminRoutes(null)).toBe(false);
       expect(canAccessAdminRoutes(undefined)).toBe(false);
-      expect(canAccessAdminRoutes('invalid' as any)).toBe(false);
+      expect(canAccessAdminRoutes('invalid' as unknown as UserRole)).toBe(false);
     });
   });
 
