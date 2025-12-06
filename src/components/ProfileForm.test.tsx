@@ -179,4 +179,42 @@ describe('ProfileForm', () => {
       expect(saveButton).toHaveTextContent('Save Changes');
     });
   });
+
+  it('should show "User not authenticated" error when session is null', async () => {
+    mockUseSession.mockReturnValue({
+      session: null,
+      userProfile: mockUserProfile,
+      userRole: mockUserProfile.role_name,
+      isLoading: false,
+    });
+
+    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+
+    const saveButton = screen.getByRole('button', { name: 'Save Changes' });
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(mockShowError).toHaveBeenCalledWith('User not authenticated.');
+      expect(mockFrom).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should show "User not authenticated" error when session.user.id is missing', async () => {
+    mockUseSession.mockReturnValue({
+      session: { user: {} }, // Session without user.id
+      userProfile: mockUserProfile,
+      userRole: mockUserProfile.role_name,
+      isLoading: false,
+    });
+
+    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+
+    const saveButton = screen.getByRole('button', { name: 'Save Changes' });
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(mockShowError).toHaveBeenCalledWith('User not authenticated.');
+      expect(mockFrom).not.toHaveBeenCalled();
+    });
+  });
 });
