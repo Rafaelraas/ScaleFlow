@@ -44,8 +44,7 @@ const CompanySettings = () => {
     if (!isLoading && userProfile?.company_id && session?.user?.id) {
       fetchCompanyDetails();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, userProfile?.company_id, session?.user?.id]);
+  }, [isLoading, userProfile?.company_id, session?.user?.id, fetchCompanyDetails]);
 
   if (isLoading || loadingCompany) {
     return (

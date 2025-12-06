@@ -127,8 +127,7 @@ const Schedules = () => {
     if (userProfile?.company_id) {
       fetchFilterOptions();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userProfile?.company_id]);
+  }, [userProfile?.company_id, fetchFilterOptions]);
 
   const fetchShifts = useCallback(async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
