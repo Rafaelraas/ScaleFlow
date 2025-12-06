@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client.ts";
 import { showError, showSuccess } from "@/utils/toast";
@@ -27,7 +27,7 @@ const EmployeePreferences = () => {
   const [preferences, setPreferences] = useState<EmployeePreference[]>([]);
   const [loadingPreferences, setLoadingPreferences] = useState(true);
 
-  const fetchEmployeePreferences = async () => {
+  const fetchEmployeePreferences = useCallback(async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
       setLoadingPreferences(false);
       return;
@@ -47,13 +47,13 @@ const EmployeePreferences = () => {
       setPreferences(data as EmployeePreference[] || []);
     }
     setLoadingPreferences(false);
-  };
+  }, [userProfile?.company_id, userRole]);
 
   useEffect(() => {
     if (!isLoading) {
       fetchEmployeePreferences();
     }
-  }, [userProfile?.company_id, userRole, isLoading]);
+  }, [isLoading, fetchEmployeePreferences]);
 
   const handleUpdatePreferenceStatus = async (preferenceId: string, newStatus: string) => {
     const { error } = await supabase

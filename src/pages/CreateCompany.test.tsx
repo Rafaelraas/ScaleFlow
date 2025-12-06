@@ -74,7 +74,7 @@ describe('CreateCompany', () => {
 
   it('should render company creation form', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <CreateCompany />
       </MemoryRouter>
     );
@@ -112,7 +112,7 @@ describe('CreateCompany', () => {
       .mockReturnValueOnce({ update: mockUpdate }); // Third call for profiles
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <CreateCompany />
       </MemoryRouter>
     );
@@ -140,7 +140,7 @@ describe('CreateCompany', () => {
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <CreateCompany />
       </MemoryRouter>
     );
@@ -166,7 +166,7 @@ describe('CreateCompany', () => {
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <CreateCompany />
       </MemoryRouter>
     );
@@ -192,7 +192,7 @@ describe('CreateCompany', () => {
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <CreateCompany />
       </MemoryRouter>
     );
@@ -211,7 +211,7 @@ describe('CreateCompany', () => {
 
   it('should show error when company name is empty', async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <CreateCompany />
       </MemoryRouter>
     );
@@ -241,7 +241,7 @@ describe('CreateCompany', () => {
     mockFrom.mockReturnValueOnce({ insert: mockInsert });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <CreateCompany />
       </MemoryRouter>
     );
@@ -270,7 +270,7 @@ describe('CreateCompany', () => {
     mockFrom.mockReturnValueOnce({ insert: mockInsert });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <CreateCompany />
       </MemoryRouter>
     );

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ShiftForm from "@/components/ShiftForm";
@@ -91,46 +91,45 @@ const Schedules = () => {
   const [loadingFilterOptions, setLoadingFilterOptions] = useState(true);
 
   // Fetch filter options (employees and roles)
-  useEffect(() => {
-    const fetchFilterOptions = async () => {
-      if (!userProfile?.company_id) {
-        setLoadingFilterOptions(false);
-        return;
-      }
-
-      setLoadingFilterOptions(true);
-      const { data: employeesData, error: employeesError } = await supabase
-        .from('profiles')
-        .select('id, first_name, last_name')
-        .eq('company_id', userProfile.company_id)
-        .order('last_name', { ascending: true });
-
-      const { data: rolesData, error: rolesError } = await supabase
-        .from('roles')
-        .select('id, name')
-        .order('name', { ascending: true });
-
-      if (employeesError) {
-        showError("Failed to fetch employee filter options: " + employeesError.message);
-      } else {
-        setEmployeeOptions(employeesData || []);
-      }
-
-      if (rolesError) {
-        showError("Failed to fetch role filter options: " + rolesError.message);
-      } else {
-        setRoleOptions(rolesData || []);
-      }
+  const fetchFilterOptions = useCallback(async () => {
+    if (!userProfile?.company_id) {
       setLoadingFilterOptions(false);
-    };
+      return;
+    }
 
+    setLoadingFilterOptions(true);
+    const { data: employeesData, error: employeesError } = await supabase
+      .from('profiles')
+      .select('id, first_name, last_name')
+      .eq('company_id', userProfile.company_id)
+      .order('last_name', { ascending: true });
+
+    const { data: rolesData, error: rolesError } = await supabase
+      .from('roles')
+      .select('id, name')
+      .order('name', { ascending: true });
+
+    if (employeesError) {
+      showError("Failed to fetch employee filter options: " + employeesError.message);
+    } else {
+      setEmployeeOptions(employeesData || []);
+    }
+
+    if (rolesError) {
+      showError("Failed to fetch role filter options: " + rolesError.message);
+    } else {
+      setRoleOptions(rolesData || []);
+    }
+    setLoadingFilterOptions(false);
+  }, [userProfile?.company_id]);
+
+  useEffect(() => {
     if (userProfile?.company_id) {
       fetchFilterOptions();
     }
-  }, [userProfile?.company_id]);
+  }, [userProfile?.company_id, fetchFilterOptions]);
 
-
-  const fetchShifts = async () => {
+  const fetchShifts = useCallback(async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
       setLoadingShifts(false);
       return;
@@ -194,7 +193,7 @@ const Schedules = () => {
       setShifts(dataResult.data as Shift[] || []);
     }
     setLoadingShifts(false);
-  };
+  }, [userProfile?.company_id, userRole, filterEmployeeId, filterRoleId, filterPublished, filterStartDate, filterEndDate, currentPage]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -203,7 +202,7 @@ const Schedules = () => {
 
   useEffect(() => {
     fetchShifts();
-  }, [userProfile?.company_id, userRole, filterEmployeeId, filterRoleId, filterPublished, filterStartDate, filterEndDate, currentPage]);
+  }, [fetchShifts]);
 
   const handleShiftFormSuccess = () => {
     setIsCreateDialogOpen(false);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import CompanySettingsForm from "@/components/CompanySettingsForm";
 import { useSession } from "@/providers/SessionContextProvider";
@@ -12,7 +12,7 @@ const CompanySettings = () => {
   const [companyName, setCompanyName] = useState<string | null>(null);
   const [loadingCompany, setLoadingCompany] = useState(true);
 
-  const fetchCompanyDetails = async () => {
+  const fetchCompanyDetails = useCallback(async () => {
     if (!userProfile?.company_id || !session?.user?.id) {
       setLoadingCompany(false);
       return;
@@ -38,13 +38,13 @@ const CompanySettings = () => {
       }
     }
     setLoadingCompany(false);
-  };
+  }, [userProfile?.company_id, session?.user?.id]);
 
   useEffect(() => {
     if (!isLoading && userProfile?.company_id && session?.user?.id) {
       fetchCompanyDetails();
     }
-  }, [isLoading, userProfile?.company_id, session?.user?.id]);
+  }, [isLoading, userProfile?.company_id, session?.user?.id, fetchCompanyDetails]);
 
   if (isLoading || loadingCompany) {
     return (

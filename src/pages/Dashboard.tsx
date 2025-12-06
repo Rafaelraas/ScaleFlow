@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "@/providers/SessionContextProvider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -48,153 +48,153 @@ const Dashboard = () => {
   const [totalCompanies, setTotalCompanies] = useState<number | null>(null);
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      if (!session?.user?.id) { // Removed userProfile?.company_id check here to allow system_admin without company_id
+  const fetchDashboardData = useCallback(async () => {
+    if (!session?.user?.id) { // Removed userProfile?.company_id check here to allow system_admin without company_id
+      setLoadingDashboard(false);
+      return;
+    }
+
+    setLoadingDashboard(true);
+
+    if (userRole === 'system_admin') {
+      // Fetch total companies
+      const { count: companiesCount, error: companiesError } = await supabase
+        .from('companies')
+        .select('id', { count: 'exact' });
+
+      if (companiesError) {
+        showError("Failed to fetch total companies: " + companiesError.message);
+      } else {
+        setTotalCompanies(companiesCount);
+      }
+
+      // Fetch total users (profiles)
+      const { count: usersCount, error: usersError } = await supabase
+        .from('profiles')
+        .select('id', { count: 'exact' });
+
+      if (usersError) {
+        showError("Failed to fetch total users: " + usersError.message);
+      } else {
+        setTotalUsers(usersCount);
+      }
+
+    } else if (userRole === 'manager') {
+      if (!userProfile?.company_id) { // Manager must have a company
         setLoadingDashboard(false);
         return;
       }
+      // Fetch pending employee preferences for managers
+      const { data: prefsData, error: prefsError } = await supabase
+        .from('preferences')
+        .select('*, profiles(first_name, last_name)')
+        .eq('company_id', userProfile.company_id)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: true });
 
-      setLoadingDashboard(true);
+      if (prefsError) {
+        showError("Failed to fetch pending preferences: " + prefsError.message);
+      } else {
+        setPendingPreferences(prefsData as Preference[] || []);
+      }
 
-      if (userRole === 'system_admin') {
-        // Fetch total companies
-        const { count: companiesCount, error: companiesError } = await supabase
-          .from('companies')
-          .select('id', { count: 'exact' });
+      // Fetch pending swap requests for managers
+      const { data: swapsData, error: swapsError } = await supabase
+        .from('swap_requests')
+        .select(`
+          id,
+          status,
+          requesting_employee:profiles!requesting_employee_id(first_name, last_name),
+          target_employee:profiles!target_employee_id(first_name, last_name),
+          requested_shift:shifts!requested_shift_id(start_time, end_time, roles(name))
+        `)
+        .eq('company_id', userProfile.company_id)
+        .eq('status', 'pending_manager_approval')
+        .order('created_at', { ascending: true });
 
-        if (companiesError) {
-          showError("Failed to fetch total companies: " + companiesError.message);
-        } else {
-          setTotalCompanies(companiesCount);
-        }
+      if (swapsError) {
+        showError("Failed to fetch pending swap requests: " + swapsError.message);
+      } else {
+        // Supabase often returns nested relations as arrays even for single relationships.
+        // We'll map to ensure the types match our interface expecting single objects.
+        const formattedSwaps = (swapsData || []).map(req => ({
+          ...req,
+          requesting_employee: req.requesting_employee?.[0] || null,
+          target_employee: req.target_employee?.[0] || null,
+          requested_shift: req.requested_shift?.[0] ? {
+            ...req.requested_shift[0],
+            roles: req.requested_shift[0].roles?.[0] || null,
+          } : null,
+        }));
+        setPendingSwapRequests(formattedSwaps as SwapRequest[] || []);
+      }
 
-        // Fetch total users (profiles)
-        const { count: usersCount, error: usersError } = await supabase
-          .from('profiles')
-          .select('id', { count: 'exact' });
+    } else if (userRole === 'employee') {
+      if (!userProfile?.company_id) { // Employee must have a company
+        setLoadingDashboard(false);
+        return;
+      }
+      // Fetch next upcoming shift for employees
+      const { data: shiftsData, error: shiftsError } = await supabase
+        .from('shifts')
+        .select('id, start_time, end_time, roles(name)')
+        .eq('employee_id', session.user.id)
+        .eq('published', true)
+        .order('start_time', { ascending: true })
+        .limit(1);
 
-        if (usersError) {
-          showError("Failed to fetch total users: " + usersError.message);
-        } else {
-          setTotalUsers(usersCount);
-        }
-
-      } else if (userRole === 'manager') {
-        if (!userProfile?.company_id) { // Manager must have a company
-          setLoadingDashboard(false);
-          return;
-        }
-        // Fetch pending employee preferences for managers
-        const { data: prefsData, error: prefsError } = await supabase
-          .from('preferences')
-          .select('*, profiles(first_name, last_name)')
-          .eq('company_id', userProfile.company_id)
-          .eq('status', 'pending')
-          .order('created_at', { ascending: true });
-
-        if (prefsError) {
-          showError("Failed to fetch pending preferences: " + prefsError.message);
-        } else {
-          setPendingPreferences(prefsData as Preference[] || []);
-        }
-
-        // Fetch pending swap requests for managers
-        const { data: swapsData, error: swapsError } = await supabase
-          .from('swap_requests')
-          .select(`
-            id,
-            status,
-            requesting_employee:profiles!requesting_employee_id(first_name, last_name),
-            target_employee:profiles!target_employee_id(first_name, last_name),
-            requested_shift:shifts!requested_shift_id(start_time, end_time, roles(name))
-          `)
-          .eq('company_id', userProfile.company_id)
-          .eq('status', 'pending_manager_approval')
-          .order('created_at', { ascending: true });
-
-        if (swapsError) {
-          showError("Failed to fetch pending swap requests: " + swapsError.message);
-        } else {
-          // Supabase often returns nested relations as arrays even for single relationships.
-          // We'll map to ensure the types match our interface expecting single objects.
-          const formattedSwaps = (swapsData || []).map(req => ({
-            ...req,
-            requesting_employee: req.requesting_employee?.[0] || null,
-            target_employee: req.target_employee?.[0] || null,
-            requested_shift: req.requested_shift?.[0] ? {
-              ...req.requested_shift[0],
-              roles: req.requested_shift[0].roles?.[0] || null,
-            } : null,
-          }));
-          setPendingSwapRequests(formattedSwaps as SwapRequest[] || []);
-        }
-
-      } else if (userRole === 'employee') {
-        if (!userProfile?.company_id) { // Employee must have a company
-          setLoadingDashboard(false);
-          return;
-        }
-        // Fetch next upcoming shift for employees
-        const { data: shiftsData, error: shiftsError } = await supabase
-          .from('shifts')
-          .select('id, start_time, end_time, roles(name)')
-          .eq('employee_id', session.user.id)
-          .eq('published', true)
-          .order('start_time', { ascending: true })
-          .limit(1);
-
-        if (shiftsError) {
-          showError("Failed to fetch next shift: " + shiftsError.message);
-        } else if (shiftsData && shiftsData.length > 0) {
-          const nextUpcoming = shiftsData.find(shift => isFuture(parseISO(shift.start_time)));
-          if (nextUpcoming) {
-            // Map to ensure roles is a single object
-            const formattedShift: Shift = {
-              ...nextUpcoming,
-              roles: nextUpcoming.roles?.[0] || null,
-            };
-            setNextShift(formattedShift);
-          } else {
-            setNextShift(null);
-          }
+      if (shiftsError) {
+        showError("Failed to fetch next shift: " + shiftsError.message);
+      } else if (shiftsData && shiftsData.length > 0) {
+        const nextUpcoming = shiftsData.find(shift => isFuture(parseISO(shift.start_time)));
+        if (nextUpcoming) {
+          // Map to ensure roles is a single object
+          const formattedShift: Shift = {
+            ...nextUpcoming,
+            roles: nextUpcoming.roles?.[0] || null,
+          };
+          setNextShift(formattedShift);
         } else {
           setNextShift(null);
         }
-
-        // Fetch employee's pending preferences count
-        const { count: myPrefsCount, error: myPrefsError } = await supabase
-          .from('preferences')
-          .select('id', { count: 'exact' })
-          .eq('employee_id', session.user.id)
-          .eq('status', 'pending');
-
-        if (myPrefsError) {
-          showError("Failed to fetch your pending preferences count: " + myPrefsError.message);
-        } else {
-          setMyPendingPreferencesCount(myPrefsCount || 0);
-        }
-
-        // Fetch employee's pending swap requests count
-        const { count: mySwapsCount, error: mySwapsError } = await supabase
-          .from('swap_requests')
-          .select('id', { count: 'exact' })
-          .or(`requesting_employee_id.eq.${session.user.id},target_employee_id.eq.${session.user.id}`)
-          .in('status', ['pending_employee_approval', 'pending_manager_approval']);
-
-        if (mySwapsError) {
-          showError("Failed to fetch your pending swap requests count: " + mySwapsError.message);
-        } else {
-          setMyPendingSwapRequestsCount(mySwapsCount || 0);
-        }
+      } else {
+        setNextShift(null);
       }
-      setLoadingDashboard(false);
-    };
 
+      // Fetch employee's pending preferences count
+      const { count: myPrefsCount, error: myPrefsError } = await supabase
+        .from('preferences')
+        .select('id', { count: 'exact' })
+        .eq('employee_id', session.user.id)
+        .eq('status', 'pending');
+
+      if (myPrefsError) {
+        showError("Failed to fetch your pending preferences count: " + myPrefsError.message);
+      } else {
+        setMyPendingPreferencesCount(myPrefsCount || 0);
+      }
+
+      // Fetch employee's pending swap requests count
+      const { count: mySwapsCount, error: mySwapsError } = await supabase
+        .from('swap_requests')
+        .select('id', { count: 'exact' })
+        .or(`requesting_employee_id.eq.${session.user.id},target_employee_id.eq.${session.user.id}`)
+        .in('status', ['pending_employee_approval', 'pending_manager_approval']);
+
+      if (mySwapsError) {
+        showError("Failed to fetch your pending swap requests count: " + mySwapsError.message);
+      } else {
+        setMyPendingSwapRequestsCount(mySwapsCount || 0);
+      }
+    }
+    setLoadingDashboard(false);
+  }, [session, userProfile, userRole]);
+
+  useEffect(() => {
     if (!isLoading && session) {
       fetchDashboardData();
     }
-  }, [session, userProfile, userRole, isLoading]);
+  }, [isLoading, session, fetchDashboardData]);
 
   if (isLoading || loadingDashboard) {
     return (

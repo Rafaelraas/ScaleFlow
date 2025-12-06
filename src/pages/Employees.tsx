@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client.ts";
 import { showError, showSuccess } from "@/utils/toast";
@@ -54,7 +54,7 @@ const Employees = () => {
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
       setLoadingEmployees(false);
       return;
@@ -97,11 +97,11 @@ const Employees = () => {
       setEmployees(formattedEmployees as EmployeeProfile[] || []);
     }
     setLoadingEmployees(false);
-  };
+  }, [userProfile?.company_id, userRole, currentPage]);
 
   useEffect(() => {
     fetchEmployees();
-  }, [userProfile?.company_id, userRole, currentPage]);
+  }, [fetchEmployees]);
 
   const handleInviteSuccess = () => {
     setIsInviteDialogOpen(false);

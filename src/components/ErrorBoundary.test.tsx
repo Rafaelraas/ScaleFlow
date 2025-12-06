@@ -25,7 +25,7 @@ describe('ErrorBoundary', () => {
 
   it('should render children when there is no error', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ErrorBoundary>
           <div>Child content</div>
         </ErrorBoundary>
@@ -37,7 +37,7 @@ describe('ErrorBoundary', () => {
 
   it('should render error UI when child throws an error', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ErrorBoundary>
           <ThrowError shouldThrow={true} />
         </ErrorBoundary>
@@ -54,7 +54,7 @@ describe('ErrorBoundary', () => {
     const customFallback = <div>Custom error fallback</div>;
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ErrorBoundary fallback={customFallback}>
           <ThrowError shouldThrow={true} />
         </ErrorBoundary>
@@ -67,7 +67,7 @@ describe('ErrorBoundary', () => {
 
   it('should reset error state when Try Again button is clicked', () => {
     const { rerender } = render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ErrorBoundary>
           <ThrowError shouldThrow={true} />
         </ErrorBoundary>
@@ -89,7 +89,7 @@ describe('ErrorBoundary', () => {
 
   it('should log error to console when error is caught', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ErrorBoundary>
           <ThrowError shouldThrow={true} />
         </ErrorBoundary>
@@ -101,7 +101,7 @@ describe('ErrorBoundary', () => {
 
   it('should have correct link to home page', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ErrorBoundary>
           <ThrowError shouldThrow={true} />
         </ErrorBoundary>
