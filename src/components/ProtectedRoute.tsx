@@ -3,10 +3,11 @@
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSession } from "@/providers/SessionContextProvider";
+import { UserRole } from "@/types/roles";
 
 interface ProtectedRouteProps {
   requiresCompany?: boolean;
-  allowedRoles?: string[];
+  allowedRoles?: UserRole[];
   children?: React.ReactNode; // Adicionado children prop
 }
 

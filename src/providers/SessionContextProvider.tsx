@@ -5,6 +5,8 @@ import { Session } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client.ts";
 import { useNavigate, useLocation } from "react-router-dom";
 import { showSuccess, showError } from "@/utils/toast";
+import { UserRole, isValidRole } from "@/types/roles";
+import { getUnauthenticatedPaths, isAuthFlowRoute } from "@/config/routes";
 
 interface UserProfile {
   id: string;
@@ -13,20 +15,20 @@ interface UserProfile {
   avatar_url: string | null;
   company_id: string | null;
   role_id: string;
-  role_name: string;
+  role_name: UserRole;
 }
 
 interface SessionContextType {
   session: Session | null;
   isLoading: boolean;
   userProfile: UserProfile | null;
-  userRole: string | null;
+  userRole: UserRole | null;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 // Public routes that don't require authentication
-const PUBLIC_ROUTES = ['/', '/login', '/register', '/verify'];
+const PUBLIC_ROUTES = getUnauthenticatedPaths();
 
 // Auth flow pages that should not trigger redirects during special auth flows
 const AUTH_FLOW_PAGES = ['/login', '/register', '/verify'];
@@ -35,7 +37,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,7 +58,8 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       }
 
       if (profileData) {
-        const roleName = (profileData.roles as { name: string } | null)?.name || 'employee';
+        const rawRoleName = (profileData.roles as { name: string } | null)?.name || 'employee';
+        const roleName: UserRole = isValidRole(rawRoleName) ? rawRoleName : 'employee';
 
         const profileWithRoleName: UserProfile = {
           id: profileData.id,
@@ -90,7 +93,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     currentPath: string
   ): string | null => {
     const isPublicRoute = PUBLIC_ROUTES.includes(currentPath);
-    const isAuthFlowPage = AUTH_FLOW_PAGES.includes(currentPath);
+    const isAuthFlowPage = isAuthFlowRoute(currentPath);
 
     // No session - redirect to login if not on public route
     if (!currentSession) {
