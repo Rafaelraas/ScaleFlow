@@ -49,9 +49,9 @@ CHANGELOG.md
 VERCEL_FIX_SUMMARY.md
 ACTION_REQUIRED.md
 
-# Supabase
-supabase/
-bin/
+# Supabase (only exclude root-level backend directory, not src/integrations/supabase/)
+/supabase/
+/bin/
 
-# Scripts
-scripts/
+# Scripts (exclude root-level scripts directory)
+/scripts/
