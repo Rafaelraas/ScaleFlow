@@ -293,7 +293,7 @@ const Dashboard = () => {
                 <ul className="list-disc list-inside text-sm text-muted-foreground mb-4">
                   {pendingSwapRequests.slice(0, 3).map(req => (
                     <li key={req.id}>
-                      {req.requesting_employee?.first_name} wants to swap {format(parseISO(req.requested_shift?.start_time || ''), 'MMM dd HH:mm')}
+                      {req.requesting_employee?.first_name} wants to swap {req.requested_shift?.start_time ? format(parseISO(req.requested_shift.start_time), 'MMM dd HH:mm') : 'shift'}
                     </li>
                   ))}
                   {pendingSwapRequests.length > 3 && <li>...and {pendingSwapRequests.length - 3} more</li>}

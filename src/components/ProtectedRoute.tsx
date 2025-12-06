@@ -16,10 +16,17 @@ const ProtectedRoute = ({ requiresCompany = true, allowedRoles, children }: Prot
 
   console.log("ProtectedRoute Render - session:", !!session, "userProfile:", userProfile, "userRole:", userRole, "isLoading:", isLoading, "location:", location.pathname);
 
-  // If session data is still loading, render nothing (or a loading spinner)
+  // If session data is still loading, show a loading spinner
   if (isLoading) {
-    console.log("ProtectedRoute: Session is still loading, rendering nothing.");
-    return null;
+    console.log("ProtectedRoute: Session is still loading, showing loading state.");
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-lg text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   // Se não há sessão, redirecionar para a página de login.
