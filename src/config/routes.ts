@@ -85,6 +85,11 @@ export const AUTH_FLOW_ROUTES: RouteConfig[] = [
 
 /**
  * Company creation route - authenticated users without company
+ * Note: Both manager and employee roles can create companies when they don't have one.
+ * This allows for flexible onboarding where a manager creates their first company,
+ * or an employee creates their own company if they're self-employed.
+ * The SessionContextProvider handles redirection to prevent users with companies
+ * from accessing this route.
  */
 export const COMPANY_CREATION_ROUTE: RouteConfig = {
   path: '/create-company',

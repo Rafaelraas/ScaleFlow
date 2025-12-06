@@ -30,9 +30,6 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = getUnauthenticatedPaths();
 
-// Auth flow pages that should not trigger redirects during special auth flows
-const AUTH_FLOW_PAGES = ['/login', '/register', '/verify'];
-
 export const SessionContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -147,7 +144,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       const hashParams = new URLSearchParams(location.hash.substring(1));
       const authFlowType = urlParams.get('type') || hashParams.get('type');
       
-      if (AUTH_FLOW_PAGES.includes(location.pathname) && 
+      if (isAuthFlowRoute(location.pathname) && 
           (authFlowType === 'recovery' || authFlowType === 'signup')) {
         if (isMounted) {
           setIsLoading(false);

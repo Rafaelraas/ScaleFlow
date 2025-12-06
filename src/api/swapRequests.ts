@@ -150,7 +150,8 @@ export async function rejectSwapRequest(swapRequestId: string, managerId: string
 
 /**
  * Delete a swap request
- * Note: There's no explicit delete policy, so this might fail based on RLS
+ * RLS Policy: No explicit delete policy exists. This function will fail unless a delete policy is added.
+ * Recommendation: Add RLS policy or use status update ('cancelled') instead of delete.
  */
 export async function deleteSwapRequest(swapRequestId: string) {
   const { error } = await supabase
