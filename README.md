@@ -219,6 +219,7 @@ Comprehensive documentation is available to help you understand and contribute t
 | [📖 Documentation Index](./docs/INDEX.md) | Complete documentation overview and navigation |
 | [⚡ Quick Start Guide](./QUICK_START.md) | Get up and running in 5 minutes |
 | [🔧 Backend Setup Guide](./BACKEND_SETUP.md) | **🆕 Complete backend configuration guide** |
+| [🔒 Security & Roles](./docs/security-and-roles.md) | **🆕 Security model, RBAC, and RLS policies** |
 | [🏗️ Architecture Guide](./docs/ARCHITECTURE.md) | System architecture and design patterns |
 | [🗄️ Database Schema](./docs/DATABASE.md) | Database structure and RLS policies |
 
@@ -263,20 +264,36 @@ Comprehensive documentation is available to help you understand and contribute t
 ScaleFlow/
 ├── public/                 # Static assets
 ├── src/
+│   ├── api/               # 🆕 Typed API layer for database operations
+│   │   ├── companies.ts   # Company operations
+│   │   ├── employees.ts   # Employee management
+│   │   ├── preferences.ts # Preference operations
+│   │   ├── profiles.ts    # Profile operations
+│   │   ├── schedules.ts   # Shift and schedule operations
+│   │   └── swapRequests.ts # Swap request operations
 │   ├── components/         # Reusable components
 │   │   ├── layout/        # Layout components (Navbar, Sidebar, Layout)
 │   │   ├── ui/            # shadcn/ui components
 │   │   └── ...            # Feature-specific components
+│   ├── config/            # 🆕 Application configuration
+│   │   └── routes.ts      # Centralized route definitions
 │   ├── hooks/             # Custom React hooks
 │   ├── integrations/      # External service integrations
 │   │   └── supabase/      # Supabase client configuration
 │   ├── lib/               # Utility functions
 │   ├── pages/             # Page components
 │   ├── providers/         # React context providers
+│   ├── types/             # 🆕 TypeScript type definitions
+│   │   ├── database.ts    # Database schema types
+│   │   └── roles.ts       # User role types and helpers
 │   ├── utils/             # Helper utilities
 │   ├── App.tsx            # Main application component with routes
 │   ├── main.tsx           # Application entry point
 │   └── globals.css        # Global styles
+├── supabase/              # Supabase backend configuration
+│   └── migrations/        # Database migrations with RLS policies
+├── docs/                  # 🆕 Comprehensive documentation
+│   └── security-and-roles.md # Security and RBAC documentation
 ├── .env                   # Environment variables (not committed)
 ├── tailwind.config.ts     # Tailwind CSS configuration
 ├── vite.config.ts         # Vite configuration
@@ -309,9 +326,29 @@ graph TD
 
 ### Security
 
-- **Row-Level Security (RLS)** - Database-level access control via Supabase
-- **Role-based Access** - Route protection based on user roles
-- **Protected Routes** - Client-side route guards
+ScaleFlow implements a comprehensive security model with multiple layers of protection:
+
+- **🔐 Row-Level Security (RLS)** - Database-level access control via Supabase policies
+  - Every table has RLS enabled with targeted policies
+  - Company isolation ensures data privacy between organizations
+  - Role-based policies enforce manager/employee boundaries
+  
+- **🛡️ Role-based Access Control (RBAC)** - Route protection based on user roles
+  - Strongly typed roles: `employee`, `manager`, `system_admin`
+  - Centralized route configuration with role requirements
+  - Protected routes with automatic redirects
+  
+- **🔒 Client-side Guards** - `ProtectedRoute` component enforces access
+  - Session validation on every protected route
+  - Company membership verification
+  - Role-based access checks with "Access Denied" pages
+  
+- **📦 Typed API Layer** - All database operations go through typed API functions
+  - Located in `src/api/` with full TypeScript support
+  - Consistent error handling and RLS enforcement
+  - No direct Supabase queries in components
+
+**📖 For detailed security documentation, see [docs/security-and-roles.md](./docs/security-and-roles.md)**
 
 ---
 
