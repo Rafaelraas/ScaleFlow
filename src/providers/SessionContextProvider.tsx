@@ -38,7 +38,10 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   const navigate = useNavigate();
   const location = useLocation();
 
-  const fetchUserProfileAndRole = useCallback(async (userId: string): Promise<UserProfile | null> => {
+  const fetchUserProfileAndRole = useCallback(async (userId: string, retryCount = 0): Promise<UserProfile | null> => {
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 1000; // 1 second base delay
+
     try {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
@@ -47,6 +50,16 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         .single();
 
       if (profileError) {
+        // Check if this is a "not found" error which might be a race condition
+        const isNotFoundError = profileError.code === 'PGRST116' || profileError.message?.includes('not found');
+        
+        if (isNotFoundError && retryCount < MAX_RETRIES) {
+          // Profile might not be created yet by trigger - retry after delay
+          console.log(`Profile not found, retrying... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retryCount + 1)));
+          return fetchUserProfileAndRole(userId, retryCount + 1);
+        }
+        
         console.error("Error fetching user profile:", profileError);
         showError("Failed to load user profile.");
         setUserProfile(null);
@@ -76,6 +89,14 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       return null;
     } catch (error) {
       console.error("Unexpected error fetching user profile:", error);
+      
+      // Retry on unexpected errors too (network issues, etc.)
+      if (retryCount < MAX_RETRIES) {
+        console.log(`Retrying after error... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retryCount + 1)));
+        return fetchUserProfileAndRole(userId, retryCount + 1);
+      }
+      
       showError("Failed to load user profile.");
       setUserProfile(null);
       setUserRole(null);
