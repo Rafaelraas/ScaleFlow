@@ -35,6 +35,12 @@ CREATE POLICY "companies_select_own" ON public.companies
     id IN (SELECT company_id FROM public.profiles WHERE id = auth.uid())
   );
 
+-- Authenticated users can create companies
+DROP POLICY IF EXISTS "companies_insert_authenticated" ON public.companies;
+CREATE POLICY "companies_insert_authenticated" ON public.companies
+  FOR INSERT
+  WITH CHECK (auth.uid() IS NOT NULL);
+
 -- Managers can update their company
 DROP POLICY IF EXISTS "companies_update_managers" ON public.companies;
 CREATE POLICY "companies_update_managers" ON public.companies
