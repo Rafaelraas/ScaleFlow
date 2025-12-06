@@ -288,7 +288,9 @@ describe('CreateCompany', () => {
     });
 
     // Resolve the promise to end submission
-    resolveCompanyCreation!({ data: { id: 'company-123', name: 'Test Company' }, error: null });
+    if (resolveCompanyCreation) {
+      resolveCompanyCreation({ data: { id: 'company-123', name: 'Test Company' }, error: null });
+    }
 
     // Note: In a real test, we would also mock role fetch and profile update
     // For simplicity, we're just checking the button state during the initial operation
