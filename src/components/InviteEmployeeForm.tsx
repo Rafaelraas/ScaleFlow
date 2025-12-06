@@ -63,7 +63,7 @@ const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) =>
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.auth.admin.inviteUserByEmail(values.email, {
+      const { error } = await supabase.auth.admin.inviteUserByEmail(values.email, {
         data: {
           first_name: values.first_name || null,
           last_name: values.last_name || null,
