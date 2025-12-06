@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { SessionContextProvider, useSession } from './SessionContextProvider';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client.ts';
 import { showError, showSuccess } from '@/utils/toast';
 import { MemoryRouter } from 'react-router-dom';
 

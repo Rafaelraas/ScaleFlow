@@ -3,7 +3,7 @@
  * Handles user profile operations
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client.ts';
 import type { Profile, ProfileWithRole } from '@/types/database';
 import type { PostgrestError } from '@supabase/supabase-js';
 

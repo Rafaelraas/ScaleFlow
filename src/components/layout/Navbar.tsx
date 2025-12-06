@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MenuIcon, LogOut, UserCircle } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { useSession } from "@/providers/SessionContextProvider";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client.ts";
 import { showError, showSuccess } from "@/utils/toast";
 import { ModeToggle } from "@/components/ModeToggle";
 import {

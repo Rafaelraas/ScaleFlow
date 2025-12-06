@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
-import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client.ts";
 import { useNavigate, useLocation } from "react-router-dom";
 import { showSuccess, showError } from "@/utils/toast";
 
