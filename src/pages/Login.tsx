@@ -47,7 +47,7 @@ const Login = () => {
             }}
             theme="light"
             view={initialView}
-            redirectTo={`${window.location.origin}${window.location.pathname}`}
+            redirectTo={`${window.location.origin}${window.location.pathname}#/dashboard`}
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
