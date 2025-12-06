@@ -423,7 +423,21 @@ npm run test:ui
 
 ## 🚢 Deployment
 
-### Vercel (Recommended)
+### GitHub Pages
+
+The project includes automated GitHub Pages deployment. See the comprehensive guide:
+
+📖 **[GitHub Pages Deployment Guide](./docs/GITHUB_PAGES_DEPLOYMENT.md)**
+
+**Quick Setup**:
+1. Enable GitHub Pages in repository settings (Source: GitHub Actions)
+2. Add Supabase secrets to repository: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+3. Configure Supabase redirect URLs to include your GitHub Pages URL
+4. Push to `main` or manually trigger the workflow
+
+**Important**: Without the Supabase secrets, the app will build but authentication will fail with "Failed to fetch" errors.
+
+### Vercel
 
 The project includes a `vercel.json` configuration for easy deployment:
 
@@ -445,6 +459,10 @@ npm run build
 ```
 
 The build output will be in the `dist/` directory.
+
+For detailed deployment instructions and troubleshooting, see:
+- [GitHub Pages Deployment Guide](./docs/GITHUB_PAGES_DEPLOYMENT.md)
+- [Environment Setup Guide](./docs/ENVIRONMENT_SETUP.md)
 
 ---
 

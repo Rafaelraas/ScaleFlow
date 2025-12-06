@@ -69,10 +69,43 @@ When deploying to production:
 
 1. **Do not** commit your `.env` file
 2. Set environment variables directly in your hosting platform:
+   - **GitHub Pages**: Repository Settings → Secrets and variables → Actions → Repository secrets
    - **Vercel**: Project Settings → Environment Variables
    - **Netlify**: Site Settings → Build & Deploy → Environment
    - **Railway**: Project → Variables
    - **Docker**: Use `-e` flags or docker-compose environment sections
+
+### GitHub Pages Setup
+
+To enable authentication on GitHub Pages, you need to configure Supabase environment variables as GitHub secrets:
+
+1. Go to your repository on GitHub
+2. Navigate to **Settings** → **Secrets and variables** → **Actions**
+3. Click **New repository secret** and add:
+   - Name: `VITE_SUPABASE_URL`
+   - Value: Your Supabase project URL (e.g., `https://your-project-id.supabase.co`)
+4. Click **New repository secret** again and add:
+   - Name: `VITE_SUPABASE_ANON_KEY`
+   - Value: Your Supabase anon/public key
+5. The GitHub Pages workflow will automatically use these secrets during the build
+
+**Important**: After adding these secrets, trigger a new deployment by:
+- Pushing to the `main` branch, or
+- Going to **Actions** → **🚀 Deploy to GitHub Pages** → **Run workflow**
+
+### Configuring Supabase for GitHub Pages
+
+After setting up the secrets, you need to configure your Supabase project to allow redirects from your GitHub Pages URL:
+
+1. Go to your [Supabase Dashboard](https://app.supabase.com/)
+2. Select your project
+3. Navigate to **Authentication** → **URL Configuration**
+4. Add your GitHub Pages URL to **Site URL** and **Redirect URLs**:
+   - Format: `https://<username>.github.io/ScaleFlow/`
+   - Replace `<username>` with your GitHub username or organization name
+5. Save the changes
+
+This ensures that authentication redirects work correctly with your deployed application.
 
 ## Troubleshooting
 
