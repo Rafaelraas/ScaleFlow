@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client.ts";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -11,7 +11,7 @@ interface UserProfile {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
-  company_id: string | null; // Ensure company_id is part of the profile
+  company_id: string | null;
   role_id: string;
   role_name: string;
 }
@@ -25,6 +25,12 @@ interface SessionContextType {
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
+// Public routes that don't require authentication
+const PUBLIC_ROUTES = ['/', '/login', '/register', '/verify'];
+
+// Auth flow pages that should not trigger redirects during special auth flows
+const AUTH_FLOW_PAGES = ['/login', '/register', '/verify'];
+
 export const SessionContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,61 +39,99 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   const navigate = useNavigate();
   const location = useLocation();
 
-  const fetchUserProfileAndRole = async (userId: string) => {
-    console.log("Fetching user profile for userId:", userId);
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .select('*, roles(name)')
-      .eq('id', userId)
-      .single();
+  const fetchUserProfileAndRole = useCallback(async (userId: string): Promise<UserProfile | null> => {
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*, roles(name)')
+        .eq('id', userId)
+        .single();
 
-    if (profileError) {
-      console.error("Error fetching user profile:", profileError);
+      if (profileError) {
+        console.error("Error fetching user profile:", profileError);
+        showError("Failed to load user profile.");
+        setUserProfile(null);
+        setUserRole(null);
+        return null;
+      }
+
+      if (profileData) {
+        const roleName = (profileData.roles as { name: string } | null)?.name || 'employee';
+
+        const profileWithRoleName: UserProfile = {
+          id: profileData.id,
+          first_name: profileData.first_name,
+          last_name: profileData.last_name,
+          avatar_url: profileData.avatar_url,
+          company_id: profileData.company_id,
+          role_id: profileData.role_id,
+          role_name: roleName,
+        };
+
+        setUserProfile(profileWithRoleName);
+        setUserRole(profileWithRoleName.role_name);
+        return profileWithRoleName;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Unexpected error fetching user profile:", error);
       showError("Failed to load user profile.");
       setUserProfile(null);
       setUserRole(null);
       return null;
-    } else if (profileData) {
-      // Correctly access the role name from the joined 'roles' object
-      // If 'roles' is a direct foreign key, it will be an object, not an array.
-      const roleName = (profileData.roles as { name: string } | null)?.name || 'employee';
-
-      const profileWithRoleName: UserProfile = {
-        id: profileData.id,
-        first_name: profileData.first_name,
-        last_name: profileData.last_name,
-        avatar_url: profileData.avatar_url,
-        company_id: profileData.company_id,
-        role_id: profileData.role_id,
-        role_name: roleName,
-      };
-      console.log("User profile fetched:", profileWithRoleName);
-      console.log("Raw profileData from Supabase:", profileData); // Added for debugging
-      setUserProfile(profileWithRoleName);
-      setUserRole(profileWithRoleName.role_name);
-      return profileWithRoleName;
     }
-    return null;
-  };
+  }, []);
+
+  // Determine the appropriate redirect path based on session and profile
+  const getRedirectPath = useCallback((
+    currentSession: Session | null,
+    profile: UserProfile | null,
+    currentPath: string
+  ): string | null => {
+    const isPublicRoute = PUBLIC_ROUTES.includes(currentPath);
+    const isAuthFlowPage = AUTH_FLOW_PAGES.includes(currentPath);
+
+    // No session - redirect to login if not on public route
+    if (!currentSession) {
+      return !isPublicRoute ? '/login' : null;
+    }
+
+    // Session exists but no profile - stay where we are (error will be shown)
+    if (!profile) {
+      return null;
+    }
+
+    // System admin without company - can access dashboard
+    if (profile.role_name === 'system_admin' && !profile.company_id) {
+      return (currentPath === '/create-company' || isAuthFlowPage) ? '/dashboard' : null;
+    }
+
+    // Non-admin without company - must create company
+    if (!profile.company_id) {
+      return currentPath !== '/create-company' ? '/create-company' : null;
+    }
+
+    // User has company - redirect to dashboard if on auth pages
+    return (currentPath === '/create-company' || isAuthFlowPage) ? '/dashboard' : null;
+  }, []);
 
   useEffect(() => {
-    let isMounted = true; // Flag to prevent state updates on unmounted component
+    let isMounted = true;
 
-    // If Supabase is not configured, skip auth checks and allow demo mode
+    // Demo mode - skip auth checks
     if (!isSupabaseConfigured) {
-      console.log("Running in demo mode - Supabase not configured");
       setIsLoading(false);
-      return () => {
-        isMounted = false;
-      };
+      return;
     }
 
     const handleSessionAndProfile = async (currentSession: Session | null, event?: string) => {
       if (!isMounted) return;
 
       setSession(currentSession);
+      
+      // Fetch profile if session exists
       let profile: UserProfile | null = null;
-
       if (currentSession?.user?.id) {
         profile = await fetchUserProfileAndRole(currentSession.user.id);
       } else {
@@ -95,79 +139,26 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         setUserRole(null);
       }
 
-      // --- Redirection Logic ---
-      let shouldRedirect = false;
-      let redirectToPath = '';
-
-      // Check if we are in an auth flow that requires staying on the current page
-      // Check both query parameters (location.search) and hash parameters (location.hash)
+      // Check for special auth flows that should not trigger redirects
       const urlParams = new URLSearchParams(location.search);
-      const hashParams = new URLSearchParams(location.hash.substring(1)); // Remove '#'
-      
+      const hashParams = new URLSearchParams(location.hash.substring(1));
       const authFlowType = urlParams.get('type') || hashParams.get('type');
-      // IMPORTANT: Added '/verify' to the list of auth flow pages
-      // Also added '/' to allow public access to the home page
-      const isAuthFlowPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/verify';
-      const isPublicPage = location.pathname === '/';
-
-      console.log(`[SessionContext Debug] Current Path: ${location.pathname}, Search: ${location.search}, Hash: ${location.hash}`);
-      console.log(`[SessionContext Debug] Detected authFlowType: ${authFlowType}, isAuthFlowPage: ${isAuthFlowPage}`);
-      console.log(`[SessionContext Debug] Current Session: ${!!currentSession}, User Profile: ${!!profile}, Company ID: ${profile?.company_id}`);
-
-
-      if (isAuthFlowPage && (authFlowType === 'recovery' || authFlowType === 'signup')) {
-        // If we are on an auth page and in a recovery/signup flow, DO NOT redirect away.
-        // The user needs to complete the action on this page.
-        console.log(`SessionContextProvider: Staying on auth page for type=${authFlowType}.`);
+      
+      if (AUTH_FLOW_PAGES.includes(location.pathname) && 
+          (authFlowType === 'recovery' || authFlowType === 'signup')) {
         if (isMounted) {
-          setIsLoading(false); // Ensure loading state is cleared
+          setIsLoading(false);
         }
-        return; // Exit early, prevent further redirection logic
+        return;
       }
 
-      // Original redirection logic (only if not in a special auth flow)
-      if (!currentSession) {
-        // No session: redirect to login/register if not already there
-        // Allow public access to the home page
-        if (!isAuthFlowPage && !isPublicPage) { // Already checked above, but good for clarity
-          shouldRedirect = true;
-          redirectToPath = '/login';
-          console.log("[SessionContext Debug] No session, redirecting to /login");
-        }
-      } else if (profile) {
-        // Session exists and profile loaded
-        if (!profile.company_id) {
-          // User has no company:
-          if (profile.role_name === 'system_admin') {
-            // System admin without a company_id should go to dashboard (which will show admin content)
-            if (location.pathname === '/create-company' || isAuthFlowPage) {
-              shouldRedirect = true;
-              redirectToPath = '/dashboard';
-              console.log("[SessionContext Debug] System admin without company_id, redirecting to /dashboard");
-            }
-          } else {
-            // Other roles (manager, employee) without a company_id must create one
-            if (location.pathname !== '/create-company') {
-              shouldRedirect = true;
-              redirectToPath = '/create-company';
-              console.log("[SessionContext Debug] Non-admin user without company_id, redirecting to /create-company");
-            }
-          }
-        } else {
-          // User has a company: redirect to dashboard if on auth/create-company pages
-          if (location.pathname === '/create-company' || isAuthFlowPage) {
-            shouldRedirect = true;
-            redirectToPath = '/dashboard';
-            console.log("[SessionContext Debug] Session exists, has company_id, redirecting to /dashboard");
-          }
-        }
-      }
-      // If session exists but profile is null (e.g., RLS error or new user without profile yet)
-      // The `fetchUserProfileAndRole` already handles error and sets profile/role to null.
-      // The `ProtectedRoute` will then handle access denial based on missing profile/role.
-
-      if (shouldRedirect && redirectToPath !== location.pathname) {
-        navigate(redirectToPath);
+      // Determine redirect path
+      const redirectPath = getRedirectPath(currentSession, profile, location.pathname);
+      
+      if (redirectPath && redirectPath !== location.pathname) {
+        navigate(redirectPath);
+        
+        // Show success messages for auth events
         if (event === 'SIGNED_IN') {
           showSuccess("Logged in successfully!");
         } else if (event === 'SIGNED_OUT') {
@@ -176,34 +167,35 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       }
 
       if (isMounted) {
-        setIsLoading(false); // Ensure isLoading is set to false after all checks
+        setIsLoading(false);
       }
     };
 
     // Initial session check
-    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
-      console.log("Initial getSession result:", initialSession);
-      await handleSessionAndProfile(initialSession);
-    }).catch(error => {
-      console.error("Error during initial getSession:", error);
-      if (isMounted) {
-        setIsLoading(false); // Ensure loading state is cleared even on error
-      }
-    });
+    supabase.auth.getSession()
+      .then(async ({ data: { session: initialSession } }) => {
+        await handleSessionAndProfile(initialSession);
+      })
+      .catch(error => {
+        console.error("Error during initial getSession:", error);
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
 
     // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      console.log("Auth state change event:", event, "Session:", currentSession);
-      await handleSessionAndProfile(currentSession, event);
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, currentSession) => {
+        await handleSessionAndProfile(currentSession, event);
+      }
+    );
 
     return () => {
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [navigate, location.pathname, location.search, location.hash]); // Added location.hash to dependencies
-
-  console.log("SessionContext Render - isLoading:", isLoading, "session:", !!session, "userProfile:", !!userProfile, "userRole:", userRole);
+  }, [navigate, location.pathname, location.search, location.hash, fetchUserProfileAndRole, getRedirectPath]);
+  // Note: location.search and location.hash are needed to detect auth flow types (recovery, signup)
 
   return (
     <SessionContext.Provider value={{ session, isLoading, userProfile, userRole }}>

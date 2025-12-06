@@ -8,7 +8,8 @@ import { MenuIcon, LogOut, UserCircle } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client.ts";
-import { showError, showSuccess } from "@/utils/toast";
+import { signOut } from "@/services/supabase/auth.service";
+import { showError } from "@/utils/toast";
 import { ModeToggle } from "@/components/ModeToggle";
 import {
   DropdownMenu,
@@ -48,13 +49,14 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
+      const { error } = await signOut();
       if (error) {
+        console.error("Logout error:", error);
         showError("Failed to log out: " + error.message);
       }
-      // The SessionContextProvider will handle navigation and success toast
+      // SessionContextProvider will handle navigation and success toast
     } catch (err) {
-      console.error("Logout error:", err);
+      console.error("Unexpected logout error:", err);
       showError("An error occurred during logout. Please try again.");
     }
   };
