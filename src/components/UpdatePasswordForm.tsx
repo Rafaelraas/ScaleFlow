@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client.ts";
+import { updatePassword } from "@/services/supabase/auth.service";
 import { showError, showSuccess } from "@/utils/toast";
 
 const formSchema = z.object({
@@ -40,16 +40,14 @@ const UpdatePasswordForm = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: values.newPassword,
-      });
+      const { error } = await updatePassword(values.newPassword);
 
       if (error) {
         throw new Error(error.message);
       }
 
       showSuccess("Password updated successfully!");
-      form.reset(); // Clear form fields on success
+      form.reset();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error("Error updating password:", errorMessage);
