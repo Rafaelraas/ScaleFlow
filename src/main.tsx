@@ -9,7 +9,12 @@ import { ThemeProvider } from "./components/ThemeProvider"; // Import ThemeProvi
 // This is the best practice for GitHub Pages static hosting
 // URLs will use hash-based routing (e.g., /#/dashboard)
 createRoot(document.getElementById("root")!).render(
-  <HashRouter>
+  <HashRouter
+    future={{
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    }}
+  >
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <SessionContextProvider>
         <App />

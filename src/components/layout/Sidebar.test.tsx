@@ -21,7 +21,7 @@ describe('Sidebar', () => {
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>
     );
@@ -49,7 +49,7 @@ describe('Sidebar', () => {
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>
     );
@@ -77,7 +77,7 @@ describe('Sidebar', () => {
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>
     );
@@ -105,7 +105,7 @@ describe('Sidebar', () => {
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>
     );
@@ -126,7 +126,7 @@ describe('Sidebar', () => {
     });
 
     const { container } = render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>
     );

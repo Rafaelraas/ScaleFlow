@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import InitiateSwapForm from "@/components/InitiateSwapForm";
@@ -46,7 +46,7 @@ const SwapRequests = () => {
   const [loadingRequests, setLoadingRequests] = useState(true);
   const [isInitiateSwapDialogOpen, setIsInitiateSwapDialogOpen] = useState(false);
 
-  const fetchSwapRequests = async () => {
+  const fetchSwapRequests = useCallback(async () => {
     if (!session?.user?.id || !userProfile?.company_id) {
       setLoadingRequests(false);
       return;
@@ -100,13 +100,13 @@ const SwapRequests = () => {
       setSwapRequests(formattedSwaps as SwapRequest[] || []);
     }
     setLoadingRequests(false);
-  };
+  }, [session?.user?.id, userRole, userProfile?.company_id]);
 
   useEffect(() => {
     if (!isLoading) {
       fetchSwapRequests();
     }
-  }, [session?.user?.id, userRole, isLoading, userProfile?.company_id]);
+  }, [isLoading, fetchSwapRequests]);
 
   const handleInitiateSwapSuccess = () => {
     setIsInitiateSwapDialogOpen(false);

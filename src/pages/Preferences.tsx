@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import PreferenceForm from "@/components/PreferenceForm"; // Import the new PreferenceForm
@@ -27,7 +27,7 @@ const Preferences = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loadingPreferences, setLoadingPreferences] = useState(true);
 
-  const fetchPreferences = async () => {
+  const fetchPreferences = useCallback(async () => {
     if (!session?.user?.id || userRole !== 'employee') {
       setLoadingPreferences(false);
       return;
@@ -47,13 +47,13 @@ const Preferences = () => {
       setPreferences(data || []);
     }
     setLoadingPreferences(false);
-  };
+  }, [session?.user?.id, userRole]);
 
   useEffect(() => {
     if (!isLoading) {
       fetchPreferences();
     }
-  }, [session?.user?.id, userRole, isLoading]);
+  }, [isLoading, fetchPreferences]);
 
   const handlePreferenceFormSuccess = () => {
     setIsDialogOpen(false);

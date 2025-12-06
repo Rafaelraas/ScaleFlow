@@ -92,7 +92,7 @@ describe('SessionContextProvider', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       render(
-        <MemoryRouter>
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <SessionContextProvider>
             <TestComponent />
           </SessionContextProvider>
@@ -126,7 +126,7 @@ describe('SessionContextProvider', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       render(
-        <MemoryRouter>
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <SessionContextProvider>
             <TestComponent />
           </SessionContextProvider>
@@ -164,7 +164,7 @@ describe('SessionContextProvider', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       render(
-        <MemoryRouter>
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <SessionContextProvider>
             <TestComponent />
           </SessionContextProvider>
@@ -203,7 +203,7 @@ describe('SessionContextProvider', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       render(
-        <MemoryRouter>
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <SessionContextProvider>
             <TestComponent />
           </SessionContextProvider>
@@ -229,7 +229,7 @@ describe('SessionContextProvider', () => {
       });
 
       render(
-        <MemoryRouter initialEntries={['/dashboard']}>
+        <MemoryRouter initialEntries={['/dashboard']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <SessionContextProvider>
             <TestComponent />
           </SessionContextProvider>
@@ -256,7 +256,7 @@ describe('SessionContextProvider', () => {
       });
 
       render(
-        <MemoryRouter initialEntries={['/dashboard']}>
+        <MemoryRouter initialEntries={['/dashboard']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <SessionContextProvider>
             <TestComponent />
           </SessionContextProvider>
@@ -294,7 +294,7 @@ describe('SessionContextProvider', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       render(
-        <MemoryRouter>
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <SessionContextProvider>
             <TestComponent />
           </SessionContextProvider>

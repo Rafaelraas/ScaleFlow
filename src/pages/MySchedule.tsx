@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client.ts";
 import { showError } from "@/utils/toast";
@@ -24,7 +24,7 @@ const MySchedule = () => {
   const [myShifts, setMyShifts] = useState<Shift[]>([]);
   const [loadingShifts, setLoadingShifts] = useState(true);
 
-  const fetchMyShifts = async () => {
+  const fetchMyShifts = useCallback(async () => {
     if (!session?.user?.id || userRole !== 'employee') {
       setLoadingShifts(false);
       return;
@@ -45,13 +45,13 @@ const MySchedule = () => {
       setMyShifts(data || []);
     }
     setLoadingShifts(false);
-  };
+  }, [session?.user?.id, userRole]);
 
   useEffect(() => {
     if (!isLoading) {
       fetchMyShifts();
     }
-  }, [session?.user?.id, userRole, isLoading]);
+  }, [isLoading, fetchMyShifts]);
 
   if (userRole !== 'employee') {
     return (

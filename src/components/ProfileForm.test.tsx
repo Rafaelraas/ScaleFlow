@@ -73,12 +73,12 @@ describe('ProfileForm', () => {
       userRole: null,
       isLoading: true,
     });
-    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
     expect(screen.getByText('Loading profile data...')).toBeInTheDocument();
   });
 
   it('should pre-fill form fields with user profile data', () => {
-    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
 
     expect(screen.getByLabelText('First Name (Optional)')).toHaveValue('John');
     expect(screen.getByLabelText('Last Name (Optional)')).toHaveValue('Doe');
@@ -92,7 +92,7 @@ describe('ProfileForm', () => {
     const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
     mockFrom.mockReturnValue({ update: mockUpdate });
     
-    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
 
     const firstNameInput = screen.getByLabelText('First Name (Optional)');
     const lastNameInput = screen.getByLabelText('Last Name (Optional)');
@@ -119,7 +119,7 @@ describe('ProfileForm', () => {
     const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
     mockFrom.mockReturnValue({ update: mockUpdate });
     
-    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
 
     const avatarUrlInput = screen.getByLabelText('Avatar URL (Optional)');
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
@@ -142,7 +142,7 @@ describe('ProfileForm', () => {
     const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
     mockFrom.mockReturnValue({ update: mockUpdate });
 
-    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
 
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
     fireEvent.click(saveButton);
@@ -160,7 +160,7 @@ describe('ProfileForm', () => {
     const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
     mockFrom.mockReturnValue({ update: mockUpdate });
 
-    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
 
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
     fireEvent.click(saveButton);
@@ -188,7 +188,7 @@ describe('ProfileForm', () => {
       isLoading: false,
     });
 
-    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
 
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
     fireEvent.click(saveButton);
@@ -207,7 +207,7 @@ describe('ProfileForm', () => {
       isLoading: false,
     });
 
-    render(<MemoryRouter><ProfileForm /></MemoryRouter>);
+    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
 
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
     fireEvent.click(saveButton);

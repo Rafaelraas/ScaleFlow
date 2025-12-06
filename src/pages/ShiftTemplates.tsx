@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ShiftTemplateForm from "@/components/ShiftTemplateForm";
@@ -55,7 +55,7 @@ const ShiftTemplates = () => {
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-  const fetchShiftTemplates = async () => {
+  const fetchShiftTemplates = useCallback(async () => {
     if (!userProfile?.company_id || userRole !== 'manager') {
       setLoadingTemplates(false);
       return;
@@ -97,13 +97,13 @@ const ShiftTemplates = () => {
       setTemplates(formattedTemplates as ShiftTemplate[] || []);
     }
     setLoadingTemplates(false);
-  };
+  }, [userProfile?.company_id, userRole, currentPage]);
 
   useEffect(() => {
     if (!isLoading) {
       fetchShiftTemplates();
     }
-  }, [userProfile?.company_id, userRole, isLoading, currentPage]);
+  }, [isLoading, fetchShiftTemplates]);
 
   const handleFormSuccess = () => {
     setIsCreateDialogOpen(false);
