@@ -5,7 +5,7 @@ import { useSession } from "@/providers/SessionContextProvider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client.ts";
 import { showError } from "@/utils/toast";
 import { format, isFuture, parseISO } from "date-fns";
 import { Badge } from "@/components/ui/badge";

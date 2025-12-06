@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import CompanySettingsForm from "@/components/CompanySettingsForm";
 import { useSession } from "@/providers/SessionContextProvider";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client.ts";
 import { showError } from "@/utils/toast";
 
 const CompanySettings = () => {

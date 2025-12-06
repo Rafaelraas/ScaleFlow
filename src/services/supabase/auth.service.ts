@@ -3,7 +3,7 @@
  * Handles user authentication operations
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client.ts';
 import type { AuthError, Session, User } from '@supabase/supabase-js';
 
 export interface SignUpData {

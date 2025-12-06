@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client.ts";
 import { useSession } from "@/providers/SessionContextProvider";
 import { showError, showSuccess } from "@/utils/toast";
 import { useRoles } from "@/hooks/useRoles";

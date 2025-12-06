@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vite
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import CreateCompany from './CreateCompany';
 import { useSession } from '@/providers/SessionContextProvider';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client.ts';
 import { showSuccess, showError } from '@/utils/toast';
 import { MemoryRouter } from 'react-router-dom';
 
