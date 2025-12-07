@@ -34,7 +34,8 @@ Welcome to the ScaleFlow documentation! This index provides an overview of all a
 
 | File | Description | Audience |
 |------|-------------|----------|
-| [.cursorrules](../.cursorrules) | AI-assisted development rules | AI Agents, Developers |
+| [.github/copilot-instructions.md](../.github/copilot-instructions.md) | **GitHub Copilot coding agent instructions** | **GitHub Copilot, AI Agents** |
+| [.cursorrules](../.cursorrules) | AI-assisted development rules for Cursor IDE | AI Agents, Developers |
 | [AI_RULES.md](../AI_RULES.md) | Tech stack and development rules | AI Agents |
 | [MCP_SETUP.md](./MCP_SETUP.md) | **🆕 Model Context Protocol setup guide** | **AI Agents, Developers** |
 | [.mcp/config.json](../.mcp/config.json) | **🆕 MCP servers configuration** | **AI Agents** |
