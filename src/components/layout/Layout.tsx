@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Navbar } from "./Navbar";
-import { Sidebar } from "./Sidebar";
-import { useIsMobile } from "@/hooks/use-mobile";
+import React from 'react';
+import { Navbar } from './Navbar';
+import { Sidebar } from './Sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,9 +17,7 @@ export const Layout = ({ children }: LayoutProps) => {
       <Navbar />
       <div className="flex flex-1">
         {!isMobile && <Sidebar />}
-        <main className="flex-1 p-6 overflow-auto bg-background">
-          {children}
-        </main>
+        <main className="flex-1 p-6 overflow-auto bg-background">{children}</main>
       </div>
     </div>
   );

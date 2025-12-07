@@ -1,6 +1,6 @@
 /**
  * Swap Requests API
- * 
+ *
  * Typed API layer for shift swap request operations.
  * All operations enforce RLS policies defined in the database.
  */
@@ -15,13 +15,15 @@ import { SwapRequest } from '@/types/database';
 export async function getMySwapRequests() {
   const { data, error } = await supabase
     .from('swap_requests')
-    .select(`
+    .select(
+      `
       *,
       shift:shifts(*),
       requester:profiles!swap_requests_requester_id_fkey(first_name, last_name),
       target:profiles!swap_requests_target_id_fkey(first_name, last_name),
       requested_shift:shifts!swap_requests_requested_shift_id_fkey(*)
-    `)
+    `
+    )
     .order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -35,13 +37,15 @@ export async function getMySwapRequests() {
 export async function getCompanySwapRequests() {
   const { data, error } = await supabase
     .from('swap_requests')
-    .select(`
+    .select(
+      `
       *,
       shift:shifts(*),
       requester:profiles!swap_requests_requester_id_fkey(first_name, last_name),
       target:profiles!swap_requests_target_id_fkey(first_name, last_name),
       requested_shift:shifts!swap_requests_requested_shift_id_fkey(*)
-    `)
+    `
+    )
     .order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -55,13 +59,15 @@ export async function getCompanySwapRequests() {
 export async function getSwapRequestById(swapRequestId: string) {
   const { data, error } = await supabase
     .from('swap_requests')
-    .select(`
+    .select(
+      `
       *,
       shift:shifts(*),
       requester:profiles!swap_requests_requester_id_fkey(first_name, last_name),
       target:profiles!swap_requests_target_id_fkey(first_name, last_name),
       requested_shift:shifts!swap_requests_requested_shift_id_fkey(*)
-    `)
+    `
+    )
     .eq('id', swapRequestId)
     .single();
 
@@ -154,10 +160,7 @@ export async function rejectSwapRequest(swapRequestId: string, managerId: string
  * Recommendation: Add RLS policy or use status update ('cancelled') instead of delete.
  */
 export async function deleteSwapRequest(swapRequestId: string) {
-  const { error } = await supabase
-    .from('swap_requests')
-    .delete()
-    .eq('id', swapRequestId);
+  const { error } = await supabase.from('swap_requests').delete().eq('id', swapRequestId);
 
   if (error) throw error;
 }

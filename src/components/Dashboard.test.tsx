@@ -3,10 +3,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Dashboard from '../pages/Dashboard';
-import { useSession } from '@/providers/SessionContextProvider';
+import { useSession } from '@/hooks/useSession';
 
 // Mock useSession
-vi.mock('@/providers/SessionContextProvider', () => ({
+vi.mock('@/hooks/useSession', () => ({
   useSession: vi.fn(),
 }));
 
@@ -123,9 +123,12 @@ describe('Dashboard', () => {
     renderDashboard();
 
     // The component will eventually show welcome message after data loads
-    await waitFor(() => {
-      expect(screen.getByText('Welcome, Manager!')).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Welcome, Manager!')).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('should eventually render welcome message for employee', async () => {
@@ -144,9 +147,12 @@ describe('Dashboard', () => {
 
     renderDashboard();
 
-    await waitFor(() => {
-      expect(screen.getByText('Welcome, Employee!')).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Welcome, Employee!')).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('should eventually render welcome message for system admin', async () => {
@@ -165,9 +171,12 @@ describe('Dashboard', () => {
 
     renderDashboard();
 
-    await waitFor(() => {
-      expect(screen.getByText('Welcome, Admin!')).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Welcome, Admin!')).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('should display email if first name is not available', async () => {
@@ -186,8 +195,11 @@ describe('Dashboard', () => {
 
     renderDashboard();
 
-    await waitFor(() => {
-      expect(screen.getByText('Welcome, john@test.com!')).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Welcome, john@test.com!')).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 });

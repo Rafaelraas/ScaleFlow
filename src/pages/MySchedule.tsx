@@ -1,12 +1,20 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { useSession } from "@/providers/SessionContextProvider";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError } from "@/utils/toast";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { format } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSession } from '@/hooks/useSession';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError } from '@/utils/toast';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { format } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
 
 interface Shift {
   id: string;
@@ -39,7 +47,7 @@ const MySchedule = () => {
       .order('start_time', { ascending: true });
 
     if (error) {
-      showError("Failed to fetch your shifts: " + error.message);
+      showError('Failed to fetch your shifts: ' + error.message);
       setMyShifts([]);
     } else {
       setMyShifts(data || []);
@@ -84,17 +92,27 @@ const MySchedule = () => {
             <TableBody>
               {[...Array(5)].map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[150px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[150px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[80px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[200px]" />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
       ) : myShifts.length === 0 ? (
-        <p className="text-center text-gray-500">You currently have no published shifts assigned.</p>
+        <p className="text-center text-gray-500">
+          You currently have no published shifts assigned.
+        </p>
       ) : (
         <div className="rounded-md border">
           <Table>

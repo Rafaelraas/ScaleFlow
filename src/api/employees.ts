@@ -1,9 +1,9 @@
 /**
  * Employees API
- * 
+ *
  * Typed API layer for employee management operations.
  * All operations enforce RLS policies defined in the database.
- * 
+ *
  * Note: This is essentially a wrapper around profiles API with
  * manager-specific operations.
  */
@@ -92,20 +92,22 @@ export async function getEmployeesByRole(roleName: string) {
  * This is a convenience function that aggregates employee data
  */
 export async function getEmployeeStatistics() {
-  const { data: employees, error } = await supabase
-    .from('profiles')
-    .select('*, roles(name)');
+  const { data: employees, error } = await supabase.from('profiles').select('*, roles(name)');
 
   if (error) throw error;
 
   // Aggregate statistics
   const stats = {
     total: employees?.length || 0,
-    byRole: employees?.reduce((acc, emp) => {
-      const roleName = (emp.roles as { name: string } | null)?.name || 'unknown';
-      acc[roleName] = (acc[roleName] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>) || {},
+    byRole:
+      employees?.reduce(
+        (acc, emp) => {
+          const roleName = (emp.roles as { name: string } | null)?.name || 'unknown';
+          acc[roleName] = (acc[roleName] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ) || {},
   };
 
   return stats;

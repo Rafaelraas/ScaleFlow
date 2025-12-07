@@ -1,6 +1,6 @@
 /**
  * Role Type Definitions
- * 
+ *
  * Centralized role definitions to maintain consistency between
  * frontend routing and backend RLS policies.
  */

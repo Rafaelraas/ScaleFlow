@@ -1,6 +1,6 @@
 /**
  * Database type definitions for ScaleFlow
- * 
+ *
  * These types represent the database schema and provide type safety
  * for Supabase queries throughout the application.
  */

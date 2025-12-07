@@ -1,6 +1,6 @@
 /**
  * Preferences API
- * 
+ *
  * Typed API layer for employee preference operations.
  * All operations enforce RLS policies defined in the database.
  */
@@ -118,10 +118,7 @@ export async function rejectPreference(preferenceId: string) {
  * RLS Policy: employees can delete their own preferences
  */
 export async function deletePreference(preferenceId: string) {
-  const { error } = await supabase
-    .from('preferences')
-    .delete()
-    .eq('id', preferenceId);
+  const { error } = await supabase.from('preferences').delete().eq('id', preferenceId);
 
   if (error) throw error;
 }

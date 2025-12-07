@@ -1,15 +1,29 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { useSession } from "@/providers/SessionContextProvider";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError, showSuccess } from "@/utils/toast";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import InviteEmployeeForm from "@/components/InviteEmployeeForm";
-import EditEmployeeForm from "@/components/EditEmployeeForm"; // Import the new form
-import { Edit, Trash2 } from "lucide-react";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSession } from '@/hooks/useSession';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError, showSuccess } from '@/utils/toast';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import InviteEmployeeForm from '@/components/InviteEmployeeForm';
+import EditEmployeeForm from '@/components/EditEmployeeForm'; // Import the new form
+import { Edit, Trash2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,8 +34,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@/components/ui/alert-dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Pagination,
   PaginationContent,
@@ -30,7 +44,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
 
 interface EmployeeProfile {
   id: string;
@@ -61,7 +75,7 @@ const Employees = () => {
     }
 
     setLoadingEmployees(true);
-    
+
     const from = (currentPage - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
@@ -76,25 +90,25 @@ const Employees = () => {
         .select('id, first_name, last_name, role_id, roles(name)')
         .eq('company_id', userProfile.company_id)
         .order('last_name', { ascending: true })
-        .range(from, to)
+        .range(from, to),
     ]);
 
     if (countResult.error) {
-      showError("Failed to fetch employee count: " + countResult.error.message);
+      showError('Failed to fetch employee count: ' + countResult.error.message);
     } else {
       setTotalCount(countResult.count || 0);
     }
 
     if (dataResult.error) {
-      showError("Failed to fetch employees: " + dataResult.error.message);
+      showError('Failed to fetch employees: ' + dataResult.error.message);
       setEmployees([]);
     } else {
       // Map to ensure roles is a single object
-      const formattedEmployees = (dataResult.data || []).map(emp => ({
+      const formattedEmployees = (dataResult.data || []).map((emp) => ({
         ...emp,
         roles: emp.roles?.[0] || null,
       }));
-      setEmployees(formattedEmployees as EmployeeProfile[] || []);
+      setEmployees((formattedEmployees as EmployeeProfile[]) || []);
     }
     setLoadingEmployees(false);
   }, [userProfile?.company_id, userRole, currentPage]);
@@ -130,7 +144,7 @@ const Employees = () => {
       .eq('id', employeeId);
 
     if (error) {
-      showError("Failed to remove employee: " + error.message);
+      showError('Failed to remove employee: ' + error.message);
     } else {
       showSuccess(`${employeeName} has been removed from the company.`);
       fetchEmployees(); // Re-fetch employees after removal
@@ -162,7 +176,10 @@ const Employees = () => {
             <DialogHeader>
               <DialogTitle>Invite New Employee</DialogTitle>
             </DialogHeader>
-            <InviteEmployeeForm onSuccess={handleInviteSuccess} onCancel={() => setIsInviteDialogOpen(false)} />
+            <InviteEmployeeForm
+              onSuccess={handleInviteSuccess}
+              onCancel={() => setIsInviteDialogOpen(false)}
+            />
           </DialogContent>
         </Dialog>
       </div>
@@ -181,8 +198,12 @@ const Employees = () => {
             <TableBody>
               {[...Array(5)].map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
                       <Skeleton className="h-8 w-8" />
@@ -195,7 +216,9 @@ const Employees = () => {
           </Table>
         </div>
       ) : employees.length === 0 ? (
-        <p className="text-center text-gray-500">No employees found for your company. Invite some to get started!</p>
+        <p className="text-center text-gray-500">
+          No employees found for your company. Invite some to get started!
+        </p>
       ) : (
         <div className="rounded-md border">
           <Table>
@@ -210,7 +233,9 @@ const Employees = () => {
             <TableBody>
               {employees.map((employee) => (
                 <TableRow key={employee.id}>
-                  <TableCell>{employee.first_name} {employee.last_name}</TableCell>
+                  <TableCell>
+                    {employee.first_name} {employee.last_name}
+                  </TableCell>
                   <TableCell>{employee.roles ? employee.roles.name : 'N/A'}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
@@ -219,7 +244,11 @@ const Employees = () => {
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
@@ -227,12 +256,23 @@ const Employees = () => {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action will remove {employee.first_name} {employee.last_name} from your company. They will no longer have access to company resources.
+                              This action will remove {employee.first_name} {employee.last_name}{' '}
+                              from your company. They will no longer have access to company
+                              resources.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleRemoveEmployee(employee.id, `${employee.first_name} ${employee.last_name}`)}>Remove</AlertDialogAction>
+                            <AlertDialogAction
+                              onClick={() =>
+                                handleRemoveEmployee(
+                                  employee.id,
+                                  `${employee.first_name} ${employee.last_name}`
+                                )
+                              }
+                            >
+                              Remove
+                            </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
@@ -252,8 +292,10 @@ const Employees = () => {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className={
+                    currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  }
                 />
               </PaginationItem>
               {[...Array(totalPages)].map((_, i) => {
@@ -285,14 +327,17 @@ const Employees = () => {
               })}
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  className={
+                    currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  }
                 />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
           <p className="text-center text-sm text-muted-foreground mt-2">
-            Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} employees
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
+            {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} employees
           </p>
         </div>
       )}

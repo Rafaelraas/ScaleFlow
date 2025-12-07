@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError } from "@/utils/toast";
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError } from '@/utils/toast';
 
 export interface Role {
   id: string;
@@ -30,7 +30,7 @@ export function useRoles(options: UseRolesOptions = {}) {
       const { data, error: fetchError } = await query;
 
       if (fetchError) {
-        const errorMessage = "Failed to fetch roles: " + fetchError.message;
+        const errorMessage = 'Failed to fetch roles: ' + fetchError.message;
         setError(errorMessage);
         showError(errorMessage);
       } else {

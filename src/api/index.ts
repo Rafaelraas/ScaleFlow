@@ -1,6 +1,6 @@
 /**
  * API Layer Index
- * 
+ *
  * Central export point for all typed API functions.
  * Import from '@/api' to access any API function.
  */

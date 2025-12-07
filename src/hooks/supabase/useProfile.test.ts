@@ -99,10 +99,9 @@ describe('useProfile', () => {
         .mockResolvedValueOnce({ data: mockProfile, error: null })
         .mockResolvedValueOnce({ data: secondProfile, error: null });
 
-      const { result, rerender } = renderHook(
-        ({ userId }) => useProfile(userId),
-        { initialProps: { userId: mockUserId } }
-      );
+      const { result, rerender } = renderHook(({ userId }) => useProfile(userId), {
+        initialProps: { userId: mockUserId },
+      });
 
       await waitFor(() => {
         expect(result.current.profile).toEqual(mockProfile);

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { SessionContextProvider, useSession } from './SessionContextProvider';
+import { SessionContextProvider } from './SessionContextProvider';
+import { useSession } from '@/hooks/useSession';
 import { supabase } from '@/integrations/supabase/client.ts';
 import { showError, showSuccess } from '@/utils/toast';
 import { MemoryRouter } from 'react-router-dom';
@@ -29,15 +30,17 @@ const mockShowSuccess = showSuccess as Mock;
 // Test component that uses the useSession hook
 const TestComponent = () => {
   const { session, userProfile, userRole, isLoading } = useSession();
-  
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  
+
   return (
     <div>
       <div data-testid="session-status">{session ? 'Authenticated' : 'Not Authenticated'}</div>
-      <div data-testid="user-profile">{userProfile ? JSON.stringify(userProfile) : 'No Profile'}</div>
+      <div data-testid="user-profile">
+        {userProfile ? JSON.stringify(userProfile) : 'No Profile'}
+      </div>
       <div data-testid="user-role">{userRole || 'No Role'}</div>
     </div>
   );
@@ -134,14 +137,20 @@ describe('SessionContextProvider', () => {
       );
 
       // Wait for loading to complete
-      await waitFor(() => {
-        expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
-      }, { timeout: 5000 });
+      await waitFor(
+        () => {
+          expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+        },
+        { timeout: 5000 }
+      );
 
       // Verify error was shown after retries
-      await waitFor(() => {
-        expect(mockShowError).toHaveBeenCalledWith('Failed to load user profile.');
-      }, { timeout: 5000 });
+      await waitFor(
+        () => {
+          expect(mockShowError).toHaveBeenCalledWith('Failed to load user profile.');
+        },
+        { timeout: 5000 }
+      );
 
       // Verify profile is null
       expect(screen.getByTestId('user-profile')).toHaveTextContent('No Profile');
@@ -172,14 +181,20 @@ describe('SessionContextProvider', () => {
       );
 
       // Wait for loading to complete (including retries)
-      await waitFor(() => {
-        expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
-      }, { timeout: 5000 });
+      await waitFor(
+        () => {
+          expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+        },
+        { timeout: 5000 }
+      );
 
       // Verify error was shown after retries
-      await waitFor(() => {
-        expect(mockShowError).toHaveBeenCalledWith('Failed to load user profile.');
-      }, { timeout: 5000 });
+      await waitFor(
+        () => {
+          expect(mockShowError).toHaveBeenCalledWith('Failed to load user profile.');
+        },
+        { timeout: 5000 }
+      );
     });
 
     it('should handle missing role data gracefully', async () => {
@@ -256,15 +271,18 @@ describe('SessionContextProvider', () => {
       );
 
       // Wait for loading to complete (including retry)
-      await waitFor(() => {
-        expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
-      }, { timeout: 5000 });
+      await waitFor(
+        () => {
+          expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+        },
+        { timeout: 5000 }
+      );
 
       // Verify profile was fetched successfully after retry
       expect(screen.getByTestId('session-status')).toHaveTextContent('Authenticated');
       expect(screen.getByTestId('user-role')).toHaveTextContent('employee');
       expect(mockShowError).not.toHaveBeenCalled();
-      
+
       // Verify it was called twice (initial + 1 retry)
       expect(mockSingle).toHaveBeenCalledTimes(2);
     });
@@ -278,7 +296,10 @@ describe('SessionContextProvider', () => {
       });
 
       render(
-        <MemoryRouter initialEntries={['/dashboard']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/dashboard']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <TestComponent />
           </SessionContextProvider>
@@ -298,14 +319,17 @@ describe('SessionContextProvider', () => {
 
     it('should not attempt to fetch profile when there is no session', async () => {
       const mockFrom = supabase.from as Mock;
-      
+
       // Mock no session
       (supabase.auth.getSession as Mock).mockResolvedValue({
         data: { session: null },
       });
 
       render(
-        <MemoryRouter initialEntries={['/dashboard']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/dashboard']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <TestComponent />
           </SessionContextProvider>
@@ -352,7 +376,9 @@ describe('SessionContextProvider', () => {
 
       // Wait for error to be logged
       await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching user profile:', mockError);
+        expect(consoleErrorSpy).toHaveBeenCalledWith('[ERROR] Error fetching user profile', {
+          error: mockError,
+        });
       });
 
       consoleErrorSpy.mockRestore();

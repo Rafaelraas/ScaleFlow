@@ -1,14 +1,10 @@
-import { format, setHours, setMinutes } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { format, setHours, setMinutes } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 interface DateTimePickerProps {
   value?: Date;
@@ -19,7 +15,7 @@ interface DateTimePickerProps {
 export function DateTimePicker({
   value,
   onChange,
-  placeholder = "Pick a date and time",
+  placeholder = 'Pick a date and time',
 }: DateTimePickerProps) {
   return (
     <Popover>
@@ -27,12 +23,12 @@ export function DateTimePicker({
         <Button
           variant="outline"
           className={cn(
-            "w-full justify-start text-left font-normal",
-            !value && "text-muted-foreground"
+            'w-full justify-start text-left font-normal',
+            !value && 'text-muted-foreground'
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {value ? format(value, "PPP HH:mm") : <span>{placeholder}</span>}
+          {value ? format(value, 'PPP HH:mm') : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
@@ -54,9 +50,9 @@ export function DateTimePicker({
         <div className="p-3 border-t">
           <Input
             type="time"
-            value={value ? format(value, "HH:mm") : ""}
+            value={value ? format(value, 'HH:mm') : ''}
             onChange={(e) => {
-              const [hours, minutes] = e.target.value.split(":").map(Number);
+              const [hours, minutes] = e.target.value.split(':').map(Number);
               const newDate = new Date(value || new Date());
               newDate.setHours(hours, minutes);
               onChange(newDate);

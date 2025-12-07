@@ -2,10 +2,10 @@ import { describe, it, expect, vi, type Mock } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
-import { useSession } from '@/providers/SessionContextProvider';
+import { useSession } from '@/hooks/useSession';
 
 // Mock do useSession
-vi.mock('@/providers/SessionContextProvider', () => ({
+vi.mock('@/hooks/useSession', () => ({
   useSession: vi.fn(),
 }));
 
@@ -65,7 +65,7 @@ describe('Sidebar', () => {
     expect(screen.getByText('Profile Settings')).toBeInTheDocument();
     expect(screen.getByText('Company Settings')).toBeInTheDocument();
     expect(screen.queryByText('Admin Companies')).not.toBeInTheDocument(); // Admin specific
-    expect(screen.queryByText('Admin Users')).not.toBeInTheDocument();     // Admin specific
+    expect(screen.queryByText('Admin Users')).not.toBeInTheDocument(); // Admin specific
   });
 
   it('should render correct navigation items for an employee', () => {

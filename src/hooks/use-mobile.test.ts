@@ -20,7 +20,10 @@ describe('useIsMobile', () => {
   beforeEach(() => {
     // Reset mocks before each test
     matchMediaMock = createMatchMedia(1024); // Default to desktop
-    vi.stubGlobal('matchMedia', vi.fn(() => matchMediaMock));
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => matchMediaMock)
+    );
     vi.stubGlobal('innerWidth', 1024); // Default window width
   });
 
@@ -36,7 +39,10 @@ describe('useIsMobile', () => {
   it('should return true for mobile width initially', () => {
     vi.stubGlobal('innerWidth', 375);
     matchMediaMock = createMatchMedia(375);
-    vi.stubGlobal('matchMedia', vi.fn(() => matchMediaMock));
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => matchMediaMock)
+    );
 
     const { result } = renderHook(() => useIsMobile());
     expect(result.current).toBe(true);
@@ -60,7 +66,10 @@ describe('useIsMobile', () => {
   it('should update isMobile when window resizes to desktop', () => {
     vi.stubGlobal('innerWidth', 375);
     matchMediaMock = createMatchMedia(375);
-    vi.stubGlobal('matchMedia', vi.fn(() => matchMediaMock));
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => matchMediaMock)
+    );
 
     const { result } = renderHook(() => useIsMobile());
     expect(result.current).toBe(true); // Initial mobile

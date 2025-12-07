@@ -1,14 +1,29 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import InitiateSwapForm from "@/components/InitiateSwapForm";
-import { useSession } from "@/providers/SessionContextProvider";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError, showSuccess } from "@/utils/toast";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { format } from "date-fns";
+import React, { useState, useEffect, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import InitiateSwapForm from '@/components/InitiateSwapForm';
+import { useSession } from '@/hooks/useSession';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError, showSuccess } from '@/utils/toast';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { logger } from '@/utils/logger';
+import { format } from 'date-fns';
 
 interface ShiftDetails {
   id: string;
@@ -32,7 +47,7 @@ interface SwapRequest {
   status: string;
   request_notes: string | null;
   created_at: string;
-  
+
   // Joined data - Corrected to single objects
   requested_shift: ShiftDetails | null;
   target_shift: ShiftDetails | null;
@@ -55,7 +70,8 @@ const SwapRequests = () => {
     setLoadingRequests(true);
     let query = supabase
       .from('swap_requests')
-      .select(`
+      .select(
+        `
         id,
         requesting_employee_id,
         requested_shift_id,
@@ -68,36 +84,43 @@ const SwapRequests = () => {
         target_shift:shifts!target_shift_id (id, start_time, end_time, roles(name)),
         requesting_employee:profiles!requesting_employee_id (id, first_name, last_name),
         target_employee:profiles!target_employee_id (id, first_name, last_name)
-      `)
+      `
+      )
       .eq('company_id', userProfile.company_id)
       .order('created_at', { ascending: false });
 
     if (userRole === 'employee') {
-      query = query.or(`requesting_employee_id.eq.${session.user.id},target_employee_id.eq.${session.user.id}`);
+      query = query.or(
+        `requesting_employee_id.eq.${session.user.id},target_employee_id.eq.${session.user.id}`
+      );
     }
     // Managers see all requests for their company, which is covered by the initial .eq('company_id')
 
     const { data, error } = await query;
 
     if (error) {
-      showError("Failed to fetch swap requests: " + error.message);
+      showError('Failed to fetch swap requests: ' + error.message);
       setSwapRequests([]);
     } else {
       // Map to ensure nested relations are single objects, not arrays
-      const formattedSwaps = (data || []).map(req => ({
+      const formattedSwaps = (data || []).map((req) => ({
         ...req,
-        requested_shift: req.requested_shift?.[0] ? {
-          ...req.requested_shift[0],
-          roles: req.requested_shift[0].roles?.[0] || null,
-        } : null,
-        target_shift: req.target_shift?.[0] ? {
-          ...req.target_shift[0],
-          roles: req.target_shift[0].roles?.[0] || null,
-        } : null,
+        requested_shift: req.requested_shift?.[0]
+          ? {
+              ...req.requested_shift[0],
+              roles: req.requested_shift[0].roles?.[0] || null,
+            }
+          : null,
+        target_shift: req.target_shift?.[0]
+          ? {
+              ...req.target_shift[0],
+              roles: req.target_shift[0].roles?.[0] || null,
+            }
+          : null,
         requesting_employee: req.requesting_employee?.[0] || null,
         target_employee: req.target_employee?.[0] || null,
       }));
-      setSwapRequests(formattedSwaps as SwapRequest[] || []);
+      setSwapRequests((formattedSwaps as SwapRequest[]) || []);
     }
     setLoadingRequests(false);
   }, [session?.user?.id, userRole, userProfile?.company_id]);
@@ -115,7 +138,7 @@ const SwapRequests = () => {
 
   const handleApproveSwap = async (request: SwapRequest) => {
     if (!request.requested_shift || !request.requesting_employee) {
-      showError("Missing shift or employee data for approval.");
+      showError('Missing shift or employee data for approval.');
       return;
     }
 
@@ -158,12 +181,12 @@ const SwapRequests = () => {
         if (res.error) throw new Error(res.error.message);
       }
 
-      showSuccess("Shift swap approved and shifts updated!");
+      showSuccess('Shift swap approved and shifts updated!');
       fetchSwapRequests(); // Re-fetch to update UI
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error approving swap:", errorMessage);
-      showError("Failed to approve swap: " + errorMessage);
+      logger.error('Error approving swap', { error: errorMessage });
+      showError('Failed to approve swap: ' + errorMessage);
     }
   };
 
@@ -176,12 +199,12 @@ const SwapRequests = () => {
 
       if (error) throw new Error(error.message);
 
-      showSuccess("Shift swap denied.");
+      showSuccess('Shift swap denied.');
       fetchSwapRequests(); // Re-fetch to update UI
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error denying swap:", errorMessage);
-      showError("Failed to deny swap: " + errorMessage);
+      logger.error('Error denying swap', { error: errorMessage });
+      showError('Failed to deny swap: ' + errorMessage);
     }
   };
 
@@ -215,7 +238,10 @@ const SwapRequests = () => {
               <DialogHeader>
                 <DialogTitle>Initiate New Shift Swap</DialogTitle>
               </DialogHeader>
-              <InitiateSwapForm onSuccess={handleInitiateSwapSuccess} onCancel={() => setIsInitiateSwapDialogOpen(false)} />
+              <InitiateSwapForm
+                onSuccess={handleInitiateSwapSuccess}
+                onCancel={() => setIsInitiateSwapDialogOpen(false)}
+              />
             </DialogContent>
           </Dialog>
         )}
@@ -244,30 +270,78 @@ const SwapRequests = () => {
               {swapRequests.map((request) => (
                 <TableRow key={request.id}>
                   <TableCell>{getShiftDisplay(request.requested_shift)}</TableCell>
-                  <TableCell>{request.target_shift ? getShiftDisplay(request.target_shift) : 'Open Request'}</TableCell>
+                  <TableCell>
+                    {request.target_shift ? getShiftDisplay(request.target_shift) : 'Open Request'}
+                  </TableCell>
                   <TableCell>{getEmployeeName(request.requesting_employee)}</TableCell>
-                  <TableCell>{request.target_employee ? getEmployeeName(request.target_employee) : 'Open'}</TableCell>
+                  <TableCell>
+                    {request.target_employee ? getEmployeeName(request.target_employee) : 'Open'}
+                  </TableCell>
                   <TableCell>{request.status.replace(/_/g, ' ')}</TableCell>
-                  <TableCell className="max-w-[150px] truncate">{request.request_notes || '-'}</TableCell>
+                  <TableCell className="max-w-[150px] truncate">
+                    {request.request_notes || '-'}
+                  </TableCell>
                   <TableCell className="flex space-x-2">
                     {userRole === 'manager' && request.status === 'pending_manager_approval' && (
                       <>
-                        <Button variant="outline" size="sm" onClick={() => handleApproveSwap(request)}>Approve</Button>
-                        <Button variant="destructive" size="sm" onClick={() => handleDenySwap(request.id)}>Deny</Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleApproveSwap(request)}
+                        >
+                          Approve
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDenySwap(request.id)}
+                        >
+                          Deny
+                        </Button>
                       </>
                     )}
-                    {userRole === 'employee' && request.target_employee_id === session?.user?.id && request.status === 'pending_employee_approval' && (
-                      <>
-                        <Button variant="outline" size="sm" onClick={() => handleApproveSwap(request)}>Accept</Button>
-                        <Button variant="destructive" size="sm" onClick={() => handleDenySwap(request.id)}>Decline</Button>
-                      </>
-                    )}
-                    {userRole === 'employee' && request.requesting_employee_id === session?.user?.id && request.status === 'pending_employee_approval' && (
-                      <Button variant="destructive" size="sm" onClick={() => handleDenySwap(request.id)}>Cancel</Button>
-                    )}
-                    {userRole === 'employee' && request.requesting_employee_id === session?.user?.id && request.status === 'pending_manager_approval' && (
-                      <Button variant="destructive" size="sm" onClick={() => handleDenySwap(request.id)}>Cancel</Button>
-                    )}
+                    {userRole === 'employee' &&
+                      request.target_employee_id === session?.user?.id &&
+                      request.status === 'pending_employee_approval' && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleApproveSwap(request)}
+                          >
+                            Accept
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDenySwap(request.id)}
+                          >
+                            Decline
+                          </Button>
+                        </>
+                      )}
+                    {userRole === 'employee' &&
+                      request.requesting_employee_id === session?.user?.id &&
+                      request.status === 'pending_employee_approval' && (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDenySwap(request.id)}
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                    {userRole === 'employee' &&
+                      request.requesting_employee_id === session?.user?.id &&
+                      request.status === 'pending_manager_approval' && (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDenySwap(request.id)}
+                        >
+                          Cancel
+                        </Button>
+                      )}
                   </TableCell>
                 </TableRow>
               ))}

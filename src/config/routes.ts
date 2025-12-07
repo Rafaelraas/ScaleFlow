@@ -1,12 +1,12 @@
 /**
  * Route Configuration
- * 
+ *
  * Centralized route definitions that specify:
  * - Path
  * - Required roles
  * - Company requirement
  * - Route metadata
- * 
+ *
  * This configuration serves as a contract between frontend routing
  * and backend RLS policies.
  */
@@ -16,25 +16,31 @@ import { UserRole } from '@/types/roles';
 export interface RouteConfig {
   /** Route path */
   path: string;
-  
+
   /** Human-readable name for documentation */
   name: string;
-  
+
   /** Description of what this route does */
   description: string;
-  
+
   /** Roles allowed to access this route */
   allowedRoles?: UserRole[];
-  
+
   /** Whether the route requires a company_id */
   requiresCompany?: boolean;
-  
+
   /** Whether authentication is required */
   requiresAuth: boolean;
-  
+
   /** Category for grouping routes */
-  category: 'public' | 'auth_flow' | 'generic_protected' | 'manager_only' | 'employee_only' | 'system_admin';
-  
+  category:
+    | 'public'
+    | 'auth_flow'
+    | 'generic_protected'
+    | 'manager_only'
+    | 'employee_only'
+    | 'system_admin';
+
   /** Supabase tables accessed by this route */
   tablesAccessed?: string[];
 }
@@ -260,40 +266,35 @@ export const ALL_ROUTES: RouteConfig[] = [
  * Get route configuration by path
  */
 export function getRouteConfig(path: string): RouteConfig | undefined {
-  return ALL_ROUTES.find(route => route.path === path);
+  return ALL_ROUTES.find((route) => route.path === path);
 }
 
 /**
  * Check if a path is a public route
  */
 export function isPublicRoute(path: string): boolean {
-  return PUBLIC_ROUTES.some(route => route.path === path);
+  return PUBLIC_ROUTES.some((route) => route.path === path);
 }
 
 /**
  * Check if a path is an auth flow route
  */
 export function isAuthFlowRoute(path: string): boolean {
-  return AUTH_FLOW_ROUTES.some(route => route.path === path);
+  return AUTH_FLOW_ROUTES.some((route) => route.path === path);
 }
 
 /**
  * Get all paths that don't require authentication
  */
 export function getUnauthenticatedPaths(): string[] {
-  return ALL_ROUTES
-    .filter(route => !route.requiresAuth)
-    .map(route => route.path);
+  return ALL_ROUTES.filter((route) => !route.requiresAuth).map((route) => route.path);
 }
 
 /**
  * Get all paths for a specific role
  */
 export function getPathsForRole(role: UserRole): string[] {
-  return ALL_ROUTES
-    .filter(route => 
-      !route.allowedRoles || 
-      route.allowedRoles.includes(role)
-    )
-    .map(route => route.path);
+  return ALL_ROUTES.filter((route) => !route.allowedRoles || route.allowedRoles.includes(role)).map(
+    (route) => route.path
+  );
 }

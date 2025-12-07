@@ -1,20 +1,22 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLocation } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useLocation } from 'react-router-dom';
 
 const Verify = () => {
   const location = useLocation();
-  const [initialView, setInitialView] = React.useState<'sign_in' | 'update_password' | 'forgotten_password' | 'magic_link' | 'verify_otp'>('sign_in');
+  const [initialView, setInitialView] = React.useState<
+    'sign_in' | 'update_password' | 'forgotten_password' | 'magic_link' | 'verify_otp'
+  >('sign_in');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const hashParams = new URLSearchParams(location.hash.substring(1));
-    
+
     const authFlowType = urlParams.get('type') || hashParams.get('type');
 
     // Determine the initial view based on the URL parameters

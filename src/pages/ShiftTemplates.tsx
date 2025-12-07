@@ -1,14 +1,28 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import ShiftTemplateForm from "@/components/ShiftTemplateForm";
-import { useSession } from "@/providers/SessionContextProvider";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError, showSuccess } from "@/utils/toast";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Edit, Trash2 } from "lucide-react";
+import React, { useState, useEffect, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import ShiftTemplateForm from '@/components/ShiftTemplateForm';
+import { useSession } from '@/hooks/useSession';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError, showSuccess } from '@/utils/toast';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Edit, Trash2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,8 +33,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@/components/ui/alert-dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Pagination,
   PaginationContent,
@@ -29,7 +43,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
 
 interface ShiftTemplate {
   id: string;
@@ -77,24 +91,24 @@ const ShiftTemplates = () => {
         .select('*, roles(name)')
         .eq('company_id', userProfile.company_id)
         .order('name', { ascending: true })
-        .range(from, to)
+        .range(from, to),
     ]);
 
     if (countResult.error) {
-      showError("Failed to fetch template count: " + countResult.error.message);
+      showError('Failed to fetch template count: ' + countResult.error.message);
     } else {
       setTotalCount(countResult.count || 0);
     }
 
     if (dataResult.error) {
-      showError("Failed to fetch shift templates: " + dataResult.error.message);
+      showError('Failed to fetch shift templates: ' + dataResult.error.message);
       setTemplates([]);
     } else {
-      const formattedTemplates = (dataResult.data || []).map(template => ({
+      const formattedTemplates = (dataResult.data || []).map((template) => ({
         ...template,
         roles: template.roles?.[0] || null,
       }));
-      setTemplates(formattedTemplates as ShiftTemplate[] || []);
+      setTemplates((formattedTemplates as ShiftTemplate[]) || []);
     }
     setLoadingTemplates(false);
   }, [userProfile?.company_id, userRole, currentPage]);
@@ -119,15 +133,12 @@ const ShiftTemplates = () => {
   };
 
   const handleDeleteTemplate = async (templateId: string) => {
-    const { error } = await supabase
-      .from('shift_templates')
-      .delete()
-      .eq('id', templateId);
+    const { error } = await supabase.from('shift_templates').delete().eq('id', templateId);
 
     if (error) {
-      showError("Failed to delete shift template: " + error.message);
+      showError('Failed to delete shift template: ' + error.message);
     } else {
-      showSuccess("Shift template deleted successfully!");
+      showSuccess('Shift template deleted successfully!');
       fetchShiftTemplates(); // Re-fetch templates after deletion
     }
   };
@@ -157,7 +168,10 @@ const ShiftTemplates = () => {
             <DialogHeader>
               <DialogTitle>Create New Shift Template</DialogTitle>
             </DialogHeader>
-            <ShiftTemplateForm onSuccess={handleFormSuccess} onCancel={() => setIsCreateDialogOpen(false)} />
+            <ShiftTemplateForm
+              onSuccess={handleFormSuccess}
+              onCancel={() => setIsCreateDialogOpen(false)}
+            />
           </DialogContent>
         </Dialog>
       </div>
@@ -179,11 +193,21 @@ const ShiftTemplates = () => {
             <TableBody>
               {[...Array(5)].map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
                       <Skeleton className="h-8 w-8" />
@@ -196,7 +220,9 @@ const ShiftTemplates = () => {
           </Table>
         </div>
       ) : templates.length === 0 ? (
-        <p className="text-center text-gray-500">No shift templates found for your company. Create one to get started!</p>
+        <p className="text-center text-gray-500">
+          No shift templates found for your company. Create one to get started!
+        </p>
       ) : (
         <div className="rounded-md border">
           <Table>
@@ -218,7 +244,9 @@ const ShiftTemplates = () => {
                   <TableCell>{template.duration_hours} hours</TableCell>
                   <TableCell>{template.default_start_time}</TableCell>
                   <TableCell>{template.roles ? template.roles.name : 'Any'}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">{template.default_notes || '-'}</TableCell>
+                  <TableCell className="max-w-[200px] truncate">
+                    {template.default_notes || '-'}
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
                       <Button variant="ghost" size="sm" onClick={() => handleEditClick(template)}>
@@ -226,7 +254,11 @@ const ShiftTemplates = () => {
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
@@ -234,12 +266,15 @@ const ShiftTemplates = () => {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the "{template.name}" shift template.
+                              This action cannot be undone. This will permanently delete the "
+                              {template.name}" shift template.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteTemplate(template.id)}>Delete</AlertDialogAction>
+                            <AlertDialogAction onClick={() => handleDeleteTemplate(template.id)}>
+                              Delete
+                            </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
@@ -259,8 +294,10 @@ const ShiftTemplates = () => {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className={
+                    currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  }
                 />
               </PaginationItem>
               {[...Array(totalPages)].map((_, i) => {
@@ -292,14 +329,17 @@ const ShiftTemplates = () => {
               })}
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  className={
+                    currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  }
                 />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
           <p className="text-center text-sm text-muted-foreground mt-2">
-            Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} templates
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
+            {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} templates
           </p>
         </div>
       )}

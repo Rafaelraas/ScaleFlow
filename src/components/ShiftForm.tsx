@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { addHours } from "date-fns";
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { addHours } from 'date-fns';
 
-import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { DateTimePicker } from '@/components/ui/date-time-picker';
 
 interface Employee {
   id: string;
@@ -18,7 +18,7 @@ interface Role {
   id: string;
   name: string;
 }
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -26,27 +26,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { useSession } from "@/providers/SessionContextProvider";
-import { showError, showSuccess } from "@/utils/toast";
+} from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { useSession } from '@/hooks/useSession';
+import { showError, showSuccess } from '@/utils/toast';
 
 const formSchema = z.object({
   start_time: z.date({
-    required_error: "Start time is required.",
+    required_error: 'Start time is required.',
   }),
   end_time: z.date({
-    required_error: "End time is required.",
+    required_error: 'End time is required.',
   }),
   employee_id: z.string().uuid().nullable().optional(),
   role_id: z.string().uuid().nullable().optional(),
@@ -91,7 +91,7 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
       end_time: initialData ? new Date(initialData.end_time) : undefined,
       employee_id: initialData?.employee_id || undefined,
       role_id: initialData?.role_id || undefined,
-      notes: initialData?.notes || "",
+      notes: initialData?.notes || '',
       published: initialData?.published || false,
     },
   });
@@ -99,7 +99,7 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
   useEffect(() => {
     const fetchTemplates = async () => {
       if (!userProfile?.company_id) {
-        showError("Company ID not found for current user.");
+        showError('Company ID not found for current user.');
         setLoadingTemplates(false);
         return;
       }
@@ -112,7 +112,7 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
         .order('name', { ascending: true });
 
       if (error) {
-        showError("Failed to fetch shift templates: " + error.message);
+        showError('Failed to fetch shift templates: ' + error.message);
       } else {
         setShiftTemplates(data || []);
       }
@@ -125,20 +125,20 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
   const handleTemplateChange = (templateId: string) => {
     if (!templateId) {
       // Clear template-related fields if "No template" is selected
-      form.setValue("role_id", undefined);
-      form.setValue("notes", "");
+      form.setValue('role_id', undefined);
+      form.setValue('notes', '');
       return;
     }
 
-    const selectedTemplate = shiftTemplates.find(t => t.id === templateId);
+    const selectedTemplate = shiftTemplates.find((t) => t.id === templateId);
     if (selectedTemplate) {
       const now = new Date();
       const [hours, minutes] = selectedTemplate.default_start_time.split(':').map(Number);
-      
+
       // Set start time to today's date with template's default time
       let startTime = new Date(now);
       startTime.setHours(hours, minutes, 0, 0);
-      
+
       // If the start time is in the past, set it for tomorrow
       if (startTime < now) {
         startTime = addHours(startTime, 24);
@@ -146,16 +146,16 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
 
       const endTime = addHours(startTime, selectedTemplate.duration_hours);
 
-      form.setValue("start_time", startTime);
-      form.setValue("end_time", endTime);
-      form.setValue("role_id", selectedTemplate.default_role_id || undefined);
-      form.setValue("notes", selectedTemplate.default_notes || "");
+      form.setValue('start_time', startTime);
+      form.setValue('end_time', endTime);
+      form.setValue('role_id', selectedTemplate.default_role_id || undefined);
+      form.setValue('notes', selectedTemplate.default_notes || '');
     }
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!userProfile?.company_id) {
-      showError("Company ID not found. Cannot create/update shift.");
+      showError('Company ID not found. Cannot create/update shift.');
       return;
     }
 
@@ -174,29 +174,27 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
         .eq('id', initialData.id);
 
       if (error) {
-        showError("Failed to update shift: " + error.message);
+        showError('Failed to update shift: ' + error.message);
       } else {
-        showSuccess("Shift updated successfully!");
+        showSuccess('Shift updated successfully!');
         onSuccess();
       }
     } else {
       // Create new shift
-      const { error } = await supabase
-        .from('shifts')
-        .insert({
-          company_id: userProfile.company_id,
-          start_time: values.start_time.toISOString(),
-          end_time: values.end_time.toISOString(),
-          employee_id: values.employee_id || null,
-          role_id: values.role_id || null,
-          notes: values.notes || null,
-          published: values.published,
-        });
+      const { error } = await supabase.from('shifts').insert({
+        company_id: userProfile.company_id,
+        start_time: values.start_time.toISOString(),
+        end_time: values.end_time.toISOString(),
+        employee_id: values.employee_id || null,
+        role_id: values.role_id || null,
+        notes: values.notes || null,
+        published: values.published,
+      });
 
       if (error) {
-        showError("Failed to create shift: " + error.message);
+        showError('Failed to create shift: ' + error.message);
       } else {
-        showSuccess("Shift created successfully!");
+        showSuccess('Shift created successfully!');
         onSuccess();
       }
     }
@@ -270,7 +268,7 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Assign Employee (Optional)</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value || ""}>
+              <Select onValueChange={field.onChange} value={field.value || ''}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select an employee" />
@@ -295,7 +293,7 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Required Role (Optional)</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value || ""}>
+              <Select onValueChange={field.onChange} value={field.value || ''}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
@@ -333,15 +331,10 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>
-                  Publish Shift
-                </FormLabel>
+                <FormLabel>Publish Shift</FormLabel>
                 <p className="text-sm text-muted-foreground">
                   If checked, this shift will be visible to assigned employees.
                 </p>
@@ -354,7 +347,13 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
             Cancel
           </Button>
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? (initialData?.id ? "Updating..." : "Creating...") : (initialData?.id ? "Update Shift" : "Create Shift")}
+            {form.formState.isSubmitting
+              ? initialData?.id
+                ? 'Updating...'
+                : 'Creating...'
+              : initialData?.id
+                ? 'Update Shift'
+                : 'Create Shift'}
           </Button>
         </div>
       </form>

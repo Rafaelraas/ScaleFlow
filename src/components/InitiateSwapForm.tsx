@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,19 +13,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { useSession } from "@/providers/SessionContextProvider";
-import { showError, showSuccess } from "@/utils/toast";
-import { format } from "date-fns";
+} from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { useSession } from '@/hooks/useSession';
+import { showError, showSuccess } from '@/utils/toast';
+import { format } from 'date-fns';
 
 interface Shift {
   id: string;
@@ -40,21 +40,28 @@ interface Employee {
   last_name: string;
 }
 
-const formSchema = z.object({
-  requested_shift_id: z.string().uuid({ message: "Please select a shift you want to give away." }),
-  target_employee_id: z.string().uuid().nullable().optional(),
-  target_shift_id: z.string().uuid().nullable().optional(),
-  request_notes: z.string().max(500).optional(),
-}).refine((data) => {
-  // If a target employee is selected, a target shift must also be selected.
-  if (data.target_employee_id && !data.target_shift_id) {
-    return false;
-  }
-  return true;
-}, {
-  message: "If you select a target employee, you must also select a target shift.",
-  path: ["target_shift_id"],
-});
+const formSchema = z
+  .object({
+    requested_shift_id: z
+      .string()
+      .uuid({ message: 'Please select a shift you want to give away.' }),
+    target_employee_id: z.string().uuid().nullable().optional(),
+    target_shift_id: z.string().uuid().nullable().optional(),
+    request_notes: z.string().max(500).optional(),
+  })
+  .refine(
+    (data) => {
+      // If a target employee is selected, a target shift must also be selected.
+      if (data.target_employee_id && !data.target_shift_id) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'If you select a target employee, you must also select a target shift.',
+      path: ['target_shift_id'],
+    }
+  );
 
 interface InitiateSwapFormProps {
   onSuccess: () => void;
@@ -72,19 +79,19 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      requested_shift_id: "",
+      requested_shift_id: '',
       target_employee_id: undefined,
       target_shift_id: undefined,
-      request_notes: "",
+      request_notes: '',
     },
   });
 
-  const selectedTargetEmployeeId = form.watch("target_employee_id");
+  const selectedTargetEmployeeId = form.watch('target_employee_id');
 
   useEffect(() => {
     const fetchInitialData = async () => {
       if (!session?.user?.id || !userProfile?.company_id) {
-        showError("User not authenticated or company ID not found.");
+        showError('User not authenticated or company ID not found.');
         setLoadingData(false);
         return;
       }
@@ -100,7 +107,7 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
         .order('start_time', { ascending: true });
 
       if (myShiftsError) {
-        showError("Failed to fetch your shifts: " + myShiftsError.message);
+        showError('Failed to fetch your shifts: ' + myShiftsError.message);
       } else {
         setMyShifts(myShiftsData || []);
       }
@@ -114,7 +121,7 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
         .order('last_name', { ascending: true });
 
       if (employeesError) {
-        showError("Failed to fetch other employees: " + employeesError.message);
+        showError('Failed to fetch other employees: ' + employeesError.message);
       } else {
         setOtherEmployees(employeesData || []);
       }
@@ -143,7 +150,7 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
         }
       } else {
         setTargetEmployeeShifts([]);
-        form.setValue("target_shift_id", undefined); // Clear target shift if no employee selected
+        form.setValue('target_shift_id', undefined); // Clear target shift if no employee selected
       }
     };
 
@@ -152,28 +159,26 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!session?.user?.id || !userProfile?.company_id) {
-      showError("User not authenticated or company ID not found.");
+      showError('User not authenticated or company ID not found.');
       return;
     }
 
     setIsSubmitting(true);
 
-    const { error } = await supabase
-      .from('swap_requests')
-      .insert({
-        company_id: userProfile.company_id,
-        requesting_employee_id: session.user.id,
-        requested_shift_id: values.requested_shift_id,
-        target_employee_id: values.target_employee_id || null,
-        target_shift_id: values.target_shift_id || null,
-        request_notes: values.request_notes || null,
-        status: values.target_employee_id ? 'pending_employee_approval' : 'pending_manager_approval', // If target employee, they approve first
-      });
+    const { error } = await supabase.from('swap_requests').insert({
+      company_id: userProfile.company_id,
+      requesting_employee_id: session.user.id,
+      requested_shift_id: values.requested_shift_id,
+      target_employee_id: values.target_employee_id || null,
+      target_shift_id: values.target_shift_id || null,
+      request_notes: values.request_notes || null,
+      status: values.target_employee_id ? 'pending_employee_approval' : 'pending_manager_approval', // If target employee, they approve first
+    });
 
     if (error) {
-      showError("Failed to initiate swap request: " + error.message);
+      showError('Failed to initiate swap request: ' + error.message);
     } else {
-      showSuccess("Shift swap request initiated successfully!");
+      showSuccess('Shift swap request initiated successfully!');
       onSuccess();
     }
     setIsSubmitting(false);
@@ -200,11 +205,14 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
                 </FormControl>
                 <SelectContent>
                   {myShifts.length === 0 ? (
-                    <SelectItem value="" disabled>No shifts available to swap</SelectItem>
+                    <SelectItem value="" disabled>
+                      No shifts available to swap
+                    </SelectItem>
                   ) : (
                     myShifts.map((shift) => (
                       <SelectItem key={shift.id} value={shift.id}>
-                        {format(new Date(shift.start_time), 'MMM dd, HH:mm')} - {format(new Date(shift.end_time), 'HH:mm')} ({shift.roles?.name || 'Any'})
+                        {format(new Date(shift.start_time), 'MMM dd, HH:mm')} -{' '}
+                        {format(new Date(shift.end_time), 'HH:mm')} ({shift.roles?.name || 'Any'})
                       </SelectItem>
                     ))
                   )}
@@ -221,7 +229,7 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Target Employee (Optional)</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value || ""} >
+              <Select onValueChange={field.onChange} value={field.value || ''}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select an employee to swap with" />
@@ -248,7 +256,7 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Target Employee's Shift (Optional)</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value || ""}>
+                <Select onValueChange={field.onChange} value={field.value || ''}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select their shift to take" />
@@ -257,11 +265,14 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
                   <SelectContent>
                     <SelectItem value="">No specific shift (Open swap)</SelectItem>
                     {targetEmployeeShifts.length === 0 ? (
-                      <SelectItem value="" disabled>No shifts available for this employee</SelectItem>
+                      <SelectItem value="" disabled>
+                        No shifts available for this employee
+                      </SelectItem>
                     ) : (
                       targetEmployeeShifts.map((shift) => (
                         <SelectItem key={shift.id} value={shift.id}>
-                          {format(new Date(shift.start_time), 'MMM dd, HH:mm')} - {format(new Date(shift.end_time), 'HH:mm')} ({shift.roles?.name || 'Any'})
+                          {format(new Date(shift.start_time), 'MMM dd, HH:mm')} -{' '}
+                          {format(new Date(shift.end_time), 'HH:mm')} ({shift.roles?.name || 'Any'})
                         </SelectItem>
                       ))
                     )}
@@ -292,7 +303,7 @@ const InitiateSwapForm = ({ onSuccess, onCancel }: InitiateSwapFormProps) => {
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Initiating..." : "Initiate Swap Request"}
+            {isSubmitting ? 'Initiating...' : 'Initiate Swap Request'}
           </Button>
         </div>
       </form>

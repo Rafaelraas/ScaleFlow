@@ -1,6 +1,6 @@
 /**
  * SessionContextProvider Routing Tests
- * 
+ *
  * Tests for redirect logic and route protection
  */
 
@@ -49,7 +49,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/dashboard']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/dashboard']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -72,7 +75,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -92,7 +98,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/login']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/login']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -136,7 +145,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/dashboard']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/dashboard']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -163,7 +175,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/create-company']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/create-company']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -207,7 +222,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/dashboard']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/dashboard']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -234,7 +252,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/login']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/login']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -278,7 +299,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/dashboard']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/dashboard']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -305,7 +329,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/create-company']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/create-company']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -349,7 +376,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/verify?type=recovery']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/verify?type=recovery']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>
@@ -377,7 +407,10 @@ describe('SessionContextProvider - Routing Behavior', () => {
       (supabase.from as Mock).mockReturnValue({ select: mockSelect });
 
       const { container } = render(
-        <MemoryRouter initialEntries={['/verify?type=signup']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <MemoryRouter
+          initialEntries={['/verify?type=signup']}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <SessionContextProvider>
             <LocationDisplay />
           </SessionContextProvider>

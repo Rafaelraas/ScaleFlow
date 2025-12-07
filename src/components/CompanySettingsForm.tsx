@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,14 +13,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { useSession } from "@/providers/SessionContextProvider";
-import { showError, showSuccess } from "@/utils/toast";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { useSession } from '@/hooks/useSession';
+import { showError, showSuccess } from '@/utils/toast';
+import { logger } from '@/utils/logger';
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Company name cannot be empty." }),
+  name: z.string().min(1, { message: 'Company name cannot be empty.' }),
 });
 
 interface CompanySettingsFormProps {
@@ -29,7 +30,11 @@ interface CompanySettingsFormProps {
   onSuccess: () => void;
 }
 
-const CompanySettingsForm = ({ companyId, initialCompanyName, onSuccess }: CompanySettingsFormProps) => {
+const CompanySettingsForm = ({
+  companyId,
+  initialCompanyName,
+  onSuccess,
+}: CompanySettingsFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -57,12 +62,12 @@ const CompanySettingsForm = ({ companyId, initialCompanyName, onSuccess }: Compa
         throw new Error(error.message);
       }
 
-      showSuccess("Company name updated successfully!");
+      showSuccess('Company name updated successfully!');
       onSuccess();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error updating company name:", errorMessage);
-      showError("Failed to update company name: " + errorMessage);
+      logger.error('Error updating company name', { error: errorMessage });
+      showError('Failed to update company name: ' + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -85,7 +90,7 @@ const CompanySettingsForm = ({ companyId, initialCompanyName, onSuccess }: Compa
           )}
         />
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save Changes"}
+          {isSubmitting ? 'Saving...' : 'Save Changes'}
         </Button>
       </form>
     </Form>

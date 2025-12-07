@@ -80,7 +80,7 @@ describe('Role Types', () => {
     });
 
     it('should have correct structure for each role', () => {
-      Object.values(ROLE_PERMISSIONS).forEach(permission => {
+      Object.values(ROLE_PERMISSIONS).forEach((permission) => {
         expect(permission.name).toBeDefined();
         expect(permission.description).toBeDefined();
         expect(typeof permission.requiresCompany).toBe('boolean');

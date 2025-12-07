@@ -1,16 +1,17 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { MenuIcon, LogOut, UserCircle } from "lucide-react";
-import { Sidebar } from "./Sidebar";
-import { useSession } from "@/providers/SessionContextProvider";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { signOut } from "@/services/supabase/auth.service";
-import { showError } from "@/utils/toast";
-import { ModeToggle } from "@/components/ModeToggle";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { MenuIcon, LogOut, UserCircle } from 'lucide-react';
+import { Sidebar } from './Sidebar';
+import { useSession } from '@/hooks/useSession';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { signOut } from '@/services/supabase/auth.service';
+import { showError } from '@/utils/toast';
+import { ModeToggle } from '@/components/ModeToggle';
+import { logger } from '@/utils/logger';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +19,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
 export const Navbar = () => {
   const { session, userProfile, userRole } = useSession();
@@ -34,7 +35,7 @@ export const Navbar = () => {
           .single();
 
         if (error) {
-          console.error("Error fetching company name:", error.message);
+          logger.error('Error fetching company name', { error: error.message });
           setCompanyName(null);
         } else {
           setCompanyName(data?.name || null);
@@ -51,13 +52,13 @@ export const Navbar = () => {
     try {
       const { error } = await signOut();
       if (error) {
-        console.error("Logout error:", error);
-        showError("Failed to log out: " + error.message);
+        logger.error('Logout error', { error });
+        showError('Failed to log out: ' + error.message);
       }
       // SessionContextProvider will handle navigation and success toast
     } catch (err) {
-      console.error("Unexpected logout error:", err);
-      showError("An error occurred during logout. Please try again.");
+      logger.error('Unexpected logout error', { error: err });
+      showError('An error occurred during logout. Please try again.');
     }
   };
 
@@ -74,7 +75,10 @@ export const Navbar = () => {
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 flex items-center justify-center space-x-2 px-4">
+                <Button
+                  variant="ghost"
+                  className="relative h-8 flex items-center justify-center space-x-2 px-4"
+                >
                   <UserCircle className="h-5 w-5" />
                   <span className="hidden md:inline-block">
                     {userProfile?.first_name || session.user.email}

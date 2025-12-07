@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ProfileForm from './ProfileForm';
-import { useSession } from '@/providers/SessionContextProvider';
+import { useSession } from '@/hooks/useSession';
 import { supabase } from '@/integrations/supabase/client.ts';
 import { showSuccess, showError } from '@/utils/toast';
 import { MemoryRouter } from 'react-router-dom'; // Needed for Link/navigation context
 
 // Mock do useSession
-vi.mock('@/providers/SessionContextProvider', () => ({
+vi.mock('@/hooks/useSession', () => ({
   useSession: vi.fn(),
 }));
 
@@ -50,12 +50,12 @@ describe('ProfileForm', () => {
       userRole: mockUserProfile.role_name,
       isLoading: false,
     });
-    
+
     // Reset mocks
     mockFrom.mockClear();
     mockShowSuccess.mockClear();
     mockShowError.mockClear();
-    
+
     // Set up default mock chain for successful updates
     const mockEq = vi.fn().mockResolvedValue({ error: null, data: null });
     const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
@@ -73,16 +73,26 @@ describe('ProfileForm', () => {
       userRole: null,
       isLoading: true,
     });
-    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ProfileForm />
+      </MemoryRouter>
+    );
     expect(screen.getByText('Loading profile data...')).toBeInTheDocument();
   });
 
   it('should pre-fill form fields with user profile data', () => {
-    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ProfileForm />
+      </MemoryRouter>
+    );
 
     expect(screen.getByLabelText('First Name (Optional)')).toHaveValue('John');
     expect(screen.getByLabelText('Last Name (Optional)')).toHaveValue('Doe');
-    expect(screen.getByLabelText('Avatar URL (Optional)')).toHaveValue('http://example.com/avatar.jpg');
+    expect(screen.getByLabelText('Avatar URL (Optional)')).toHaveValue(
+      'http://example.com/avatar.jpg'
+    );
     expect(screen.getByDisplayValue('test@example.com')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Employee')).toBeInTheDocument();
   });
@@ -91,8 +101,12 @@ describe('ProfileForm', () => {
     const mockEq = vi.fn().mockResolvedValue({ error: null, data: null });
     const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
     mockFrom.mockReturnValue({ update: mockUpdate });
-    
-    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
+
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ProfileForm />
+      </MemoryRouter>
+    );
 
     const firstNameInput = screen.getByLabelText('First Name (Optional)');
     const lastNameInput = screen.getByLabelText('Last Name (Optional)');
@@ -118,8 +132,12 @@ describe('ProfileForm', () => {
     const mockEq = vi.fn().mockResolvedValue({ error: null, data: null });
     const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
     mockFrom.mockReturnValue({ update: mockUpdate });
-    
-    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
+
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ProfileForm />
+      </MemoryRouter>
+    );
 
     const avatarUrlInput = screen.getByLabelText('Avatar URL (Optional)');
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
@@ -142,7 +160,11 @@ describe('ProfileForm', () => {
     const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
     mockFrom.mockReturnValue({ update: mockUpdate });
 
-    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ProfileForm />
+      </MemoryRouter>
+    );
 
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
     fireEvent.click(saveButton);
@@ -156,11 +178,19 @@ describe('ProfileForm', () => {
   it('should disable button during submission', async () => {
     // Simulate a pending Supabase call
     let resolveSupabaseCall: ((value: { data: null; error: null }) => void) | undefined;
-    const mockEq = vi.fn().mockReturnValue(new Promise(resolve => { resolveSupabaseCall = resolve; }));
+    const mockEq = vi.fn().mockReturnValue(
+      new Promise((resolve) => {
+        resolveSupabaseCall = resolve;
+      })
+    );
     const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
     mockFrom.mockReturnValue({ update: mockUpdate });
 
-    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ProfileForm />
+      </MemoryRouter>
+    );
 
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
     fireEvent.click(saveButton);
@@ -188,7 +218,11 @@ describe('ProfileForm', () => {
       isLoading: false,
     });
 
-    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ProfileForm />
+      </MemoryRouter>
+    );
 
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
     fireEvent.click(saveButton);
@@ -207,7 +241,11 @@ describe('ProfileForm', () => {
       isLoading: false,
     });
 
-    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><ProfileForm /></MemoryRouter>);
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ProfileForm />
+      </MemoryRouter>
+    );
 
     const saveButton = screen.getByRole('button', { name: 'Save Changes' });
     fireEvent.click(saveButton);

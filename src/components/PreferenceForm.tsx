@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -16,31 +16,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { useSession } from "@/providers/SessionContextProvider";
-import { showError, showSuccess } from "@/utils/toast";
+} from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { useSession } from '@/hooks/useSession';
+import { showError, showSuccess } from '@/utils/toast';
 
 const formSchema = z.object({
   start_date: z.date({
-    required_error: "Start date is required.",
+    required_error: 'Start date is required.',
   }),
   end_date: z.date({
-    required_error: "End date is required.",
+    required_error: 'End date is required.',
   }),
   preference_type: z.string({
-    required_error: "Preference type is required.",
+    required_error: 'Preference type is required.',
   }),
   notes: z.string().max(500).optional(),
 });
@@ -59,35 +59,33 @@ const PreferenceForm = ({ onSuccess, onCancel }: PreferenceFormProps) => {
     defaultValues: {
       start_date: undefined,
       end_date: undefined,
-      preference_type: "",
-      notes: "",
+      preference_type: '',
+      notes: '',
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!session?.user?.id || !userProfile?.company_id) {
-      showError("User not authenticated or company ID not found.");
+      showError('User not authenticated or company ID not found.');
       return;
     }
 
     setIsSubmitting(true);
 
-    const { error } = await supabase
-      .from('preferences')
-      .insert({
-        company_id: userProfile.company_id,
-        employee_id: session.user.id,
-        start_date: values.start_date.toISOString().split('T')[0], // Format to YYYY-MM-DD
-        end_date: values.end_date.toISOString().split('T')[0],     // Format to YYYY-MM-DD
-        preference_type: values.preference_type,
-        notes: values.notes || null,
-        status: 'pending', // Default status
-      });
+    const { error } = await supabase.from('preferences').insert({
+      company_id: userProfile.company_id,
+      employee_id: session.user.id,
+      start_date: values.start_date.toISOString().split('T')[0], // Format to YYYY-MM-DD
+      end_date: values.end_date.toISOString().split('T')[0], // Format to YYYY-MM-DD
+      preference_type: values.preference_type,
+      notes: values.notes || null,
+      status: 'pending', // Default status
+    });
 
     if (error) {
-      showError("Failed to submit preference: " + error.message);
+      showError('Failed to submit preference: ' + error.message);
     } else {
-      showSuccess("Preference submitted successfully!");
+      showSuccess('Preference submitted successfully!');
       onSuccess();
     }
     setIsSubmitting(false);
@@ -106,14 +104,14 @@ const PreferenceForm = ({ onSuccess, onCancel }: PreferenceFormProps) => {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      variant={"outline"}
+                      variant={'outline'}
                       className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !field.value && "text-muted-foreground"
+                        'w-full justify-start text-left font-normal',
+                        !field.value && 'text-muted-foreground'
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                      {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -140,14 +138,14 @@ const PreferenceForm = ({ onSuccess, onCancel }: PreferenceFormProps) => {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      variant={"outline"}
+                      variant={'outline'}
                       className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !field.value && "text-muted-foreground"
+                        'w-full justify-start text-left font-normal',
+                        !field.value && 'text-muted-foreground'
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                      {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -206,7 +204,7 @@ const PreferenceForm = ({ onSuccess, onCancel }: PreferenceFormProps) => {
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit Preference"}
+            {isSubmitting ? 'Submitting...' : 'Submit Preference'}
           </Button>
         </div>
       </form>

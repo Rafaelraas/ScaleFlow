@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { useSession } from "@/providers/SessionContextProvider";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError } from "@/utils/toast";
-import { format, isFuture, parseISO } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSession } from '@/hooks/useSession';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError } from '@/utils/toast';
+import { format, isFuture, parseISO } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
 
 interface Shift {
   id: string;
@@ -31,7 +31,7 @@ interface SwapRequest {
   id: string;
   status: string;
   requesting_employee: { first_name: string; last_name: string } | null; // Corrected to single object
-  target_employee: { first_name: string; last_name: string } | null;     // Corrected to single object
+  target_employee: { first_name: string; last_name: string } | null; // Corrected to single object
   requested_shift: { start_time: string; end_time: string; roles: { name: string } | null } | null; // Corrected to single object
 }
 
@@ -49,7 +49,8 @@ const Dashboard = () => {
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
 
   const fetchDashboardData = useCallback(async () => {
-    if (!session?.user?.id) { // Removed userProfile?.company_id check here to allow system_admin without company_id
+    if (!session?.user?.id) {
+      // Removed userProfile?.company_id check here to allow system_admin without company_id
       setLoadingDashboard(false);
       return;
     }
@@ -63,7 +64,7 @@ const Dashboard = () => {
         .select('id', { count: 'exact' });
 
       if (companiesError) {
-        showError("Failed to fetch total companies: " + companiesError.message);
+        showError('Failed to fetch total companies: ' + companiesError.message);
       } else {
         setTotalCompanies(companiesCount);
       }
@@ -74,13 +75,13 @@ const Dashboard = () => {
         .select('id', { count: 'exact' });
 
       if (usersError) {
-        showError("Failed to fetch total users: " + usersError.message);
+        showError('Failed to fetch total users: ' + usersError.message);
       } else {
         setTotalUsers(usersCount);
       }
-
     } else if (userRole === 'manager') {
-      if (!userProfile?.company_id) { // Manager must have a company
+      if (!userProfile?.company_id) {
+        // Manager must have a company
         setLoadingDashboard(false);
         return;
       }
@@ -93,44 +94,48 @@ const Dashboard = () => {
         .order('created_at', { ascending: true });
 
       if (prefsError) {
-        showError("Failed to fetch pending preferences: " + prefsError.message);
+        showError('Failed to fetch pending preferences: ' + prefsError.message);
       } else {
-        setPendingPreferences(prefsData as Preference[] || []);
+        setPendingPreferences((prefsData as Preference[]) || []);
       }
 
       // Fetch pending swap requests for managers
       const { data: swapsData, error: swapsError } = await supabase
         .from('swap_requests')
-        .select(`
+        .select(
+          `
           id,
           status,
           requesting_employee:profiles!requesting_employee_id(first_name, last_name),
           target_employee:profiles!target_employee_id(first_name, last_name),
           requested_shift:shifts!requested_shift_id(start_time, end_time, roles(name))
-        `)
+        `
+        )
         .eq('company_id', userProfile.company_id)
         .eq('status', 'pending_manager_approval')
         .order('created_at', { ascending: true });
 
       if (swapsError) {
-        showError("Failed to fetch pending swap requests: " + swapsError.message);
+        showError('Failed to fetch pending swap requests: ' + swapsError.message);
       } else {
         // Supabase often returns nested relations as arrays even for single relationships.
         // We'll map to ensure the types match our interface expecting single objects.
-        const formattedSwaps = (swapsData || []).map(req => ({
+        const formattedSwaps = (swapsData || []).map((req) => ({
           ...req,
           requesting_employee: req.requesting_employee?.[0] || null,
           target_employee: req.target_employee?.[0] || null,
-          requested_shift: req.requested_shift?.[0] ? {
-            ...req.requested_shift[0],
-            roles: req.requested_shift[0].roles?.[0] || null,
-          } : null,
+          requested_shift: req.requested_shift?.[0]
+            ? {
+                ...req.requested_shift[0],
+                roles: req.requested_shift[0].roles?.[0] || null,
+              }
+            : null,
         }));
-        setPendingSwapRequests(formattedSwaps as SwapRequest[] || []);
+        setPendingSwapRequests((formattedSwaps as SwapRequest[]) || []);
       }
-
     } else if (userRole === 'employee') {
-      if (!userProfile?.company_id) { // Employee must have a company
+      if (!userProfile?.company_id) {
+        // Employee must have a company
         setLoadingDashboard(false);
         return;
       }
@@ -144,9 +149,9 @@ const Dashboard = () => {
         .limit(1);
 
       if (shiftsError) {
-        showError("Failed to fetch next shift: " + shiftsError.message);
+        showError('Failed to fetch next shift: ' + shiftsError.message);
       } else if (shiftsData && shiftsData.length > 0) {
-        const nextUpcoming = shiftsData.find(shift => isFuture(parseISO(shift.start_time)));
+        const nextUpcoming = shiftsData.find((shift) => isFuture(parseISO(shift.start_time)));
         if (nextUpcoming) {
           // Map to ensure roles is a single object
           const formattedShift: Shift = {
@@ -169,7 +174,7 @@ const Dashboard = () => {
         .eq('status', 'pending');
 
       if (myPrefsError) {
-        showError("Failed to fetch your pending preferences count: " + myPrefsError.message);
+        showError('Failed to fetch your pending preferences count: ' + myPrefsError.message);
       } else {
         setMyPendingPreferencesCount(myPrefsCount || 0);
       }
@@ -182,7 +187,7 @@ const Dashboard = () => {
         .in('status', ['pending_employee_approval', 'pending_manager_approval']);
 
       if (mySwapsError) {
-        showError("Failed to fetch your pending swap requests count: " + mySwapsError.message);
+        showError('Failed to fetch your pending swap requests count: ' + mySwapsError.message);
       } else {
         setMyPendingSwapRequestsCount(mySwapsCount || 0);
       }
@@ -232,7 +237,9 @@ const Dashboard = () => {
               <CardDescription>Number of companies registered on the platform.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold mb-4">{totalCompanies !== null ? totalCompanies : <Skeleton className="h-10 w-1/4" />}</p>
+              <p className="text-4xl font-bold mb-4">
+                {totalCompanies !== null ? totalCompanies : <Skeleton className="h-10 w-1/4" />}
+              </p>
               <Button asChild className="w-full">
                 <Link to="/admin/companies">Manage Companies</Link>
               </Button>
@@ -245,7 +252,9 @@ const Dashboard = () => {
               <CardDescription>Number of user profiles across all companies.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold mb-4">{totalUsers !== null ? totalUsers : <Skeleton className="h-10 w-1/4" />}</p>
+              <p className="text-4xl font-bold mb-4">
+                {totalUsers !== null ? totalUsers : <Skeleton className="h-10 w-1/4" />}
+              </p>
               <Button asChild className="w-full">
                 <Link to="/admin/users">Manage All Users</Link>
               </Button>
@@ -266,12 +275,17 @@ const Dashboard = () => {
               <p className="text-4xl font-bold mb-4">{pendingPreferences.length}</p>
               {pendingPreferences.length > 0 ? (
                 <ul className="list-disc list-inside text-sm text-muted-foreground mb-4">
-                  {pendingPreferences.slice(0, 3).map(pref => (
+                  {pendingPreferences.slice(0, 3).map((pref) => (
                     <li key={pref.id}>
-                      {pref.profiles ? `${pref.profiles.first_name} ${pref.profiles.last_name}` : 'N/A'} - {pref.preference_type.replace(/_/g, ' ')}
+                      {pref.profiles
+                        ? `${pref.profiles.first_name} ${pref.profiles.last_name}`
+                        : 'N/A'}{' '}
+                      - {pref.preference_type.replace(/_/g, ' ')}
                     </li>
                   ))}
-                  {pendingPreferences.length > 3 && <li>...and {pendingPreferences.length - 3} more</li>}
+                  {pendingPreferences.length > 3 && (
+                    <li>...and {pendingPreferences.length - 3} more</li>
+                  )}
                 </ul>
               ) : (
                 <p className="text-muted-foreground mb-4">No pending preferences.</p>
@@ -291,12 +305,17 @@ const Dashboard = () => {
               <p className="text-4xl font-bold mb-4">{pendingSwapRequests.length}</p>
               {pendingSwapRequests.length > 0 ? (
                 <ul className="list-disc list-inside text-sm text-muted-foreground mb-4">
-                  {pendingSwapRequests.slice(0, 3).map(req => (
+                  {pendingSwapRequests.slice(0, 3).map((req) => (
                     <li key={req.id}>
-                      {req.requesting_employee?.first_name} wants to swap {req.requested_shift?.start_time ? format(parseISO(req.requested_shift.start_time), 'MMM dd HH:mm') : 'shift'}
+                      {req.requesting_employee?.first_name} wants to swap{' '}
+                      {req.requested_shift?.start_time
+                        ? format(parseISO(req.requested_shift.start_time), 'MMM dd HH:mm')
+                        : 'shift'}
                     </li>
                   ))}
-                  {pendingSwapRequests.length > 3 && <li>...and {pendingSwapRequests.length - 3} more</li>}
+                  {pendingSwapRequests.length > 3 && (
+                    <li>...and {pendingSwapRequests.length - 3} more</li>
+                  )}
                 </ul>
               ) : (
                 <p className="text-muted-foreground mb-4">No pending swap requests.</p>
@@ -322,9 +341,12 @@ const Dashboard = () => {
               {nextShift ? (
                 <>
                   <p className="text-2xl font-bold mb-2">
-                    {format(parseISO(nextShift.start_time), 'MMM dd, HH:mm')} - {format(parseISO(nextShift.end_time), 'HH:mm')}
+                    {format(parseISO(nextShift.start_time), 'MMM dd, HH:mm')} -{' '}
+                    {format(parseISO(nextShift.end_time), 'HH:mm')}
                   </p>
-                  <p className="text-muted-foreground mb-4">Role: {nextShift.roles?.name || 'Any'}</p>
+                  <p className="text-muted-foreground mb-4">
+                    Role: {nextShift.roles?.name || 'Any'}
+                  </p>
                 </>
               ) : (
                 <p className="text-muted-foreground mb-4">No upcoming shifts assigned.</p>
@@ -364,7 +386,6 @@ const Dashboard = () => {
           {/* Add more employee-specific cards here */}
         </div>
       )}
-
     </div>
   );
 };

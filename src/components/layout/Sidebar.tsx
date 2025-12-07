@@ -1,11 +1,23 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { CalendarDays, Users, Settings, LayoutDashboard, Repeat, ListChecks, User, Building, Clock, Briefcase, UserCog } from "lucide-react"; // Added Briefcase and UserCog icons
-import { useSession } from "@/providers/SessionContextProvider";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import {
+  CalendarDays,
+  Users,
+  Settings,
+  LayoutDashboard,
+  Repeat,
+  ListChecks,
+  User,
+  Building,
+  Clock,
+  Briefcase,
+  UserCog,
+} from 'lucide-react'; // Added Briefcase and UserCog icons
+import { useSession } from '@/hooks/useSession';
 
 interface SidebarProps {
   isMobile?: boolean;
@@ -16,88 +28,86 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
 
   const navItems = [
     {
-      name: "Dashboard",
-      href: "/dashboard",
+      name: 'Dashboard',
+      href: '/dashboard',
       icon: LayoutDashboard,
-      roles: ["manager", "employee", "system_admin"],
+      roles: ['manager', 'employee', 'system_admin'],
     },
     {
-      name: "Schedules",
-      href: "/schedules",
+      name: 'Schedules',
+      href: '/schedules',
       icon: CalendarDays,
-      roles: ["manager", "system_admin"],
+      roles: ['manager', 'system_admin'],
     },
     {
-      name: "Shift Templates",
-      href: "/shift-templates",
+      name: 'Shift Templates',
+      href: '/shift-templates',
       icon: Clock,
-      roles: ["manager", "system_admin"],
+      roles: ['manager', 'system_admin'],
     },
     {
-      name: "Employees",
-      href: "/employees",
+      name: 'Employees',
+      href: '/employees',
       icon: Users,
-      roles: ["manager", "system_admin"],
+      roles: ['manager', 'system_admin'],
     },
     {
-      name: "Employee Preferences",
-      href: "/employee-preferences",
+      name: 'Employee Preferences',
+      href: '/employee-preferences',
       icon: ListChecks,
-      roles: ["manager", "system_admin"],
+      roles: ['manager', 'system_admin'],
     },
     {
-      name: "My Schedule",
-      href: "/my-schedule",
+      name: 'My Schedule',
+      href: '/my-schedule',
       icon: CalendarDays,
-      roles: ["employee"],
+      roles: ['employee'],
     },
     {
-      name: "Preferences",
-      href: "/preferences",
+      name: 'Preferences',
+      href: '/preferences',
       icon: Settings,
-      roles: ["employee"],
+      roles: ['employee'],
     },
     {
-      name: "Swap Requests",
-      href: "/swap-requests",
+      name: 'Swap Requests',
+      href: '/swap-requests',
       icon: Repeat,
-      roles: ["employee", "manager", "system_admin"],
+      roles: ['employee', 'manager', 'system_admin'],
     },
     {
-      name: "Profile Settings",
-      href: "/profile-settings",
+      name: 'Profile Settings',
+      href: '/profile-settings',
       icon: User,
-      roles: ["manager", "employee", "system_admin"],
+      roles: ['manager', 'employee', 'system_admin'],
     },
     {
-      name: "Company Settings",
-      href: "/company-settings",
+      name: 'Company Settings',
+      href: '/company-settings',
       icon: Building,
-      roles: ["manager", "system_admin"],
+      roles: ['manager', 'system_admin'],
     },
     {
-      name: "Admin Companies", // New item for system admin
-      href: "/admin/companies",
+      name: 'Admin Companies', // New item for system admin
+      href: '/admin/companies',
       icon: Briefcase, // Using Briefcase icon
-      roles: ["system_admin"],
+      roles: ['system_admin'],
     },
     {
-      name: "Admin Users", // New item for system admin
-      href: "/admin/users",
+      name: 'Admin Users', // New item for system admin
+      href: '/admin/users',
       icon: UserCog, // Using UserCog icon
-      roles: ["system_admin"],
+      roles: ['system_admin'],
     },
   ];
 
-  const filteredNavItems = userRole
-    ? navItems.filter((item) => item.roles.includes(userRole))
-    : [];
+  const filteredNavItems = userRole ? navItems.filter((item) => item.roles.includes(userRole)) : [];
 
   return (
     <div
       className={cn(
-        "flex flex-col h-full bg-sidebar text-sidebar-foreground border-r",
-        isMobile ? "w-full" : "w-64",
+        'flex flex-col h-full bg-sidebar text-sidebar-foreground border-r',
+        isMobile ? 'w-full' : 'w-64'
       )}
     >
       {!isMobile && (

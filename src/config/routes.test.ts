@@ -69,52 +69,52 @@ describe('Route Configuration', () => {
   describe('getPathsForRole', () => {
     it('should return paths for employee role', () => {
       const paths = getPathsForRole('employee');
-      
+
       // Should include employee-specific routes
       expect(paths).toContain('/my-schedule');
       expect(paths).toContain('/preferences');
-      
+
       // Should include generic protected routes
       expect(paths).toContain('/dashboard');
       expect(paths).toContain('/profile-settings');
-      
+
       // Should NOT include manager-only routes
       expect(paths).not.toContain('/schedules');
       expect(paths).not.toContain('/employees');
-      
+
       // Should NOT include admin routes
       expect(paths).not.toContain('/admin/companies');
     });
 
     it('should return paths for manager role', () => {
       const paths = getPathsForRole('manager');
-      
+
       // Should include manager-specific routes
       expect(paths).toContain('/schedules');
       expect(paths).toContain('/employees');
       expect(paths).toContain('/company-settings');
-      
+
       // Should include generic protected routes
       expect(paths).toContain('/dashboard');
-      
+
       // Should NOT include employee-only routes
       expect(paths).not.toContain('/my-schedule');
       expect(paths).not.toContain('/preferences');
-      
+
       // Should NOT include admin routes
       expect(paths).not.toContain('/admin/companies');
     });
 
     it('should return paths for system_admin role', () => {
       const paths = getPathsForRole('system_admin');
-      
+
       // Should include admin routes
       expect(paths).toContain('/admin/companies');
       expect(paths).toContain('/admin/users');
-      
+
       // Should include generic protected routes
       expect(paths).toContain('/dashboard');
-      
+
       // Should NOT include role-specific routes
       expect(paths).not.toContain('/my-schedule');
       expect(paths).not.toContain('/schedules');
@@ -130,14 +130,14 @@ describe('Route Configuration', () => {
 
     it('should have correct auth flow routes', () => {
       expect(AUTH_FLOW_ROUTES).toHaveLength(3);
-      const paths = AUTH_FLOW_ROUTES.map(r => r.path);
+      const paths = AUTH_FLOW_ROUTES.map((r) => r.path);
       expect(paths).toContain('/login');
       expect(paths).toContain('/register');
       expect(paths).toContain('/verify');
     });
 
     it('should have manager routes with correct configuration', () => {
-      MANAGER_ROUTES.forEach(route => {
+      MANAGER_ROUTES.forEach((route) => {
         expect(route.requiresAuth).toBe(true);
         expect(route.requiresCompany).toBe(true);
         expect(route.allowedRoles).toEqual(['manager']);
@@ -146,7 +146,7 @@ describe('Route Configuration', () => {
     });
 
     it('should have employee routes with correct configuration', () => {
-      EMPLOYEE_ROUTES.forEach(route => {
+      EMPLOYEE_ROUTES.forEach((route) => {
         expect(route.requiresAuth).toBe(true);
         expect(route.requiresCompany).toBe(true);
         expect(route.allowedRoles).toEqual(['employee']);
@@ -155,7 +155,7 @@ describe('Route Configuration', () => {
     });
 
     it('should have system admin routes with correct configuration', () => {
-      SYSTEM_ADMIN_ROUTES.forEach(route => {
+      SYSTEM_ADMIN_ROUTES.forEach((route) => {
         expect(route.requiresAuth).toBe(true);
         expect(route.requiresCompany).toBe(false);
         expect(route.allowedRoles).toEqual(['system_admin']);
@@ -172,7 +172,7 @@ describe('Route Configuration', () => {
         ...SYSTEM_ADMIN_ROUTES,
       ];
 
-      allRoutes.forEach(route => {
+      allRoutes.forEach((route) => {
         expect(route.tablesAccessed).toBeDefined();
         expect(Array.isArray(route.tablesAccessed)).toBe(true);
       });
