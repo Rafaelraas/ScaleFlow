@@ -1,9 +1,16 @@
 import { useMemo, useCallback, useEffect } from 'react';
-import { Calendar as BigCalendar, momentLocalizer, View, SlotInfo } from 'react-big-calendar';
+import {
+  Calendar as BigCalendar,
+  momentLocalizer,
+  View,
+  SlotInfo,
+  EventProps,
+} from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { logger } from '@/utils/logger';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ShiftCard } from './ShiftCard';
 
 const localizer = momentLocalizer(moment);
 
@@ -13,6 +20,11 @@ export interface CalendarEvent {
   start: Date;
   end: Date;
   resource?: unknown;
+  // Shift-specific properties for color coding
+  published?: boolean;
+  completed?: boolean;
+  cancelled?: boolean;
+  employeeId?: string;
 }
 
 export interface CalendarProps {
@@ -131,11 +143,9 @@ export const Calendar = ({
           day: 'Day',
           agenda: 'Agenda',
         }}
-        // Mobile-friendly event rendering
+        // Custom event rendering with ShiftCard for color coding
         components={{
-          event: ({ event }) => (
-            <div className="text-xs sm:text-sm truncate p-1">{event.title}</div>
-          ),
+          event: ({ event }: EventProps<CalendarEvent>) => <ShiftCard event={event} />,
         }}
       />
     </div>
