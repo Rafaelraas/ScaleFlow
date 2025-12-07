@@ -36,6 +36,8 @@ Welcome to the ScaleFlow documentation! This index provides an overview of all a
 |------|-------------|----------|
 | [.cursorrules](../.cursorrules) | AI-assisted development rules | AI Agents, Developers |
 | [AI_RULES.md](../AI_RULES.md) | Tech stack and development rules | AI Agents |
+| [MCP_SETUP.md](./MCP_SETUP.md) | **🆕 Model Context Protocol setup guide** | **AI Agents, Developers** |
+| [.mcp/config.json](../.mcp/config.json) | **🆕 MCP servers configuration** | **AI Agents** |
 
 ## 🎯 Quick Navigation
 

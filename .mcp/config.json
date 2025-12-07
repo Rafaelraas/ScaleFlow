@@ -1,0 +1,56 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/runner/work/ScaleFlow/ScaleFlow"
+      ],
+      "description": "Provides read/write access to the ScaleFlow repository files"
+    },
+    "git": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-git",
+        "--repository",
+        "/home/runner/work/ScaleFlow/ScaleFlow"
+      ],
+      "description": "Git operations for the ScaleFlow repository"
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<your_github_token_here>"
+      },
+      "description": "GitHub API access for issues, PRs, and repository management"
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://postgres:postgres@localhost:54322/postgres"
+      ],
+      "description": "PostgreSQL database access (Supabase local instance)",
+      "disabled": true
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "<your_brave_api_key_here>"
+      },
+      "description": "Web search capabilities for research and documentation",
+      "disabled": true
+    }
+  }
+}

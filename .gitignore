@@ -32,3 +32,8 @@ supabase/.temp/cli-latest
 *.njsproj
 *.sln
 *.sw?
+
+# MCP (Model Context Protocol) - exclude configs with tokens
+.mcp/config.local.json
+.mcp/*.local.json
+claude_desktop_config.json

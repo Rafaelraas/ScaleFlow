@@ -278,10 +278,12 @@ Comprehensive documentation is available to help you understand and contribute t
 
 ### For AI Agents
 
-| File                              | Description                                |
-| --------------------------------- | ------------------------------------------ |
-| [🤖 .cursorrules](./.cursorrules) | AI-assisted development rules and patterns |
-| [🛠️ AI_RULES.md](./AI_RULES.md)   | Tech stack and development guidelines      |
+| File                                           | Description                                      |
+| ---------------------------------------------- | ------------------------------------------------ |
+| [🤖 .cursorrules](./.cursorrules)              | AI-assisted development rules and patterns       |
+| [🛠️ AI_RULES.md](./AI_RULES.md)                | Tech stack and development guidelines            |
+| [🔌 MCP Setup Guide](./docs/MCP_SETUP.md)      | **🆕 Model Context Protocol configuration guide** |
+| [📁 .mcp/config.json](./.mcp/config.json)      | **🆕 MCP servers configuration**                 |
 
 **📖 [View Complete Documentation Index](./docs/INDEX.md)**
 

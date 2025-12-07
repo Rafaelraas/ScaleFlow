@@ -347,9 +347,35 @@ import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 4. Check that build size doesn't increase significantly
 5. Verify no TypeScript errors introduced
 
+## Model Context Protocol (MCP) Integration
+
+### Using MCP with ScaleFlow
+- **MCP Configuration** is available in `.mcp/config.json`
+- **Setup Guide** - See `docs/MCP_SETUP.md` for complete installation instructions
+- **Available Servers**:
+  - Filesystem - Read/write repository files
+  - Git - Execute git operations
+  - GitHub - Manage issues and PRs (requires token)
+  - PostgreSQL - Query Supabase database (requires local instance)
+  - Brave Search - Web research capabilities (requires API key)
+
+### MCP Best Practices
+- Use filesystem server to read/edit code efficiently
+- Use git server for status checks and commits
+- Review all AI-generated code changes before committing
+- Keep API tokens secure and never commit them
+- Test MCP tools with read-only operations first
+
+### Getting Started with MCP
+1. Review the configuration: `.mcp/config.json`
+2. Follow setup guide: `docs/MCP_SETUP.md`
+3. Configure for your AI assistant (Claude Desktop, Cursor, or VS Code)
+4. Test with simple commands like "List files in src/pages"
+
 ## Questions?
 Refer to:
 - README.md for project overview
 - CONTRIBUTING.md for contribution guidelines
 - AI_RULES.md for additional tech stack rules
+- docs/MCP_SETUP.md for AI assistant MCP configuration
 - Official docs for each library in the tech stack
