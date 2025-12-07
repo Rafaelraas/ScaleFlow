@@ -44,8 +44,8 @@ export function PerformanceMonitor() {
         <p className="text-xs text-muted-foreground">Collecting metrics...</p>
       ) : (
         <div className="space-y-2 text-xs">
-          {metrics.map((metric, i) => (
-            <div key={i} className="flex justify-between items-center">
+          {metrics.map((metric) => (
+            <div key={metric.name} className="flex justify-between items-center">
               <span className="font-medium">{metric.name}:</span>
               <div className="flex items-center gap-2">
                 <span className={getMetricColor(metric.rating)}>

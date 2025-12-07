@@ -103,6 +103,8 @@ export function isFeatureEnabled(
   const flagConfig = featureFlagConfig[flag];
 
   if (!flagConfig) {
+    // Note: Using console.warn here instead of logger to avoid circular dependency
+    // The logger imports from config, which may depend on feature flags
     console.warn(`Feature flag "${flag}" not found in configuration`);
     return false;
   }

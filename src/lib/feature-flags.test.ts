@@ -57,9 +57,8 @@ describe('Feature Flags', () => {
 
     it('should warn for unknown flags', () => {
       const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      expect(
-        isFeatureEnabled('unknown-flag' as unknown as typeof FEATURE_FLAGS.CALENDAR_VIEW)
-      ).toBe(false);
+      const unknownFlag = 'unknown-flag' as FeatureFlag;
+      expect(isFeatureEnabled(unknownFlag)).toBe(false);
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         'Feature flag "unknown-flag" not found in configuration'
       );
