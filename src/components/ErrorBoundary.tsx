@@ -3,19 +3,23 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { logger } from '@/utils/logger';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
+
+type ErrorCategory = 'network' | 'auth' | 'render' | 'unknown';
 
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
+  errorCategory: ErrorCategory;
 }
 
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -25,28 +29,145 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       hasError: false,
       error: null,
       errorInfo: null,
+      errorCategory: 'unknown',
     };
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
-    return { hasError: true, error };
+    // Categorize error
+    const errorCategory = ErrorBoundary.categorizeError(error);
+
+    return {
+      hasError: true,
+      error,
+      errorCategory,
+    };
+  }
+
+  static categorizeError(error: Error): ErrorCategory {
+    const message = error.message.toLowerCase();
+
+    if (
+      message.includes('network') ||
+      message.includes('fetch') ||
+      message.includes('failed to fetch')
+    ) {
+      return 'network';
+    }
+    if (
+      message.includes('auth') ||
+      message.includes('unauthorized') ||
+      message.includes('session')
+    ) {
+      return 'auth';
+    }
+    if (message.includes('render') || error.name === 'RenderError') {
+      return 'render';
+    }
+
+    return 'unknown';
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    this.setState({ errorInfo });
-    // Log the error to an error reporting service
-    logger.error('ErrorBoundary caught an error', { error, errorInfo });
+    // Log to console in development
+    logger.error('Error boundary caught error:', {
+      error: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+      category: this.state.errorCategory,
+    });
+
+    // Call custom error handler if provided
+    this.props.onError?.(error, errorInfo);
+
+    // In production, this could send to error tracking service
+    // Example: Sentry.captureException(error, { extra: errorInfo });
+
+    this.setState({
+      errorInfo,
+    });
   }
 
-  handleRetry = (): void => {
-    this.setState({ hasError: false, error: null, errorInfo: null });
+  handleReload = (): void => {
+    window.location.reload();
   };
+
+  handleGoHome = (): void => {
+    window.location.href = '/';
+  };
+
+  handlePrimaryAction = (): void => {
+    const { errorCategory } = this.state;
+
+    switch (errorCategory) {
+      case 'network':
+        // For network errors, try reloading to reconnect
+        window.location.reload();
+        break;
+      case 'auth':
+        // For auth errors, navigate to login page
+        window.location.href = '/login';
+        break;
+      case 'render':
+        // For render errors, go to home page
+        window.location.href = '/';
+        break;
+      default:
+        // For unknown errors, reload the page
+        window.location.reload();
+        break;
+    }
+  };
+
+  handleReset = (): void => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      errorCategory: 'unknown',
+    });
+  };
+
+  renderErrorMessage(): { title: string; description: string; action: string } {
+    const { errorCategory } = this.state;
+
+    switch (errorCategory) {
+      case 'network':
+        return {
+          title: 'Connection Problem',
+          description: 'Unable to connect to the server. Please check your internet connection.',
+          action: 'Retry Connection',
+        };
+      case 'auth':
+        return {
+          title: 'Authentication Error',
+          description: 'Your session may have expired. Please try logging in again.',
+          action: 'Go to Login',
+        };
+      case 'render':
+        return {
+          title: 'Display Error',
+          description: 'Something went wrong while displaying this page.',
+          action: 'Go Home',
+        };
+      default:
+        return {
+          title: 'Unexpected Error',
+          description: 'An unexpected error occurred. We have been notified and are working on it.',
+          action: 'Reload Page',
+        };
+    }
+  }
 
   render(): ReactNode {
     if (this.state.hasError) {
+      // Use custom fallback if provided
       if (this.props.fallback) {
         return this.props.fallback;
       }
+
+      const { title, description, action } = this.renderErrorMessage();
+      const isDev = import.meta.env.DEV;
 
       return (
         <div className="flex items-center justify-center min-h-[400px] p-4">
@@ -55,34 +176,41 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
               <div className="flex justify-center mb-4">
                 <AlertTriangle className="h-12 w-12 text-destructive" />
               </div>
-              <CardTitle className="text-2xl">Something went wrong</CardTitle>
-              <CardDescription>
-                An unexpected error has occurred. Please try again or return to the home page.
-              </CardDescription>
+              <CardTitle className="text-2xl">{title}</CardTitle>
+              <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {isDev && this.state.error && (
                 <div className="rounded-md bg-muted p-4 text-sm">
-                  <p className="font-medium text-destructive">{this.state.error.message}</p>
-                  {this.state.errorInfo && (
-                    <pre className="mt-2 max-h-32 overflow-auto text-xs text-muted-foreground">
-                      {this.state.errorInfo.componentStack}
+                  <p className="font-medium text-destructive mb-2">{this.state.error.toString()}</p>
+                  {this.state.error.stack && (
+                    <pre className="text-xs overflow-auto max-h-40 text-muted-foreground">
+                      {this.state.error.stack}
                     </pre>
                   )}
                 </div>
               )}
               <div className="flex flex-col gap-2">
-                <Button onClick={this.handleRetry} className="w-full">
+                <Button onClick={this.handlePrimaryAction} className="w-full">
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Try Again
+                  {action}
                 </Button>
                 <Button variant="outline" asChild className="w-full">
                   <Link to="/">
                     <Home className="mr-2 h-4 w-4" />
-                    Return to Home
+                    Go Home
                   </Link>
                 </Button>
+                {isDev && (
+                  <Button onClick={this.handleReset} variant="ghost" className="w-full">
+                    <Bug className="mr-2 h-4 w-4" />
+                    Reset Error
+                  </Button>
+                )}
               </div>
+              <p className="text-xs text-center text-muted-foreground">
+                If this problem persists, please contact support.
+              </p>
             </CardContent>
           </Card>
         </div>

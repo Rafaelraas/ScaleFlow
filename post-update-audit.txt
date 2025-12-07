@@ -1,0 +1,21 @@
+Package                        Current   Wanted   Latest  Location                                    Depended by
+@hookform/resolvers             3.10.0   3.10.0    5.2.2  node_modules/@hookform/resolvers            ScaleFlow
+@types/node                    22.19.1  22.19.1  24.10.1  node_modules/@types/node                    ScaleFlow
+@types/react                   18.3.27  18.3.27   19.2.7  node_modules/@types/react                   ScaleFlow
+@types/react-dom                18.3.7   18.3.7   19.2.3  node_modules/@types/react-dom               ScaleFlow
+@types/testing-library__react   10.2.0   10.2.0   10.0.1  node_modules/@types/testing-library__react  ScaleFlow
+@vitejs/plugin-react-swc        3.11.0   3.11.0    4.2.2  node_modules/@vitejs/plugin-react-swc       ScaleFlow
+@vitest/coverage-v8              2.1.9    2.1.9   4.0.15  node_modules/@vitest/coverage-v8            ScaleFlow
+@vitest/ui                       2.1.9    2.1.9   4.0.15  node_modules/@vitest/ui                     ScaleFlow
+date-fns                         3.6.0    3.6.0    4.1.0  node_modules/date-fns                       ScaleFlow
+eslint-plugin-react-hooks        5.2.0    5.2.0    7.0.1  node_modules/eslint-plugin-react-hooks      ScaleFlow
+react                           18.3.1   18.3.1   19.2.1  node_modules/react                          ScaleFlow
+react-day-picker                8.10.1   8.10.1   9.12.0  node_modules/react-day-picker               ScaleFlow
+react-dom                       18.3.1   18.3.1   19.2.1  node_modules/react-dom                      ScaleFlow
+react-resizable-panels           2.1.9    2.1.9    3.0.6  node_modules/react-resizable-panels         ScaleFlow
+react-router-dom                6.30.2   6.30.2   7.10.1  node_modules/react-router-dom               ScaleFlow
+recharts                        2.15.4   2.15.4    3.5.1  node_modules/recharts                       ScaleFlow
+tailwindcss                     3.4.18   3.4.18   4.1.17  node_modules/tailwindcss                    ScaleFlow
+vite                             6.4.1    6.4.1    7.2.6  node_modules/vite                           ScaleFlow
+vitest                           2.1.9    2.1.9   4.0.15  node_modules/vitest                         ScaleFlow
+zod                            3.25.76  3.25.76   4.1.13  node_modules/zod                            ScaleFlow
