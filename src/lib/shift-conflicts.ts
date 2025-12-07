@@ -32,6 +32,8 @@ export const MIN_REST_HOURS = 8;
 
 /**
  * Convert string or Date to Date object
+ * @param dateInput - Input date as ISO string or Date object
+ * @returns Date object for consistent date operations
  */
 function toDate(dateInput: string | Date): Date {
   return typeof dateInput === 'string' ? new Date(dateInput) : dateInput;

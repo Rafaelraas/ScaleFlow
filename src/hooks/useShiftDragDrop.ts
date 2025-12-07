@@ -107,9 +107,13 @@ export function useShiftDragDrop({
           return false;
         }
 
-        // If warnings only or user allowed, show toast but continue
+        // If warnings exist and user chose to proceed, show warning toast
         if (conflicts.length > 0 && allowAnyway) {
           logger.info('User chose to proceed despite conflicts');
+          const warningCount = conflicts.filter((c) => c.severity === 'warning').length;
+          if (warningCount > 0) {
+            logger.warn(`Proceeding with ${warningCount} warning(s)`);
+          }
         }
       }
 

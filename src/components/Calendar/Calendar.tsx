@@ -160,7 +160,7 @@ export const Calendar = ({
         onSelectSlot={handleSelectSlot}
         onEventDrop={enableDragAndDrop ? handleEventDrop : undefined}
         onEventResize={enableDragAndDrop ? handleEventResize : undefined}
-        draggableAccessor={() => enableDragAndDrop}
+        draggableAccessor={enableDragAndDrop ? () => true : undefined}
         resizable={enableDragAndDrop}
         selectable
         popup

@@ -62,11 +62,14 @@ export const ShiftCalendar = ({
       onShiftUpdate?.(shiftId, updates);
     },
     onConflictDetected: (conflicts) => {
-      // Show conflicts to user and let them decide
+      // Conflict handling: Block errors, allow warnings
+      // TODO: Implement ConflictDialog component for user confirmation
+      // For now, automatically allow warnings (like insufficient rest)
       const message = formatConflictsMessage(conflicts);
-      logger.warn('Conflicts detected:', message);
-      // For now, block on errors, allow warnings
-      // TODO: Show a dialog for user to confirm
+      logger.warn('Conflicts detected during drag:', message);
+
+      // Block error-level conflicts (double-booking)
+      // Allow warning-level conflicts (insufficient rest) automatically
       return conflicts.every((c) => c.severity === 'warning');
     },
   });
