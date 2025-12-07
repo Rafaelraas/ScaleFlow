@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, { createContext, useEffect, useState, useCallback } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client.ts";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -31,7 +31,7 @@ interface SessionContextType {
   userRole: UserRole | null;
 }
 
-const SessionContext = createContext<SessionContextType | undefined>(undefined);
+export const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = getUnauthenticatedPaths();
@@ -226,12 +226,4 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       {children}
     </SessionContext.Provider>
   );
-};
-
-export const useSession = () => {
-  const context = useContext(SessionContext);
-  if (context === undefined) {
-    throw new Error("useSession must be used within a SessionContextProvider");
-  }
-  return context;
 };

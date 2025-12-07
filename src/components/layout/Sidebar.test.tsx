@@ -2,10 +2,10 @@ import { describe, it, expect, vi, type Mock } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
-import { useSession } from '@/providers/SessionContextProvider';
+import { useSession } from '@/hooks/useSession';
 
 // Mock do useSession
-vi.mock('@/providers/SessionContextProvider', () => ({
+vi.mock('@/hooks/useSession', () => ({
   useSession: vi.fn(),
 }));
 

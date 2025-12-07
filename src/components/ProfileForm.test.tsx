@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ProfileForm from './ProfileForm';
-import { useSession } from '@/providers/SessionContextProvider';
+import { useSession } from '@/hooks/useSession';
 import { supabase } from '@/integrations/supabase/client.ts';
 import { showSuccess, showError } from '@/utils/toast';
 import { MemoryRouter } from 'react-router-dom'; // Needed for Link/navigation context
 
 // Mock do useSession
-vi.mock('@/providers/SessionContextProvider', () => ({
+vi.mock('@/hooks/useSession', () => ({
   useSession: vi.fn(),
 }));
 

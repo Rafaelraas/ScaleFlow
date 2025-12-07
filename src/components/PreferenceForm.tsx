@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client.ts";
-import { useSession } from "@/providers/SessionContextProvider";
+import { useSession } from '@/hooks/useSession';
 import { showError, showSuccess } from "@/utils/toast";
 
 const formSchema = z.object({

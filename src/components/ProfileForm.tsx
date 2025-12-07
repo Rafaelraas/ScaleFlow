@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client.ts";
-import { useSession } from "@/providers/SessionContextProvider";
+import { useSession } from '@/hooks/useSession';
 import { showError, showSuccess } from "@/utils/toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserIcon } from "lucide-react";

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Users, Settings, LayoutDashboard, Repeat, ListChecks, User, Building, Clock, Briefcase, UserCog } from "lucide-react"; // Added Briefcase and UserCog icons
-import { useSession } from "@/providers/SessionContextProvider";
+import { useSession } from '@/hooks/useSession';
 
 interface SidebarProps {
   isMobile?: boolean;

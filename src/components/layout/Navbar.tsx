@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MenuIcon, LogOut, UserCircle } from "lucide-react";
 import { Sidebar } from "./Sidebar";
-import { useSession } from "@/providers/SessionContextProvider";
+import { useSession } from '@/hooks/useSession';
 import { supabase } from "@/integrations/supabase/client.ts";
 import { signOut } from "@/services/supabase/auth.service";
 import { showError } from "@/utils/toast";

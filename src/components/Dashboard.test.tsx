@@ -3,10 +3,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Dashboard from '../pages/Dashboard';
-import { useSession } from '@/providers/SessionContextProvider';
+import { useSession } from '@/hooks/useSession';
 
 // Mock useSession
-vi.mock('@/providers/SessionContextProvider', () => ({
+vi.mock('@/hooks/useSession', () => ({
   useSession: vi.fn(),
 }));
 

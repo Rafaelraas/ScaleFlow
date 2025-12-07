@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vite
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
-import { useSession } from '@/providers/SessionContextProvider';
+import { useSession } from '@/hooks/useSession';
 
 // Mock do useSession
-vi.mock('@/providers/SessionContextProvider', () => ({
+vi.mock('@/hooks/useSession', () => ({
   useSession: vi.fn(),
 }));
 

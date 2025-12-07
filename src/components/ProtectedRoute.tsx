@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useSession } from "@/providers/SessionContextProvider";
+import { useSession } from '@/hooks/useSession';
 import { UserRole } from "@/types/roles";
 
 interface ProtectedRouteProps {
