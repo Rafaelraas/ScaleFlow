@@ -15,6 +15,8 @@
     "test:ui": "vitest --ui",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,md,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json,md,css}\"",
+    "deps:check": "bash scripts/dependency-health.sh",
+    "deps:update": "npm update && npm audit fix && npm run test",
     "_comment": "Backend scripts require bash (Git Bash on Windows). Windows users should use WSL or Git Bash.",
     "backend:setup": "bash scripts/setup-backend.sh",
     "backend:deploy": "bash scripts/backend-commands.sh deploy",
