@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Package manager lockfiles (use npm only)
+pnpm-lock.yaml
+yarn.lock
+
 # Environment variables
 .env
 .env.local

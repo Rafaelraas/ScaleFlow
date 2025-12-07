@@ -6,13 +6,16 @@ import {
   SlotInfo,
   EventProps,
 } from 'react-big-calendar';
+import withDragAndDrop, { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { logger } from '@/utils/logger';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ShiftCard } from './ShiftCard';
 
 const localizer = momentLocalizer(moment);
+const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 
 export interface CalendarEvent {
   id: string;
@@ -33,10 +36,13 @@ export interface CalendarProps {
   onSelectSlot?: (slotInfo: SlotInfo) => void;
   onNavigate?: (date: Date, view: View) => void;
   onView?: (view: View) => void;
+  onEventDrop?: (args: EventInteractionArgs<CalendarEvent>) => void;
+  onEventResize?: (args: EventInteractionArgs<CalendarEvent>) => void;
   defaultView?: View;
   view?: View;
   date?: Date;
   className?: string;
+  enableDragAndDrop?: boolean;
 }
 
 /**
@@ -50,10 +56,13 @@ export const Calendar = ({
   onSelectSlot,
   onNavigate,
   onView,
+  onEventDrop,
+  onEventResize,
   defaultView = 'month',
   view,
   date,
   className = '',
+  enableDragAndDrop = true,
 }: CalendarProps) => {
   const isMobile = useIsMobile();
 
@@ -111,9 +120,29 @@ export const Calendar = ({
     [onView]
   );
 
+  // Handle event drop (drag and drop)
+  const handleEventDrop = useCallback(
+    (args: EventInteractionArgs<CalendarEvent>) => {
+      logger.debug('Event dropped:', args.event.id, 'to', args.start);
+      onEventDrop?.(args);
+    },
+    [onEventDrop]
+  );
+
+  // Handle event resize
+  const handleEventResize = useCallback(
+    (args: EventInteractionArgs<CalendarEvent>) => {
+      logger.debug('Event resized:', args.event.id, 'to', args.start, '-', args.end);
+      onEventResize?.(args);
+    },
+    [onEventResize]
+  );
+
+  const CalendarComponent = enableDragAndDrop ? DragAndDropCalendar : BigCalendar;
+
   return (
     <div className={`calendar-container ${className}`}>
-      <BigCalendar
+      <CalendarComponent
         localizer={localizer}
         events={calendarEvents}
         startAccessor="start"
@@ -129,6 +158,10 @@ export const Calendar = ({
         onView={handleViewChange}
         onSelectEvent={handleSelectEvent}
         onSelectSlot={handleSelectSlot}
+        onEventDrop={enableDragAndDrop ? handleEventDrop : undefined}
+        onEventResize={enableDragAndDrop ? handleEventResize : undefined}
+        draggableAccessor={enableDragAndDrop ? () => true : undefined}
+        resizable={enableDragAndDrop}
         selectable
         popup
         views={['month', 'week', 'day']}
