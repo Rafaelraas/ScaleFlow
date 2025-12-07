@@ -15,3 +15,5 @@ export { ShiftCard } from './ShiftCard';
 export type { ShiftCardProps } from './ShiftCard';
 export { ColorLegend } from './ColorLegend';
 export type { ColorLegendProps } from './ColorLegend';
+export { ShiftCalendar } from './ShiftCalendar';
+export type { ShiftCalendarProps } from './ShiftCalendar';
