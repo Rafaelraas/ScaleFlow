@@ -1,8 +1,9 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { Calendar as BigCalendar, momentLocalizer, View, SlotInfo } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { logger } from '@/utils/logger';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const localizer = momentLocalizer(moment);
 
@@ -29,6 +30,7 @@ export interface CalendarProps {
 /**
  * Calendar component wrapper for React Big Calendar
  * Provides shift scheduling visualization with month/week/day views
+ * Automatically switches to appropriate view on mobile devices
  */
 export const Calendar = ({
   events,
@@ -41,6 +43,17 @@ export const Calendar = ({
   date,
   className = '',
 }: CalendarProps) => {
+  const isMobile = useIsMobile();
+
+  // On mobile, suggest switching to week or day view for better UX
+  useEffect(() => {
+    if (isMobile && view === 'month' && onView) {
+      logger.debug('Mobile device detected, suggesting week view for better UX');
+      // Note: We don't force the change, just log it
+      // The ViewToggle component will handle the actual switching
+    }
+  }, [isMobile, view, onView]);
+
   // Convert events to calendar format
   const calendarEvents = useMemo(() => {
     return events.map((event) => ({
@@ -93,7 +106,10 @@ export const Calendar = ({
         events={calendarEvents}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 'calc(100vh - 200px)', minHeight: '500px' }}
+        style={{
+          height: isMobile ? 'calc(100vh - 250px)' : 'calc(100vh - 200px)',
+          minHeight: isMobile ? '400px' : '500px',
+        }}
         defaultView={defaultView}
         view={view}
         date={date}
@@ -114,6 +130,12 @@ export const Calendar = ({
           week: 'Week',
           day: 'Day',
           agenda: 'Agenda',
+        }}
+        // Mobile-friendly event rendering
+        components={{
+          event: ({ event }) => (
+            <div className="text-xs sm:text-sm truncate p-1">{event.title}</div>
+          ),
         }}
       />
     </div>

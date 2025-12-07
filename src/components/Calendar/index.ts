@@ -9,3 +9,5 @@
 
 export { Calendar } from './Calendar';
 export type { CalendarProps, CalendarEvent } from './Calendar';
+export { ViewToggle } from './ViewToggle';
+export type { ViewToggleProps } from './ViewToggle';
