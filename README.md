@@ -880,6 +880,30 @@ For detailed deployment instructions and troubleshooting, see:
 
 ---
 
+## 🤖 AI-Assisted Development
+
+ScaleFlow is optimized for AI-assisted development with GitHub Copilot and other AI coding agents.
+
+### For GitHub Copilot Users
+
+GitHub Copilot automatically reads instructions from [`.github/copilot-instructions.md`](.github/copilot-instructions.md) when working in this repository. These instructions provide:
+
+- Architecture overview and tech stack
+- Coding standards and conventions  
+- Common patterns and best practices
+- Testing guidelines
+- Development commands
+
+No additional setup required - just start coding with Copilot enabled!
+
+### For Other AI Assistants
+
+- **Cursor IDE**: Uses [`.cursorrules`](.cursorrules) for AI-assisted development
+- **Claude/ChatGPT with MCP**: See [docs/MCP_SETUP.md](docs/MCP_SETUP.md) for Model Context Protocol setup
+- **General AI Tools**: Refer to [AI_RULES.md](AI_RULES.md) for comprehensive development guidelines
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please follow these steps:
