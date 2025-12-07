@@ -4,65 +4,77 @@
 
 ---
 
-## 🚀 Next Sprint to Execute: Sprint 2
+## 🚀 Next Sprint to Execute: Sprint 5
 
-**Status:** ✅ Ready to start  
-**Estimated Time:** 10 hours  
+**Status:** 🎯 Ready to start  
+**Estimated Time:** 55-66 hours (~3 weeks)  
 **Priority:** High 🔴  
-**Main Goal:** Reduce bundle size by 60%+
+**Main Goal:** Interactive Calendar View + Recurring Shifts
 
 ### Quick Start
 
 ```bash
 # Read these documents in order:
-1. SPRINT_2_AGENT_PROMPT.md   # If you're an AI agent
-   OR SPRINT_2_PLAN.md         # If you're a human developer
+1. SPRINT_5_AGENT_PROMPT.md   # If you're an AI agent
+   OR SPRINT_5_PLAN.md         # If you're a human developer
 
-2. Start with Task 1: Route-based code splitting
+2. Start with Task 1: Calendar library selection
 3. Test after each task
 4. Report progress frequently
 ```
 
 ### Expected Outcome
 
-- Bundle size: 923 KB → <350 KB
-- Lazy loading for all routes
-- Bundle monitoring active
-- All tests passing
+- Interactive calendar with month/week/day views
+- Drag-and-drop shift scheduling
+- Recurring shifts with bulk generation
+- Mobile responsive design
+- 186+ tests passing
 
 ---
 
 ## 📋 All Sprint Documents
 
-### Sprint 2: Performance Optimization (Week 2)
+### Sprint 2: Performance Optimization (Week 2) ✅
 
+- **Status:** COMPLETED
 - **Plan:** `SPRINT_2_PLAN.md` (17.8 KB)
 - **Agent Prompt:** `SPRINT_2_AGENT_PROMPT.md` (13.5 KB)
 - **Goal:** 60%+ bundle size reduction
-- **Time:** 10 hours
-- **Priority:** High 🔴
+- **Achieved:** Lazy loading, bundle monitoring
 
-### Sprint 3: Dependencies & Stability (Week 3)
+### Sprint 3: Dependencies & Stability (Week 3) ✅
 
+- **Status:** COMPLETED
 - **Plan:** `SPRINT_3_PLAN.md` (20.7 KB)
 - **Agent Prompt:** `SPRINT_3_AGENT_PROMPT.md` (17.5 KB)
+- **Completion:** `SPRINT_3_COMPLETION_SUMMARY.md`
 - **Goal:** Update dependencies, enhance stability
-- **Time:** 10 hours
-- **Priority:** High 🔴
+- **Achieved:** 8 packages updated, error boundaries enhanced
 
-### Sprint 4: Developer Experience (Week 4)
+### Sprint 4: Developer Experience (Week 4) ✅
 
+- **Status:** COMPLETED
 - **Plan:** `SPRINT_4_PLAN.md` (27.5 KB)
 - **Agent Prompt:** `SPRINT_4_AGENT_PROMPT.md` (16.1 KB)
+- **Completion:** `SPRINT_4_COMPLETION_SUMMARY.md`
 - **Goal:** Feature flags, monitoring, dev tools
-- **Time:** 8-15 hours (8 core + 7 optional)
-- **Priority:** Medium 🟡
+- **Achieved:** Feature flags, Web Vitals, performance monitor
 
-### Future Sprints (Week 5+)
+### Sprint 5: Advanced Features (Week 5-7) 🎯
+
+- **Status:** IN PROGRESS
+- **Plan:** `SPRINT_5_PLAN.md` (NEW)
+- **Agent Prompt:** `SPRINT_5_AGENT_PROMPT.md` (NEW)
+- **Goal:** Calendar view, recurring shifts
+- **Time:** 55-66 hours (~3 weeks)
+- **Priority:** High 🔴
+
+### Future Sprints (Week 8+)
 
 - **Backlog:** `FUTURE_BACKLOG.md` (25.1 KB)
 - **Overview:** `SPRINT_OVERVIEW.md` (11.0 KB)
-- **Features:** 17+ planned features
+- **Features:** 15+ planned features
 - **Timeline:** Through Q4 2025
 
 ---
