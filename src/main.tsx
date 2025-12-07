@@ -4,6 +4,11 @@ import './globals.css';
 import { SessionContextProvider } from './providers/SessionContextProvider.tsx';
 import { HashRouter } from 'react-router-dom'; // Using HashRouter for GitHub Pages compatibility
 import { ThemeProvider } from './components/ThemeProvider'; // Import ThemeProvider
+import { Analytics } from '@vercel/analytics/react';
+import { initWebVitals } from './lib/web-vitals';
+
+// Initialize Web Vitals tracking
+initWebVitals();
 
 // HashRouter handles routing without server-side configuration
 // This is the best practice for GitHub Pages static hosting
@@ -18,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <SessionContextProvider>
         <App />
+        <Analytics />
       </SessionContextProvider>
     </ThemeProvider>
   </HashRouter>

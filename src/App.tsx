@@ -8,6 +8,7 @@ import { Layout } from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import { LoadingFallback } from './components/LoadingFallback';
+import { PerformanceMonitor } from './components/PerformanceMonitor';
 
 // Eager load critical auth/landing pages
 import Index from './pages/Index';
@@ -29,6 +30,7 @@ const EmployeePreferences = lazy(() => import('./pages/EmployeePreferences'));
 const CreateCompany = lazy(() => import('./pages/CreateCompany'));
 const AdminCompanyManagement = lazy(() => import('./pages/AdminCompanyManagement'));
 const AdminUserManagement = lazy(() => import('./pages/AdminUserManagement'));
+const FeatureFlagAdmin = lazy(() => import('./pages/FeatureFlagAdmin'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 const queryClient = new QueryClient();
@@ -40,6 +42,8 @@ const App = () => (
       <Sonner />
       <ErrorBoundary>
         <Suspense fallback={<LoadingFallback />}>
+          {/* Performance monitoring in development only */}
+          {import.meta.env.DEV && <PerformanceMonitor />}
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -177,6 +181,14 @@ const App = () => (
                 element={
                   <Layout>
                     <AdminUserManagement />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/admin/feature-flags"
+                element={
+                  <Layout>
+                    <FeatureFlagAdmin />
                   </Layout>
                 }
               />

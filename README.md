@@ -56,35 +56,50 @@
 ## ✨ Features
 
 ### For Managers
-| Feature | Description |
-|---------|-------------|
-| 📅 **Schedule Management** | Create, edit, and delete shifts with detailed information |
-| 👥 **Employee Management** | Invite, edit, and manage team members |
-| 📋 **Shift Templates** | Create reusable templates for common shift patterns |
-| ✅ **Preference Review** | Review and approve/reject employee work preferences |
-| 🔄 **Swap Request Approval** | Manage shift swap requests between employees |
-| ⚙️ **Company Settings** | Configure company-specific settings |
+
+| Feature                      | Description                                               |
+| ---------------------------- | --------------------------------------------------------- |
+| 📅 **Schedule Management**   | Create, edit, and delete shifts with detailed information |
+| 👥 **Employee Management**   | Invite, edit, and manage team members                     |
+| 📋 **Shift Templates**       | Create reusable templates for common shift patterns       |
+| ✅ **Preference Review**     | Review and approve/reject employee work preferences       |
+| 🔄 **Swap Request Approval** | Manage shift swap requests between employees              |
+| ⚙️ **Company Settings**      | Configure company-specific settings                       |
 
 ### For Employees
-| Feature | Description |
-|---------|-------------|
-| 📅 **Personal Schedule** | View assigned shifts and upcoming work |
+
+| Feature                      | Description                              |
+| ---------------------------- | ---------------------------------------- |
+| 📅 **Personal Schedule**     | View assigned shifts and upcoming work   |
 | 📝 **Preference Submission** | Submit availability and work preferences |
-| 🔄 **Shift Swap Requests** | Request to swap shifts with colleagues |
-| 👤 **Profile Management** | Update personal information and settings |
+| 🔄 **Shift Swap Requests**   | Request to swap shifts with colleagues   |
+| 👤 **Profile Management**    | Update personal information and settings |
 
 ### For System Administrators
-| Feature | Description |
-|---------|-------------|
-| 🏢 **Company Management** | Oversee all registered companies |
-| 👥 **User Management** | Manage users across the platform |
-| 📊 **Platform Analytics** | View total companies and users |
+
+| Feature                        | Description                                           |
+| ------------------------------ | ----------------------------------------------------- |
+| 🏢 **Company Management**      | Oversee all registered companies                      |
+| 👥 **User Management**         | Manage users across the platform                      |
+| 📊 **Platform Analytics**      | View total companies and users                        |
+| 🚩 **Feature Flag Management** | 🆕 View and monitor feature flags across the platform |
+
+### Developer Experience & Monitoring 🆕
+
+| Feature                        | Description                                                        |
+| ------------------------------ | ------------------------------------------------------------------ |
+| 🚩 **Feature Flags**           | Controlled feature rollouts with role and environment restrictions |
+| 📊 **Performance Monitoring**  | Track Core Web Vitals (CLS, INP, FCP, LCP, TTFB)                   |
+| 🔍 **Dev Performance Monitor** | Real-time performance metrics in development mode                  |
+| 📈 **Vercel Analytics**        | Automatic analytics tracking in production                         |
+| 🎯 **Rollout Control**         | Gradual feature rollout with percentage-based distribution         |
 
 ---
 
 ## 🛠 Tech Stack
 
 ### Frontend
+
 - **[React 18](https://reactjs.org/)** - UI library
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
 - **[Vite](https://vitejs.dev/)** - Build tool and development server
@@ -92,12 +107,14 @@
 - **[TanStack Query](https://tanstack.com/query)** - Data fetching and caching
 
 ### Styling & UI
+
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[shadcn/ui](https://ui.shadcn.com/)** - Reusable component library
 - **[Radix UI](https://www.radix-ui.com/)** - Accessible component primitives
 - **[Lucide React](https://lucide.dev/)** - Icon library
 
 ### Backend & Authentication
+
 - **[Supabase](https://supabase.io/)** - Backend-as-a-Service
   - PostgreSQL database
   - Authentication
@@ -105,10 +122,12 @@
   - Real-time subscriptions
 
 ### Form Handling & Validation
+
 - **[React Hook Form](https://react-hook-form.com/)** - Performant form handling
 - **[Zod](https://zod.dev/)** - Schema validation
 
 ### Additional Libraries
+
 - **[date-fns](https://date-fns.org/)** - Date manipulation
 - **[Recharts](https://recharts.org/)** - Charting library
 - **[Sonner](https://sonner.emilkowal.ski/)** - Toast notifications
@@ -126,12 +145,14 @@
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/Rafaelraas/ScaleFlow.git
    cd ScaleFlow
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    # or
@@ -139,33 +160,36 @@
    ```
 
 3. **Configure backend** (🆕 Automated Setup)
-   
+
    Run the automated backend setup script:
+
    ```bash
    npm run backend:setup
    # or
    bash scripts/setup-backend.sh
    ```
-   
+
    This will:
    - ✓ Install Supabase CLI locally
    - ✓ Create `.env` files from templates
    - ✓ Validate database migrations
    - ✓ Provide next steps for deployment
-   
+
    **For detailed backend configuration**, see [BACKEND_SETUP.md](./BACKEND_SETUP.md)
 
 4. **Configure environment variables**
-   
+
    Edit the `.env` file created in step 3:
+
    ```env
    VITE_SUPABASE_URL=your_supabase_project_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
-   
+
    Get these values from [Supabase Dashboard](https://app.supabase.com/project/ttgntuaffrondfxybxmi/settings/api)
 
 5. **Deploy database migrations**
+
    ```bash
    npm run backend:deploy
    # or
@@ -173,36 +197,39 @@
    ```
 
 6. **Start the development server**
+
    ```bash
    npm run dev
    ```
 
 7. **Open your browser**
-   
+
    Navigate to `http://localhost:5173`
 
 ### Available Scripts
 
 #### Development Scripts
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run build:dev` | Build for development |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
-| `npm run test` | Run tests with Vitest |
-| `npm run test:ui` | Run tests with UI |
+
+| Script              | Description              |
+| ------------------- | ------------------------ |
+| `npm run dev`       | Start development server |
+| `npm run build`     | Build for production     |
+| `npm run build:dev` | Build for development    |
+| `npm run preview`   | Preview production build |
+| `npm run lint`      | Run ESLint               |
+| `npm run test`      | Run tests with Vitest    |
+| `npm run test:ui`   | Run tests with UI        |
 
 #### Backend Scripts (🆕)
-| Script | Description |
-|--------|-------------|
-| `npm run backend:setup` | Setup backend infrastructure |
-| `npm run backend:deploy` | Deploy database migrations |
-| `npm run backend:start` | Start local Supabase (requires Docker) |
-| `npm run backend:stop` | Stop local Supabase |
-| `npm run backend:status` | Check Supabase status |
-| `npm run backend:link` | Link to Supabase project |
+
+| Script                   | Description                            |
+| ------------------------ | -------------------------------------- |
+| `npm run backend:setup`  | Setup backend infrastructure           |
+| `npm run backend:deploy` | Deploy database migrations             |
+| `npm run backend:start`  | Start local Supabase (requires Docker) |
+| `npm run backend:stop`   | Stop local Supabase                    |
+| `npm run backend:status` | Check Supabase status                  |
+| `npm run backend:link`   | Link to Supabase project               |
 
 **Need help?** Check out the [Quick Start Guide](./QUICK_START.md) for a 5-minute setup tutorial.
 
@@ -214,45 +241,47 @@ Comprehensive documentation is available to help you understand and contribute t
 
 ### Core Documentation
 
-| Document | Description |
-|----------|-------------|
-| [📖 Documentation Index](./docs/INDEX.md) | Complete documentation overview and navigation |
-| [⚡ Quick Start Guide](./QUICK_START.md) | Get up and running in 5 minutes |
-| [🔧 Backend Setup Guide](./BACKEND_SETUP.md) | **🆕 Complete backend configuration guide** |
-| [🔒 Security & Roles](./docs/security-and-roles.md) | **🆕 Security model, RBAC, and RLS policies** |
-| [🏗️ Architecture Guide](./docs/ARCHITECTURE.md) | System architecture and design patterns |
-| [🗄️ Database Schema](./docs/DATABASE.md) | Database structure and RLS policies |
+| Document                                            | Description                                    |
+| --------------------------------------------------- | ---------------------------------------------- |
+| [📖 Documentation Index](./docs/INDEX.md)           | Complete documentation overview and navigation |
+| [⚡ Quick Start Guide](./QUICK_START.md)            | Get up and running in 5 minutes                |
+| [🔧 Backend Setup Guide](./BACKEND_SETUP.md)        | **🆕 Complete backend configuration guide**    |
+| [🔒 Security & Roles](./docs/security-and-roles.md) | **🆕 Security model, RBAC, and RLS policies**  |
+| [🏗️ Architecture Guide](./docs/ARCHITECTURE.md)     | System architecture and design patterns        |
+| [🗄️ Database Schema](./docs/DATABASE.md)            | Database structure and RLS policies            |
 
 ### Developer Guides
 
-| Document | Description |
-|----------|-------------|
-| [💻 Development Guide](./docs/DEVELOPMENT_GUIDE.md) | Complete setup and development workflow |
-| [🔌 API Guidelines](./docs/API_GUIDELINES.md) | Supabase integration patterns |
-| [🔒 Security Best Practices](./docs/SECURITY.md) | Security guidelines and vulnerability reporting |
-| [💡 Feature Ideas](./docs/FEATURE_IDEAS.md) | Future features and enhancement suggestions |
+| Document                                            | Description                                                 |
+| --------------------------------------------------- | ----------------------------------------------------------- |
+| [💻 Development Guide](./docs/DEVELOPMENT_GUIDE.md) | Complete setup and development workflow                     |
+| [🛠️ Developer Tools](./docs/DEVELOPER_TOOLS.md)     | **🆕 Feature flags, performance monitoring, and dev tools** |
+| [🚩 Feature Flags Guide](./docs/FEATURE_FLAGS.md)   | **🆕 Complete guide to using feature flags**                |
+| [🔌 API Guidelines](./docs/API_GUIDELINES.md)       | Supabase integration patterns                               |
+| [🔒 Security Best Practices](./docs/SECURITY.md)    | Security guidelines and vulnerability reporting             |
+| [💡 Feature Ideas](./docs/FEATURE_IDEAS.md)         | Future features and enhancement suggestions                 |
 
 ### Troubleshooting
 
-| Document | Description |
-|----------|-------------|
+| Document                                           | Description                                       |
+| -------------------------------------------------- | ------------------------------------------------- |
 | [🚨 CodeQL Setup Fix](./CODEQL_TROUBLESHOOTING.md) | **Quick fix for CodeQL "default setup" conflict** |
-| [🛡️ CodeQL Setup Guide](./docs/CODEQL_SETUP.md) | Comprehensive CodeQL configuration guide |
+| [🛡️ CodeQL Setup Guide](./docs/CODEQL_SETUP.md)    | Comprehensive CodeQL configuration guide          |
 
 ### Contributing
 
-| Document | Description |
-|----------|-------------|
-| [🤝 Contributing Guidelines](./CONTRIBUTING.md) | How to contribute to the project |
-| [📜 Code of Conduct](./CODE_OF_CONDUCT.md) | Community standards and guidelines |
-| [📋 Changelog](./CHANGELOG.md) | Version history and release notes |
+| Document                                        | Description                        |
+| ----------------------------------------------- | ---------------------------------- |
+| [🤝 Contributing Guidelines](./CONTRIBUTING.md) | How to contribute to the project   |
+| [📜 Code of Conduct](./CODE_OF_CONDUCT.md)      | Community standards and guidelines |
+| [📋 Changelog](./CHANGELOG.md)                  | Version history and release notes  |
 
 ### For AI Agents
 
-| File | Description |
-|------|-------------|
+| File                              | Description                                |
+| --------------------------------- | ------------------------------------------ |
 | [🤖 .cursorrules](./.cursorrules) | AI-assisted development rules and patterns |
-| [🛠️ AI_RULES.md](./AI_RULES.md) | Tech stack and development guidelines |
+| [🛠️ AI_RULES.md](./AI_RULES.md)   | Tech stack and development guidelines      |
 
 **📖 [View Complete Documentation Index](./docs/INDEX.md)**
 
@@ -332,17 +361,14 @@ ScaleFlow implements a comprehensive security model with multiple layers of prot
   - Every table has RLS enabled with targeted policies
   - Company isolation ensures data privacy between organizations
   - Role-based policies enforce manager/employee boundaries
-  
 - **🛡️ Role-based Access Control (RBAC)** - Route protection based on user roles
   - Strongly typed roles: `employee`, `manager`, `system_admin`
   - Centralized route configuration with role requirements
   - Protected routes with automatic redirects
-  
 - **🔒 Client-side Guards** - `ProtectedRoute` component enforces access
   - Session validation on every protected route
   - Company membership verification
   - Role-based access checks with "Access Denied" pages
-  
 - **📦 Typed API Layer** - All database operations go through typed API functions
   - Located in `src/api/` with full TypeScript support
   - Consistent error handling and RLS enforcement
@@ -355,17 +381,20 @@ ScaleFlow implements a comprehensive security model with multiple layers of prot
 ## 👤 User Roles
 
 ### System Admin (`system_admin`)
+
 - Full platform access
 - Manage all companies and users
 - View platform-wide analytics
 
 ### Manager (`manager`)
+
 - Company-level access
 - Create and manage schedules
 - Manage employees
 - Approve preferences and swap requests
 
 ### Employee (`employee`)
+
 - Personal access
 - View assigned shifts
 - Submit preferences
@@ -375,25 +404,25 @@ ScaleFlow implements a comprehensive security model with multiple layers of prot
 
 ## 📄 Pages & Routes
 
-| Route | Component | Access | Description |
-|-------|-----------|--------|-------------|
-| `/` | `Index` | Public | Landing page |
-| `/login` | `Login` | Public | User login |
-| `/register` | `Register` | Public | User registration |
-| `/verify` | `Verify` | Public | Email verification |
-| `/dashboard` | `Dashboard` | Protected | Role-specific dashboard |
-| `/schedules` | `Schedules` | Manager | Schedule management |
-| `/shift-templates` | `ShiftTemplates` | Manager | Shift template management |
-| `/employees` | `Employees` | Manager | Employee management |
-| `/employee-preferences` | `EmployeePreferences` | Manager | Review employee preferences |
-| `/my-schedule` | `MySchedule` | Employee | Personal schedule view |
-| `/preferences` | `Preferences` | Employee | Submit work preferences |
-| `/swap-requests` | `SwapRequests` | Protected | Manage shift swaps |
-| `/profile-settings` | `ProfileSettings` | Protected | User profile settings |
-| `/company-settings` | `CompanySettings` | Manager | Company configuration |
-| `/create-company` | `CreateCompany` | Protected | Create new company |
-| `/admin/companies` | `AdminCompanyManagement` | System Admin | Platform company management |
-| `/admin/users` | `AdminUserManagement` | System Admin | Platform user management |
+| Route                   | Component                | Access       | Description                 |
+| ----------------------- | ------------------------ | ------------ | --------------------------- |
+| `/`                     | `Index`                  | Public       | Landing page                |
+| `/login`                | `Login`                  | Public       | User login                  |
+| `/register`             | `Register`               | Public       | User registration           |
+| `/verify`               | `Verify`                 | Public       | Email verification          |
+| `/dashboard`            | `Dashboard`              | Protected    | Role-specific dashboard     |
+| `/schedules`            | `Schedules`              | Manager      | Schedule management         |
+| `/shift-templates`      | `ShiftTemplates`         | Manager      | Shift template management   |
+| `/employees`            | `Employees`              | Manager      | Employee management         |
+| `/employee-preferences` | `EmployeePreferences`    | Manager      | Review employee preferences |
+| `/my-schedule`          | `MySchedule`             | Employee     | Personal schedule view      |
+| `/preferences`          | `Preferences`            | Employee     | Submit work preferences     |
+| `/swap-requests`        | `SwapRequests`           | Protected    | Manage shift swaps          |
+| `/profile-settings`     | `ProfileSettings`        | Protected    | User profile settings       |
+| `/company-settings`     | `CompanySettings`        | Manager      | Company configuration       |
+| `/create-company`       | `CreateCompany`          | Protected    | Create new company          |
+| `/admin/companies`      | `AdminCompanyManagement` | System Admin | Platform company management |
+| `/admin/users`          | `AdminUserManagement`    | System Admin | Platform user management    |
 
 ---
 
@@ -402,6 +431,7 @@ ScaleFlow implements a comprehensive security model with multiple layers of prot
 ### Tailwind CSS
 
 The project uses a custom Tailwind configuration with:
+
 - Custom color palette for light/dark themes
 - Typography plugin for prose content
 - Animation utilities
@@ -409,6 +439,7 @@ The project uses a custom Tailwind configuration with:
 ### TypeScript
 
 Multiple TypeScript configurations:
+
 - `tsconfig.json` - Base configuration
 - `tsconfig.app.json` - Application-specific settings
 - `tsconfig.node.json` - Node.js environment settings
@@ -416,6 +447,7 @@ Multiple TypeScript configurations:
 ### ESLint
 
 ESLint is configured with:
+
 - TypeScript support
 - React Hooks rules
 - React Refresh plugin
@@ -445,6 +477,7 @@ ESLint is configured with:
 ## 🧪 Testing
 
 The project uses **Vitest** for testing with:
+
 - `@testing-library/react` for component testing
 - `@testing-library/jest-dom` for DOM assertions
 
@@ -467,6 +500,7 @@ The project includes automated GitHub Pages deployment. See the comprehensive gu
 📖 **[GitHub Pages Deployment Guide](./docs/GITHUB_PAGES_DEPLOYMENT.md)**
 
 **Quick Setup**:
+
 1. Enable GitHub Pages in repository settings (Source: GitHub Actions)
 2. Add Supabase secrets to repository: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
 3. Configure Supabase redirect URLs to include your GitHub Pages URL
@@ -485,6 +519,7 @@ The project includes a `vercel.json` configuration for easy deployment:
 3. Deploy automatically on push
 
 **Note:** The `vercel.json` file configures:
+
 - SPA routing (all routes redirected to index.html)
 - Asset caching with 1-year cache headers
 - Vite framework integration
@@ -498,6 +533,7 @@ npm run build
 The build output will be in the `dist/` directory.
 
 For detailed deployment instructions and troubleshooting, see:
+
 - [GitHub Pages Deployment Guide](./docs/GITHUB_PAGES_DEPLOYMENT.md)
 - [Environment Setup Guide](./docs/ENVIRONMENT_SETUP.md)
 
@@ -508,6 +544,7 @@ For detailed deployment instructions and troubleshooting, see:
 ### High Priority 🔴
 
 #### Core Features
+
 - [x] **Add unit tests** - Increase test coverage for critical components ✅
 - [x] **Implement error boundaries** - Better error handling and user feedback ✅
 - [x] **Add loading states** - Consistent skeleton loaders across all pages ✅
@@ -528,6 +565,7 @@ For detailed deployment instructions and troubleshooting, see:
   - Save and reuse filter presets
 
 #### Documentation & Developer Experience
+
 - [x] **Contributing guidelines** - Comprehensive CONTRIBUTING.md ✅
 - [x] **Code of conduct** - Community standards document ✅
 - [x] **AI development rules** - .cursorrules for AI-assisted development ✅
@@ -540,6 +578,7 @@ For detailed deployment instructions and troubleshooting, see:
 ### Medium Priority 🟡
 
 #### User Experience Enhancements
+
 - [x] **Dark mode toggle** - User preference for theme selection ✅
 - [ ] **Export functionality** - Export data in multiple formats
   - PDF schedules with company branding
@@ -563,6 +602,7 @@ For detailed deployment instructions and troubleshooting, see:
   - Time-off request management
 
 #### Communication Features
+
 - [ ] **In-app messaging** - Direct communication between users
   - Manager-to-employee messaging
   - Team announcements
@@ -575,6 +615,7 @@ For detailed deployment instructions and troubleshooting, see:
   - Attach files/documents to shifts
 
 #### Mobile & Accessibility
+
 - [ ] **Progressive Web App (PWA)** - Offline-capable web app
   - Service worker for offline access
   - Push notifications support
@@ -594,6 +635,7 @@ For detailed deployment instructions and troubleshooting, see:
 ### Medium Priority 🟡 (continued)
 
 #### Analytics & Reporting
+
 - [ ] **Analytics dashboard** - Comprehensive business intelligence
   - Labor cost tracking and forecasting
   - Employee hours and overtime reports
@@ -609,6 +651,7 @@ For detailed deployment instructions and troubleshooting, see:
   - Break time tracking
 
 #### Integration & Automation
+
 - [ ] **Internationalization (i18n)** - Multi-language support
   - English, Spanish, Portuguese, French
   - Right-to-left language support
@@ -629,6 +672,7 @@ For detailed deployment instructions and troubleshooting, see:
 ### Low Priority 🟢
 
 #### Advanced Features
+
 - [ ] **Shift bidding system** - Employees bid on open shifts
   - Post available shifts for bidding
   - Automatic assignment based on seniority/preferences
@@ -671,6 +715,7 @@ For detailed deployment instructions and troubleshooting, see:
   - Training requirement alerts
 
 #### Platform Features
+
 - [ ] **White-label options** - Custom branding for resellers
   - Custom domain support
   - Logo and color customization
@@ -691,6 +736,7 @@ For detailed deployment instructions and troubleshooting, see:
 ### Technical Debt & Code Quality 🔧
 
 #### Code Improvements
+
 - [ ] **Fix TypeScript `any` types** - Replace with proper type definitions (15 instances)
   - CompanySettingsForm.tsx (1)
   - EditEmployeeForm.tsx (2)
@@ -719,6 +765,7 @@ For detailed deployment instructions and troubleshooting, see:
   - Visual regression testing
 
 #### Testing & Quality Assurance
+
 - [ ] **Increase test coverage** - Target 80%+ coverage
   - Add tests for all page components
   - Integration tests for key user flows
@@ -738,6 +785,7 @@ For detailed deployment instructions and troubleshooting, see:
   - Dependency updates automation
 
 #### Performance Optimization
+
 - [ ] **Database query optimization** - Faster data loading
   - Add composite indexes
   - Optimize complex queries
@@ -762,6 +810,7 @@ For detailed deployment instructions and troubleshooting, see:
 ### Security Enhancements 🔐
 
 #### Authentication & Authorization
+
 - [ ] **Multi-factor authentication (MFA)** - Enhanced security
   - TOTP-based 2FA
   - SMS verification
@@ -779,6 +828,7 @@ For detailed deployment instructions and troubleshooting, see:
   - Breach detection (HaveIBeenPwned)
 
 #### Data Protection
+
 - [ ] **Rate limiting** - Prevent abuse on API endpoints
   - Per-user rate limits
   - IP-based rate limits
@@ -802,6 +852,7 @@ For detailed deployment instructions and troubleshooting, see:
   - Compliance reporting
 
 #### Compliance & Privacy
+
 - [ ] **GDPR compliance** - Data privacy regulations
   - Data export functionality
   - Right to be forgotten
@@ -834,6 +885,7 @@ Contributions are welcome! Please follow these steps:
 ### Commit Message Convention
 
 Use conventional commits:
+
 - `feat:` - New feature
 - `fix:` - Bug fix
 - `docs:` - Documentation changes
