@@ -58,9 +58,19 @@ check_prerequisites() {
     log_success "Node.js $(node --version) found"
     
     # Check if we're in the ScaleFlow repository
-    if [ ! -f "package.json" ] || ! grep -q "vite_react_shadcn_ts" package.json; then
+    if [ ! -f "package.json" ]; then
         log_error "This script must be run from the ScaleFlow repository root"
+        log_error "package.json not found in current directory"
         exit 1
+    fi
+    
+    # Check for ScaleFlow-specific markers
+    if [ ! -d ".mcp" ] && [ ! -d "supabase" ]; then
+        log_warning "This doesn't appear to be the ScaleFlow repository"
+        read -p "Continue anyway? (y/n): " continue_anyway
+        if [ "$continue_anyway" != "y" ]; then
+            exit 1
+        fi
     fi
     
     log_success "ScaleFlow repository detected"

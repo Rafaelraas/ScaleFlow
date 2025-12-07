@@ -66,10 +66,13 @@ function Check-Prerequisites {
         exit 1
     }
     
-    $packageJson = Get-Content "package.json" -Raw
-    if ($packageJson -notmatch "vite_react_shadcn_ts") {
-        Write-Error "This doesn't appear to be the ScaleFlow repository"
-        exit 1
+    # Check for ScaleFlow-specific markers
+    if (-not (Test-Path ".mcp") -and -not (Test-Path "supabase")) {
+        Write-Warning "This doesn't appear to be the ScaleFlow repository"
+        $continueAnyway = Read-Host "Continue anyway? (y/n)"
+        if ($continueAnyway -ne "y") {
+            exit 1
+        }
     }
     
     Write-Success "ScaleFlow repository detected"
@@ -138,10 +141,10 @@ function Setup-Claude {
     # Copy config and update path
     Copy-Item ".mcp\config.json" $configFile
     
-    # Update repository path (convert to forward slashes for JSON)
-    $jsonPath = $RepoPath -replace '\\', '/'
+    # Update repository path (convert to forward slashes for JSON compatibility)
+    $normalizedPath = $RepoPath -replace '\\', '/'
     $content = Get-Content $configFile -Raw
-    $content = $content -replace '/home/runner/work/ScaleFlow/ScaleFlow', $jsonPath
+    $content = $content -replace '/home/runner/work/ScaleFlow/ScaleFlow', $normalizedPath
     Set-Content $configFile $content -NoNewline
     
     Write-Success "Claude Desktop configuration installed"
@@ -180,10 +183,10 @@ function Setup-Cursor {
     # Copy config and update path
     Copy-Item ".mcp\config.json" $configFile
     
-    # Update repository path (convert to forward slashes for JSON)
-    $jsonPath = $RepoPath -replace '\\', '/'
+    # Update repository path (convert to forward slashes for JSON compatibility)
+    $normalizedPath = $RepoPath -replace '\\', '/'
     $content = Get-Content $configFile -Raw
-    $content = $content -replace '/home/runner/work/ScaleFlow/ScaleFlow', $jsonPath
+    $content = $content -replace '/home/runner/work/ScaleFlow/ScaleFlow', $normalizedPath
     Set-Content $configFile $content -NoNewline
     
     Write-Success "Cursor configuration installed"
