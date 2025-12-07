@@ -127,6 +127,7 @@ describe('ErrorBoundary', () => {
 
     expect(screen.getByText('Connection Problem')).toBeInTheDocument();
     expect(screen.getByText(/check your internet connection/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Retry Connection/i })).toBeInTheDocument();
   });
 
   it('should categorize authentication errors correctly', () => {

@@ -57,11 +57,16 @@ echo ""
 
 echo "📊 ${BLUE}Package Statistics:${NC}"
 echo "---"
-DEPS=$(cat package.json | grep -A 1000 '"dependencies"' | grep -B 1000 '"devDependencies"' | grep -c "@")
-DEV_DEPS=$(cat package.json | grep -A 1000 '"devDependencies"' | grep -c "@")
-echo "Production dependencies: ${GREEN}${DEPS}${NC}"
-echo "Development dependencies: ${GREEN}${DEV_DEPS}${NC}"
-echo "Total: $((DEPS + DEV_DEPS))"
+# Use node to properly parse JSON
+if command -v node &> /dev/null; then
+    DEPS=$(node -e "const pkg = require('./package.json'); console.log(Object.keys(pkg.dependencies || {}).length);")
+    DEV_DEPS=$(node -e "const pkg = require('./package.json'); console.log(Object.keys(pkg.devDependencies || {}).length);")
+    echo "Production dependencies: ${GREEN}${DEPS}${NC}"
+    echo "Development dependencies: ${GREEN}${DEV_DEPS}${NC}"
+    echo "Total: $((DEPS + DEV_DEPS))"
+else
+    echo "${YELLOW}⚠ Node.js not found - skipping package count${NC}"
+fi
 echo ""
 
 echo "🏷️  ${BLUE}Critical Package Versions:${NC}"

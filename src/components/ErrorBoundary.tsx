@@ -96,6 +96,29 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     window.location.href = '/';
   };
 
+  handlePrimaryAction = (): void => {
+    const { errorCategory } = this.state;
+
+    switch (errorCategory) {
+      case 'network':
+        // For network errors, try reloading to reconnect
+        window.location.reload();
+        break;
+      case 'auth':
+        // For auth errors, navigate to login page
+        window.location.href = '/login';
+        break;
+      case 'render':
+        // For render errors, go to home page
+        window.location.href = '/';
+        break;
+      default:
+        // For unknown errors, reload the page
+        window.location.reload();
+        break;
+    }
+  };
+
   handleReset = (): void => {
     this.setState({
       hasError: false,
@@ -113,7 +136,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         return {
           title: 'Connection Problem',
           description: 'Unable to connect to the server. Please check your internet connection.',
-          action: 'Retry',
+          action: 'Retry Connection',
         };
       case 'auth':
         return {
@@ -168,7 +191,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 </div>
               )}
               <div className="flex flex-col gap-2">
-                <Button onClick={this.handleReload} className="w-full">
+                <Button onClick={this.handlePrimaryAction} className="w-full">
                   <RefreshCw className="mr-2 h-4 w-4" />
                   {action}
                 </Button>
