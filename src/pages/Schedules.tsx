@@ -44,6 +44,7 @@ import {
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
+import { ShiftCalendar } from '@/components/Calendar';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -103,6 +104,9 @@ const Schedules = () => {
   const [employeeOptions, setEmployeeOptions] = useState<EmployeeOption[]>([]);
   const [roleOptions, setRoleOptions] = useState<RoleOption[]>([]);
   const [loadingFilterOptions, setLoadingFilterOptions] = useState(true);
+
+  // Calendar view state
+  const [showCalendarView, setShowCalendarView] = useState(false);
 
   // Fetch filter options (employees and roles)
   const fetchFilterOptions = useCallback(async () => {
@@ -393,7 +397,19 @@ const Schedules = () => {
         </div>
       </div>
 
-      {loadingShifts || loadingFilterOptions ? (
+      {/* Calendar or Table View */}
+      {showCalendarView && !loadingShifts && !loadingFilterOptions ? (
+        <ShiftCalendar
+          shifts={shifts}
+          onSelectShift={handleEditClick}
+          onSelectSlot={(slotInfo) => {
+            // Pre-fill the create dialog with the selected time
+            setIsCreateDialogOpen(true);
+          }}
+          onToggleView={(isCalendar) => setShowCalendarView(isCalendar)}
+          showViewToggle={true}
+        />
+      ) : loadingShifts || loadingFilterOptions ? (
         <div className="rounded-md border">
           <Table>
             <TableCaption>Loading shifts...</TableCaption>
