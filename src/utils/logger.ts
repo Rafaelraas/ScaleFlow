@@ -7,8 +7,10 @@
 
 import { config } from '@/config/env';
 
+type LogValue = string | number | boolean | null | undefined;
+
 interface LogContext {
-  [key: string]: unknown;
+  [key: string]: LogValue | LogValue[] | { [key: string]: LogValue };
 }
 
 class Logger {
@@ -18,12 +20,15 @@ class Logger {
   /**
    * Log error messages
    * In production, these should be sent to error tracking service
+   *
+   * NOTE: Errors are intentionally not logged to console in production.
+   * Uncomment one of the integration options below to enable production error tracking.
    */
   error(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
       console.error(`[ERROR] ${message}`, context || '');
     } else if (!this.isTest) {
-      // Production error tracking integration examples:
+      // Production error tracking integration examples (uncomment one):
       // Option 1: Sentry
       // import * as Sentry from '@sentry/react';
       // Sentry.captureException(new Error(message), {
