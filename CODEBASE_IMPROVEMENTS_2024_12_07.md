@@ -176,8 +176,8 @@ npx lint-staged
 #### 2.1 Implement Code Splitting & Lazy Loading
 **Impact:** Significantly reduce initial bundle size  
 **Effort:** Medium (4-6 hours)  
-**Current:** 923 KB single chunk  
-**Target:** ~300 KB initial + route-based chunks
+**Current:** 923 KB minified (266 KB gzipped) - single chunk  
+**Target:** ~300 KB minified (~90 KB gzipped) initial + route-based chunks
 
 **Recommended Implementation:**
 ```typescript
@@ -210,7 +210,7 @@ const PageLoader = () => (
 ```
 
 **Expected Results:**
-- Initial bundle: ~300 KB (67% reduction)
+- Initial bundle: ~300 KB minified / ~90 KB gzipped (67% reduction from 923 KB / 266 KB)
 - Faster initial page load
 - Better Lighthouse scores
 - On-demand route loading
@@ -596,9 +596,14 @@ import { features } from '@/config/features';
 
 ### Bundle Analysis
 ```
-Total Bundle Size: 923.48 KB (minified)
-Gzipped Size: 266.17 KB
+Total Bundle Size: 923.48 KB (minified, uncompressed)
+Gzipped Size: 266.17 KB (actual size served to users)
 CSS Size: 64.52 KB (minified)
+Gzipped CSS: 11.26 KB
+
+Note: Modern deployment platforms (Vercel, Netlify, etc.) automatically 
+serve gzipped content. The 266 KB gzipped size is what users actually 
+download, but 923 KB is still large for initial parse/execution.
 ```
 
 ### Dependency Stats
