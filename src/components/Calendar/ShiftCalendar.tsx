@@ -1,12 +1,15 @@
 import { useState, useCallback, useMemo } from 'react';
 import { View, SlotInfo } from 'react-big-calendar';
+import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 import { Calendar, CalendarEvent } from './Calendar';
 import { ViewToggle } from './ViewToggle';
 import { ColorLegend } from './ColorLegend';
 import { useCalendarView } from '@/hooks/useCalendarView';
+import { useShiftDragDrop } from '@/hooks/useShiftDragDrop';
 import { Button } from '@/components/ui/button';
-import { CalendarDays, List } from 'lucide-react';
+import { CalendarDays, List, Undo2, Redo2 } from 'lucide-react';
 import { logger } from '@/utils/logger';
+import { detectConflicts, formatConflictsMessage } from '@/lib/shift-conflicts';
 
 interface Shift {
   id: string;
@@ -23,7 +26,9 @@ export interface ShiftCalendarProps {
   onSelectShift?: (shift: Shift) => void;
   onSelectSlot?: (slotInfo: SlotInfo) => void;
   onToggleView?: (isCalendarView: boolean) => void;
+  onShiftUpdate?: (shiftId: string, updates: Partial<Shift>) => void;
   showViewToggle?: boolean;
+  enableDragAndDrop?: boolean;
   className?: string;
 }
 
@@ -36,12 +41,35 @@ export const ShiftCalendar = ({
   onSelectShift,
   onSelectSlot,
   onToggleView,
+  onShiftUpdate,
   showViewToggle = true,
+  enableDragAndDrop = true,
   className = '',
 }: ShiftCalendarProps) => {
   const { view, setView } = useCalendarView();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isCalendarView, setIsCalendarView] = useState(true);
+
+  // Drag and drop functionality
+  const { handleDrop, handleUndo, handleRedo, canUndo, canRedo } = useShiftDragDrop({
+    shifts: shifts.map((s) => ({
+      id: s.id,
+      employee_id: s.employee_id,
+      start_time: s.start_time,
+      end_time: s.end_time,
+    })),
+    onShiftUpdate: (shiftId, updates) => {
+      onShiftUpdate?.(shiftId, updates);
+    },
+    onConflictDetected: (conflicts) => {
+      // Show conflicts to user and let them decide
+      const message = formatConflictsMessage(conflicts);
+      logger.warn('Conflicts detected:', message);
+      // For now, block on errors, allow warnings
+      // TODO: Show a dialog for user to confirm
+      return conflicts.every((c) => c.severity === 'warning');
+    },
+  });
 
   // Transform shifts to calendar events
   const events = useMemo<CalendarEvent[]>(() => {
@@ -93,6 +121,26 @@ export const ShiftCalendar = ({
     }
   };
 
+  // Handle event drop from drag and drop
+  const handleEventDrop = useCallback(
+    (args: EventInteractionArgs<CalendarEvent>) => {
+      const { event, start, end } = args;
+      logger.debug('Event dropped:', event.id, start, end);
+      handleDrop(event.id, start, end);
+    },
+    [handleDrop]
+  );
+
+  // Handle event resize
+  const handleEventResize = useCallback(
+    (args: EventInteractionArgs<CalendarEvent>) => {
+      const { event, start, end } = args;
+      logger.debug('Event resized:', event.id, start, end);
+      handleDrop(event.id, start, end);
+    },
+    [handleDrop]
+  );
+
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Calendar Header with Controls */}
@@ -107,6 +155,34 @@ export const ShiftCalendar = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* Undo/Redo buttons */}
+          {enableDragAndDrop && isCalendarView && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleUndo}
+                disabled={!canUndo}
+                className="gap-2"
+                title="Undo last change"
+              >
+                <Undo2 className="h-4 w-4" />
+                <span className="hidden sm:inline">Undo</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRedo}
+                disabled={!canRedo}
+                className="gap-2"
+                title="Redo last change"
+              >
+                <Redo2 className="h-4 w-4" />
+                <span className="hidden sm:inline">Redo</span>
+              </Button>
+            </>
+          )}
+
           {/* View Toggle (Calendar/List) */}
           {showViewToggle && (
             <Button variant="outline" size="sm" onClick={handleToggleListView} className="gap-2">
@@ -141,8 +217,11 @@ export const ShiftCalendar = ({
             onSelectSlot={handleSelectSlot}
             onNavigate={handleNavigate}
             onView={setView}
+            onEventDrop={handleEventDrop}
+            onEventResize={handleEventResize}
             view={view}
             date={currentDate}
+            enableDragAndDrop={enableDragAndDrop}
             className="bg-background rounded-lg border shadow-sm"
           />
         ) : (
