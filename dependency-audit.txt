@@ -1,0 +1,27 @@
+Package                        Current   Wanted   Latest  Location                                    Depended by  Package Type     Homepage
+@hookform/resolvers             3.10.0   3.10.0    5.2.2  node_modules/@hookform/resolvers            ScaleFlow    dependencies     https://react-hook-form.com
+@types/node                    22.19.1  22.19.1  24.10.1  node_modules/@types/node                    ScaleFlow    devDependencies  https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node
+@types/react                   18.3.27  18.3.27   19.2.7  node_modules/@types/react                   ScaleFlow    devDependencies  https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react
+@types/react-dom                18.3.7   18.3.7   19.2.3  node_modules/@types/react-dom               ScaleFlow    devDependencies  https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-dom
+@types/testing-library__react   10.2.0   10.2.0   10.0.1  node_modules/@types/testing-library__react  ScaleFlow    devDependencies
+@vitejs/plugin-react-swc        3.11.0   3.11.0    4.2.2  node_modules/@vitejs/plugin-react-swc       ScaleFlow    devDependencies  https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react-swc#readme
+@vitest/coverage-v8              2.1.9    2.1.9   4.0.15  node_modules/@vitest/coverage-v8            ScaleFlow    devDependencies  https://github.com/vitest-dev/vitest/tree/main/packages/coverage-v8#readme
+@vitest/ui                       2.1.9    2.1.9   4.0.15  node_modules/@vitest/ui                     ScaleFlow    devDependencies  https://github.com/vitest-dev/vitest/tree/main/packages/ui#readme
+date-fns                         3.6.0    3.6.0    4.1.0  node_modules/date-fns                       ScaleFlow    dependencies     https://github.com/date-fns/date-fns#readme
+eslint-plugin-react-hooks        5.2.0    5.2.0    7.0.1  node_modules/eslint-plugin-react-hooks      ScaleFlow    devDependencies  https://react.dev/
+globals                        15.15.0  15.15.0   16.5.0  node_modules/globals                        ScaleFlow    devDependencies  https://github.com/sindresorhus/globals#readme
+lucide-react                   0.462.0  0.462.0  0.556.0  node_modules/lucide-react                   ScaleFlow    dependencies     https://lucide.dev
+next-themes                      0.3.0    0.3.0    0.4.6  node_modules/next-themes                    ScaleFlow    dependencies     https://github.com/pacocoursey/next-themes#readme
+react                           18.3.1   18.3.1   19.2.1  node_modules/react                          ScaleFlow    dependencies     https://react.dev/
+react-day-picker                8.10.1   8.10.1   9.12.0  node_modules/react-day-picker               ScaleFlow    dependencies     https://daypicker.dev
+react-dom                       18.3.1   18.3.1   19.2.1  node_modules/react-dom                      ScaleFlow    dependencies     https://react.dev/
+react-resizable-panels           2.1.9    2.1.9    3.0.6  node_modules/react-resizable-panels         ScaleFlow    dependencies     https://github.com/bvaughn/react-resizable-panels#readme
+react-router-dom                6.30.2   6.30.2   7.10.1  node_modules/react-router-dom               ScaleFlow    dependencies     https://github.com/remix-run/react-router#readme
+recharts                        2.15.4   2.15.4    3.5.1  node_modules/recharts                       ScaleFlow    dependencies     https://github.com/recharts/recharts
+sonner                           1.7.4    1.7.4    2.0.7  node_modules/sonner                         ScaleFlow    dependencies     https://sonner.emilkowal.ski/
+tailwind-merge                   2.6.0    2.6.0    3.4.0  node_modules/tailwind-merge                 ScaleFlow    dependencies     https://github.com/dcastil/tailwind-merge
+tailwindcss                     3.4.18   3.4.18   4.1.17  node_modules/tailwindcss                    ScaleFlow    devDependencies  https://tailwindcss.com
+vaul                             0.9.9    0.9.9    1.1.2  node_modules/vaul                           ScaleFlow    dependencies     https://vaul.emilkowal.ski/
+vite                             6.4.1    6.4.1    7.2.6  node_modules/vite                           ScaleFlow    devDependencies  https://vite.dev
+vitest                           2.1.9    2.1.9   4.0.15  node_modules/vitest                         ScaleFlow    devDependencies  https://vitest.dev
+zod                            3.25.76  3.25.76   4.1.13  node_modules/zod                            ScaleFlow    dependencies     https://zod.dev
