@@ -1,6 +1,8 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
+import viteCompression from 'vite-plugin-compression';
 
 export default defineConfig(({ mode }) => {
   // Use VITE_APP_BASE_PATH environment variable, default to '/'
@@ -8,13 +10,25 @@ export default defineConfig(({ mode }) => {
 
   return {
     server: {
-      host: "::",
+      host: '::',
       port: 8080,
     },
-    plugins: [react()],
+    plugins: [
+      react(),
+      viteCompression({
+        algorithm: 'gzip',
+        ext: '.gz',
+      }),
+      visualizer({
+        filename: './dist/stats.html',
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+      }),
+    ],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        '@': path.resolve(__dirname, './src'),
       },
       extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
     },
