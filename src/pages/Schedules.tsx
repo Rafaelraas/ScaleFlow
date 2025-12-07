@@ -44,8 +44,9 @@ import {
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { ShiftCalendar } from '@/components/Calendar';
+import { ShiftCalendar, QuickShiftModal } from '@/components/Calendar';
 import { cn } from '@/lib/utils';
+import type { SlotInfo } from 'react-big-calendar';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Pagination,
@@ -107,6 +108,10 @@ const Schedules = () => {
 
   // Calendar view state
   const [showCalendarView, setShowCalendarView] = useState(false);
+
+  // Quick shift modal state
+  const [isQuickShiftModalOpen, setIsQuickShiftModalOpen] = useState(false);
+  const [selectedSlotInfo, setSelectedSlotInfo] = useState<{ start: Date; end: Date } | null>(null);
 
   // Fetch filter options (employees and roles)
   const fetchFilterOptions = useCallback(async () => {
@@ -403,8 +408,12 @@ const Schedules = () => {
           shifts={shifts}
           onSelectShift={handleEditClick}
           onSelectSlot={(slotInfo) => {
-            // Pre-fill the create dialog with the selected time
-            setIsCreateDialogOpen(true);
+            // Open quick shift modal with pre-filled date/time
+            setSelectedSlotInfo({
+              start: slotInfo.start as Date,
+              end: slotInfo.end as Date,
+            });
+            setIsQuickShiftModalOpen(true);
           }}
           onToggleView={(isCalendar) => setShowCalendarView(isCalendar)}
           showViewToggle={true}
@@ -595,6 +604,17 @@ const Schedules = () => {
             />
           </DialogContent>
         </Dialog>
+      )}
+
+      {/* Quick Shift Modal */}
+      {selectedSlotInfo && (
+        <QuickShiftModal
+          open={isQuickShiftModalOpen}
+          onOpenChange={setIsQuickShiftModalOpen}
+          startDate={selectedSlotInfo.start}
+          endDate={selectedSlotInfo.end}
+          onSuccess={handleShiftFormSuccess}
+        />
       )}
     </div>
   );
