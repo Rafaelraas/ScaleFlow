@@ -24,6 +24,7 @@
     "backend:stop": "bash scripts/backend-commands.sh stop",
     "backend:status": "bash scripts/backend-commands.sh status",
     "backend:link": "bash scripts/backend-commands.sh link",
+    "mcp:setup": "bash scripts/setup-mcp.sh",
     "prepare": "husky"
   },
   "dependencies": {

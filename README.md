@@ -231,6 +231,12 @@
 | `npm run backend:status` | Check Supabase status                  |
 | `npm run backend:link`   | Link to Supabase project               |
 
+#### MCP Scripts (🆕)
+
+| Script              | Description                                |
+| ------------------- | ------------------------------------------ |
+| `npm run mcp:setup` | Setup Model Context Protocol for AI agents |
+
 **Need help?** Check out the [Quick Start Guide](./QUICK_START.md) for a 5-minute setup tutorial.
 
 ---
@@ -278,10 +284,12 @@ Comprehensive documentation is available to help you understand and contribute t
 
 ### For AI Agents
 
-| File                              | Description                                |
-| --------------------------------- | ------------------------------------------ |
-| [🤖 .cursorrules](./.cursorrules) | AI-assisted development rules and patterns |
-| [🛠️ AI_RULES.md](./AI_RULES.md)   | Tech stack and development guidelines      |
+| File                                           | Description                                      |
+| ---------------------------------------------- | ------------------------------------------------ |
+| [🤖 .cursorrules](./.cursorrules)              | AI-assisted development rules and patterns       |
+| [🛠️ AI_RULES.md](./AI_RULES.md)                | Tech stack and development guidelines            |
+| [🔌 MCP Setup Guide](./docs/MCP_SETUP.md)      | **🆕 Model Context Protocol configuration guide** |
+| [📁 .mcp/config.json](./.mcp/config.json)      | **🆕 MCP servers configuration**                 |
 
 **📖 [View Complete Documentation Index](./docs/INDEX.md)**
 

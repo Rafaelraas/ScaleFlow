@@ -218,3 +218,26 @@ return isMobile ? <MobileView /> : <DesktopView />;
 6. Update `src/components/layout/Sidebar.tsx` for navigation
 7. Write tests following existing patterns
 8. Use API functions from `src/api/` for data operations
+
+## Model Context Protocol (MCP) Support
+
+ScaleFlow is configured to work with MCP-compatible AI assistants.
+
+### Available MCP Servers
+- **Filesystem** - Read/write files in the repository
+- **Git** - Execute git operations (status, commit, diff, branch)
+- **GitHub** - Manage issues and PRs (requires personal access token)
+- **PostgreSQL** - Query Supabase database (requires local instance)
+- **Brave Search** - Web search for documentation (requires API key)
+
+### MCP Configuration
+- Config file: `.mcp/config.json`
+- Setup guide: `docs/MCP_SETUP.md`
+- Supports: Claude Desktop, Cursor, VS Code with Cline
+
+### Using MCP
+- Access files directly without manual copy/paste
+- Execute git commands through AI assistant
+- Query database schema and data
+- Search documentation when needed
+- Review comprehensive setup guide in `docs/MCP_SETUP.md`
