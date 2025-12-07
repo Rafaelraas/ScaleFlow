@@ -8,6 +8,7 @@ import { Layout } from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import { LoadingFallback } from './components/LoadingFallback';
+import { PerformanceMonitor } from './components/PerformanceMonitor';
 
 // Eager load critical auth/landing pages
 import Index from './pages/Index';
@@ -41,6 +42,8 @@ const App = () => (
       <Sonner />
       <ErrorBoundary>
         <Suspense fallback={<LoadingFallback />}>
+          {/* Performance monitoring in development only */}
+          {import.meta.env.DEV && <PerformanceMonitor />}
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
