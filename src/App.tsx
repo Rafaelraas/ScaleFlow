@@ -29,6 +29,7 @@ const EmployeePreferences = lazy(() => import('./pages/EmployeePreferences'));
 const CreateCompany = lazy(() => import('./pages/CreateCompany'));
 const AdminCompanyManagement = lazy(() => import('./pages/AdminCompanyManagement'));
 const AdminUserManagement = lazy(() => import('./pages/AdminUserManagement'));
+const FeatureFlagAdmin = lazy(() => import('./pages/FeatureFlagAdmin'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 const queryClient = new QueryClient();
@@ -177,6 +178,14 @@ const App = () => (
                 element={
                   <Layout>
                     <AdminUserManagement />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/admin/feature-flags"
+                element={
+                  <Layout>
+                    <FeatureFlagAdmin />
                   </Layout>
                 }
               />
