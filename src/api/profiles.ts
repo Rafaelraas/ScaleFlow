@@ -1,6 +1,6 @@
 /**
  * Profiles API
- * 
+ *
  * Typed API layer for profile-related operations.
  * All operations enforce RLS policies defined in the database.
  */
@@ -13,7 +13,9 @@ import { Profile } from '@/types/database';
  * RLS Policy: users can view their own profile
  */
 export async function getCurrentUserProfile() {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
   const { data, error } = await supabase
@@ -50,7 +52,9 @@ export async function updateCurrentUserProfile(updates: {
   last_name?: string | null;
   avatar_url?: string | null;
 }) {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
   const { data, error } = await supabase
@@ -68,13 +72,16 @@ export async function updateCurrentUserProfile(updates: {
  * Update a user's profile (manager/admin only)
  * RLS Policy: managers can update profiles in their company, admins can update any
  */
-export async function updateProfile(userId: string, updates: {
-  first_name?: string | null;
-  last_name?: string | null;
-  avatar_url?: string | null;
-  company_id?: string | null;
-  role_id?: string;
-}) {
+export async function updateProfile(
+  userId: string,
+  updates: {
+    first_name?: string | null;
+    last_name?: string | null;
+    avatar_url?: string | null;
+    company_id?: string | null;
+    role_id?: string;
+  }
+) {
   const { data, error } = await supabase
     .from('profiles')
     .update(updates)

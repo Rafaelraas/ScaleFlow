@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,20 +13,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client.ts";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client.ts';
 import { useSession } from '@/hooks/useSession';
-import { showError, showSuccess } from "@/utils/toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserIcon } from "lucide-react";
-import { Label } from "@/components/ui/label"; // Added Label import
-import { logger } from "@/utils/logger";
+import { showError, showSuccess } from '@/utils/toast';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserIcon } from 'lucide-react';
+import { Label } from '@/components/ui/label'; // Added Label import
+import { logger } from '@/utils/logger';
 
 const formSchema = z.object({
   first_name: z.string().optional(),
   last_name: z.string().optional(),
-  avatar_url: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")),
+  avatar_url: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
 });
 
 const ProfileForm = () => {
@@ -36,9 +36,9 @@ const ProfileForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: userProfile?.first_name || "",
-      last_name: userProfile?.last_name || "",
-      avatar_url: userProfile?.avatar_url || "",
+      first_name: userProfile?.first_name || '',
+      last_name: userProfile?.last_name || '',
+      avatar_url: userProfile?.avatar_url || '',
     },
   });
 
@@ -46,16 +46,16 @@ const ProfileForm = () => {
   useEffect(() => {
     if (userProfile) {
       form.reset({
-        first_name: userProfile.first_name || "",
-        last_name: userProfile.last_name || "",
-        avatar_url: userProfile.avatar_url || "",
+        first_name: userProfile.first_name || '',
+        last_name: userProfile.last_name || '',
+        avatar_url: userProfile.avatar_url || '',
       });
     }
   }, [userProfile, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!session?.user?.id) {
-      showError("User not authenticated.");
+      showError('User not authenticated.');
       return;
     }
 
@@ -75,12 +75,12 @@ const ProfileForm = () => {
         throw new Error(error.message);
       }
 
-      showSuccess("Profile updated successfully!");
+      showSuccess('Profile updated successfully!');
       // The SessionContextProvider will re-fetch the profile on USER_UPDATED event
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error("Error updating profile", { error: errorMessage });
-      showError("Failed to update profile: " + errorMessage);
+      logger.error('Error updating profile', { error: errorMessage });
+      showError('Failed to update profile: ' + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -95,7 +95,7 @@ const ProfileForm = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="flex items-center space-x-4">
           <Avatar className="h-20 w-20">
-            <AvatarImage src={form.watch("avatar_url") || undefined} alt="User Avatar" />
+            <AvatarImage src={form.watch('avatar_url') || undefined} alt="User Avatar" />
             <AvatarFallback>
               <UserIcon className="h-10 w-10 text-muted-foreground" />
             </AvatarFallback>
@@ -143,21 +143,26 @@ const ProfileForm = () => {
             </FormItem>
           )}
         />
-        
+
         <div className="space-y-2">
           <Label>Email</Label>
-          <Input value={session?.user?.email || "N/A"} disabled />
+          <Input value={session?.user?.email || 'N/A'} disabled />
           <p className="text-sm text-muted-foreground">Your email cannot be changed here.</p>
         </div>
 
         <div className="space-y-2">
           <Label>Role</Label>
-          <Input value={userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : "N/A"} disabled />
-          <p className="text-sm text-muted-foreground">Your role is managed by your company administrator.</p>
+          <Input
+            value={userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : 'N/A'}
+            disabled
+          />
+          <p className="text-sm text-muted-foreground">
+            Your role is managed by your company administrator.
+          </p>
         </div>
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save Changes"}
+          {isSubmitting ? 'Saving...' : 'Save Changes'}
         </Button>
       </form>
     </Form>

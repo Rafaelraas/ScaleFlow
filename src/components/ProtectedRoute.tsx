@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import React from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useSession } from '@/hooks/useSession';
-import { UserRole } from "@/types/roles";
+import { UserRole } from '@/types/roles';
 
 interface ProtectedRouteProps {
   requiresCompany?: boolean;
@@ -11,7 +11,11 @@ interface ProtectedRouteProps {
   children?: React.ReactNode; // Adicionado children prop
 }
 
-const ProtectedRoute = ({ requiresCompany = true, allowedRoles, children }: ProtectedRouteProps) => {
+const ProtectedRoute = ({
+  requiresCompany = true,
+  allowedRoles,
+  children,
+}: ProtectedRouteProps) => {
   const { session, userProfile, userRole, isLoading } = useSession();
 
   // Show loading state while session data is being fetched

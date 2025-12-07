@@ -6,13 +6,10 @@ import { logger } from '@/utils/logger';
 const createDummyClient = () => {
   logger.warn(
     'Supabase environment variables are not configured. Running in demo mode. ' +
-    'To enable full functionality, set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+      'To enable full functionality, set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
   );
   // Use placeholder values that won't actually connect
-  return createClient(
-    'https://placeholder.supabase.co',
-    'placeholder-anon-key'
-  );
+  return createClient('https://placeholder.supabase.co', 'placeholder-anon-key');
 };
 
 // Export either a real client or a dummy client

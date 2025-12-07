@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useLocation } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link, useLocation } from 'react-router-dom';
 
 const Login = () => {
   const location = useLocation();
@@ -14,7 +14,7 @@ const Login = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const hashParams = new URLSearchParams(location.hash.substring(1));
-    
+
     const authFlowType = urlParams.get('type') || hashParams.get('type');
 
     if (authFlowType === 'recovery') {
@@ -50,7 +50,7 @@ const Login = () => {
             redirectTo={`${window.location.origin}${window.location.pathname}#/dashboard`}
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Don't have an account?{' '}
             <Link to="/register" className="text-primary hover:underline">
               Sign up
             </Link>

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError } from "@/utils/toast";
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError } from '@/utils/toast';
 
 export interface Employee {
   id: string;
@@ -30,7 +30,7 @@ export function useEmployees(companyId?: string) {
         .eq('company_id', companyId);
 
       if (fetchError) {
-        const errorMessage = "Failed to fetch employees: " + fetchError.message;
+        const errorMessage = 'Failed to fetch employees: ' + fetchError.message;
         setError(errorMessage);
         showError(errorMessage);
       } else {

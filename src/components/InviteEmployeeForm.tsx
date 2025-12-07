@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,26 +13,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client.ts";
+} from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client.ts';
 import { useSession } from '@/hooks/useSession';
-import { showError, showSuccess } from "@/utils/toast";
-import { useRoles } from "@/hooks/useRoles";
-import { logger } from "@/utils/logger";
+import { showError, showSuccess } from '@/utils/toast';
+import { useRoles } from '@/hooks/useRoles';
+import { logger } from '@/utils/logger';
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address." }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
-  role_id: z.string().uuid({ message: "Please select a role." }),
+  role_id: z.string().uuid({ message: 'Please select a role.' }),
 });
 
 interface InviteEmployeeFormProps {
@@ -48,16 +48,16 @@ const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) =>
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      first_name: "",
-      last_name: "",
-      role_id: "",
+      email: '',
+      first_name: '',
+      last_name: '',
+      role_id: '',
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!userProfile?.company_id) {
-      showError("Company ID not found. Cannot invite employee.");
+      showError('Company ID not found. Cannot invite employee.');
       return;
     }
 
@@ -82,8 +82,8 @@ const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) =>
       onSuccess();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error("Error inviting employee", { error: errorMessage });
-      showError("Failed to send invitation: " + errorMessage);
+      logger.error('Error inviting employee', { error: errorMessage });
+      showError('Failed to send invitation: ' + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -164,7 +164,7 @@ const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) =>
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Sending Invitation..." : "Invite Employee"}
+            {isSubmitting ? 'Sending Invitation...' : 'Invite Employee'}
           </Button>
         </div>
       </form>

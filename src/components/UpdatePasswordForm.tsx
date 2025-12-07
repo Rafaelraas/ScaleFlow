@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,19 +13,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { updatePassword } from "@/services/supabase/auth.service";
-import { showError, showSuccess } from "@/utils/toast";
-import { logger } from "@/utils/logger";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { updatePassword } from '@/services/supabase/auth.service';
+import { showError, showSuccess } from '@/utils/toast';
+import { logger } from '@/utils/logger';
 
-const formSchema = z.object({
-  newPassword: z.string().min(6, { message: "Password must be at least 6 characters." }),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords do not match.",
-  path: ["confirmPassword"],
-});
+const formSchema = z
+  .object({
+    newPassword: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Passwords do not match.',
+    path: ['confirmPassword'],
+  });
 
 const UpdatePasswordForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,8 +35,8 @@ const UpdatePasswordForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      newPassword: "",
-      confirmPassword: "",
+      newPassword: '',
+      confirmPassword: '',
     },
   });
 
@@ -47,12 +49,12 @@ const UpdatePasswordForm = () => {
         throw new Error(error.message);
       }
 
-      showSuccess("Password updated successfully!");
+      showSuccess('Password updated successfully!');
       form.reset();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error("Error updating password", { error: errorMessage });
-      showError("Failed to update password: " + errorMessage);
+      logger.error('Error updating password', { error: errorMessage });
+      showError('Failed to update password: ' + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +90,7 @@ const UpdatePasswordForm = () => {
           )}
         />
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Updating Password..." : "Update Password"}
+          {isSubmitting ? 'Updating Password...' : 'Update Password'}
         </Button>
       </form>
     </Form>

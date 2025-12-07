@@ -1,15 +1,29 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import PreferenceForm from "@/components/PreferenceForm"; // Import the new PreferenceForm
+import React, { useState, useEffect, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import PreferenceForm from '@/components/PreferenceForm'; // Import the new PreferenceForm
 import { useSession } from '@/hooks/useSession';
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError } from "@/utils/toast";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { format } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError } from '@/utils/toast';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { format } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
 
 interface Preference {
   id: string;
@@ -41,7 +55,7 @@ const Preferences = () => {
       .order('start_date', { ascending: true });
 
     if (error) {
-      showError("Failed to fetch your preferences: " + error.message);
+      showError('Failed to fetch your preferences: ' + error.message);
       setPreferences([]);
     } else {
       setPreferences(data || []);
@@ -85,7 +99,10 @@ const Preferences = () => {
             <DialogHeader>
               <DialogTitle>Submit New Work Preference</DialogTitle>
             </DialogHeader>
-            <PreferenceForm onSuccess={handlePreferenceFormSuccess} onCancel={() => setIsDialogOpen(false)} />
+            <PreferenceForm
+              onSuccess={handlePreferenceFormSuccess}
+              onCancel={() => setIsDialogOpen(false)}
+            />
           </DialogContent>
         </Dialog>
       </div>
@@ -105,18 +122,30 @@ const Preferences = () => {
             <TableBody>
               {[...Array(5)].map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[180px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[70px]" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[120px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[120px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[100px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[180px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[70px]" />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
       ) : preferences.length === 0 ? (
-        <p className="text-center text-gray-500">You have not submitted any work preferences yet.</p>
+        <p className="text-center text-gray-500">
+          You have not submitted any work preferences yet.
+        </p>
       ) : (
         <div className="rounded-md border">
           <Table>
@@ -136,7 +165,9 @@ const Preferences = () => {
                   <TableCell>{format(new Date(preference.start_date), 'MMM dd, yyyy')}</TableCell>
                   <TableCell>{format(new Date(preference.end_date), 'MMM dd, yyyy')}</TableCell>
                   <TableCell>{preference.preference_type.replace(/_/g, ' ')}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">{preference.notes || '-'}</TableCell>
+                  <TableCell className="max-w-[200px] truncate">
+                    {preference.notes || '-'}
+                  </TableCell>
                   <TableCell>{preference.status}</TableCell>
                 </TableRow>
               ))}

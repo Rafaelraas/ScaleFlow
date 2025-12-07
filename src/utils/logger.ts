@@ -1,6 +1,6 @@
 /**
  * Centralized logging utility for ScaleFlow
- * 
+ *
  * In development: logs to console
  * In production: can be configured to send to monitoring service
  */
@@ -24,20 +24,17 @@ class Logger {
       console.error(`[ERROR] ${message}`, context || '');
     } else if (!this.isTest) {
       // Production error tracking integration examples:
-      
       // Option 1: Sentry
       // import * as Sentry from '@sentry/react';
-      // Sentry.captureException(new Error(message), { 
+      // Sentry.captureException(new Error(message), {
       //   extra: context,
       //   level: 'error'
       // });
-      
       // Option 2: LogRocket
       // import LogRocket from 'logrocket';
       // LogRocket.captureException(new Error(message), {
       //   tags: context
       // });
-      
       // Option 3: Datadog
       // import { datadogLogs } from '@datadog/browser-logs';
       // datadogLogs.logger.error(message, context);

@@ -1,12 +1,20 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from '@/hooks/useSession';
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError, showSuccess } from "@/utils/toast";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError, showSuccess } from '@/utils/toast';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
 
 interface EmployeePreference {
   id: string;
@@ -41,10 +49,10 @@ const EmployeePreferences = () => {
       .order('created_at', { ascending: false });
 
     if (error) {
-      showError("Failed to fetch employee preferences: " + error.message);
+      showError('Failed to fetch employee preferences: ' + error.message);
       setPreferences([]);
     } else {
-      setPreferences(data as EmployeePreference[] || []);
+      setPreferences((data as EmployeePreference[]) || []);
     }
     setLoadingPreferences(false);
   }, [userProfile?.company_id, userRole]);
@@ -62,7 +70,7 @@ const EmployeePreferences = () => {
       .eq('id', preferenceId);
 
     if (error) {
-      showError("Failed to update preference status: " + error.message);
+      showError('Failed to update preference status: ' + error.message);
     } else {
       showSuccess(`Preference status updated to ${newStatus}.`);
       fetchEmployeePreferences(); // Re-fetch to update UI
@@ -89,7 +97,9 @@ const EmployeePreferences = () => {
       {loadingPreferences ? (
         <p>Loading employee preferences...</p>
       ) : preferences.length === 0 ? (
-        <p className="text-center text-gray-500">No employee preferences have been submitted yet.</p>
+        <p className="text-center text-gray-500">
+          No employee preferences have been submitted yet.
+        </p>
       ) : (
         <div className="rounded-md border">
           <Table>
@@ -109,18 +119,34 @@ const EmployeePreferences = () => {
               {preferences.map((preference) => (
                 <TableRow key={preference.id}>
                   <TableCell>
-                    {preference.profiles ? `${preference.profiles.first_name} ${preference.profiles.last_name}` : 'N/A'}
+                    {preference.profiles
+                      ? `${preference.profiles.first_name} ${preference.profiles.last_name}`
+                      : 'N/A'}
                   </TableCell>
                   <TableCell>{format(new Date(preference.start_date), 'MMM dd, yyyy')}</TableCell>
                   <TableCell>{format(new Date(preference.end_date), 'MMM dd, yyyy')}</TableCell>
                   <TableCell>{preference.preference_type.replace(/_/g, ' ')}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">{preference.notes || '-'}</TableCell>
+                  <TableCell className="max-w-[200px] truncate">
+                    {preference.notes || '-'}
+                  </TableCell>
                   <TableCell>{preference.status}</TableCell>
                   <TableCell className="flex space-x-2">
                     {preference.status === 'pending' && (
                       <>
-                        <Button variant="outline" size="sm" onClick={() => handleUpdatePreferenceStatus(preference.id, 'approved')}>Approve</Button>
-                        <Button variant="destructive" size="sm" onClick={() => handleUpdatePreferenceStatus(preference.id, 'denied')}>Deny</Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleUpdatePreferenceStatus(preference.id, 'approved')}
+                        >
+                          Approve
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleUpdatePreferenceStatus(preference.id, 'denied')}
+                        >
+                          Deny
+                        </Button>
                       </>
                     )}
                   </TableCell>

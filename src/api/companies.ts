@@ -1,6 +1,6 @@
 /**
  * Companies API
- * 
+ *
  * Typed API layer for company-related operations.
  * All operations enforce RLS policies defined in the database.
  */
@@ -13,10 +13,7 @@ import { Company } from '@/types/database';
  * RLS Policy: users can view their own company
  */
 export async function getCurrentUserCompany() {
-  const { data, error } = await supabase
-    .from('companies')
-    .select('*')
-    .single();
+  const { data, error } = await supabase.from('companies').select('*').single();
 
   if (error) throw error;
   return data as Company;
@@ -27,11 +24,7 @@ export async function getCurrentUserCompany() {
  * RLS Policy: users can view their own company, system admins can view all
  */
 export async function getCompanyById(companyId: string) {
-  const { data, error } = await supabase
-    .from('companies')
-    .select('*')
-    .eq('id', companyId)
-    .single();
+  const { data, error } = await supabase.from('companies').select('*').eq('id', companyId).single();
 
   if (error) throw error;
   return data as Company;
@@ -59,10 +52,13 @@ export async function createCompany(name: string, settings?: Record<string, unkn
  * Update company settings
  * RLS Policy: only managers of the company can update
  */
-export async function updateCompany(companyId: string, updates: {
-  name?: string;
-  settings?: Record<string, unknown> | null;
-}) {
+export async function updateCompany(
+  companyId: string,
+  updates: {
+    name?: string;
+    settings?: Record<string, unknown> | null;
+  }
+) {
   const { data, error } = await supabase
     .from('companies')
     .update(updates)
@@ -93,10 +89,7 @@ export async function listAllCompanies() {
  * RLS Policy: only system admins can delete companies
  */
 export async function deleteCompany(companyId: string) {
-  const { error } = await supabase
-    .from('companies')
-    .delete()
-    .eq('id', companyId);
+  const { error } = await supabase.from('companies').delete().eq('id', companyId);
 
   if (error) throw error;
 }

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,24 +13,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError, showSuccess } from "@/utils/toast";
-import { useRoles } from "@/hooks/useRoles";
-import { logger } from "@/utils/logger";
+} from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError, showSuccess } from '@/utils/toast';
+import { useRoles } from '@/hooks/useRoles';
+import { logger } from '@/utils/logger';
 
 const formSchema = z.object({
   first_name: z.string().optional(),
   last_name: z.string().optional(),
-  role_id: z.string().uuid({ message: "Please select a role." }),
+  role_id: z.string().uuid({ message: 'Please select a role.' }),
 });
 
 interface EditEmployeeFormProps {
@@ -51,8 +51,8 @@ const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormPro
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: employee.first_name || "",
-      last_name: employee.last_name || "",
+      first_name: employee.first_name || '',
+      last_name: employee.last_name || '',
       role_id: employee.role_id,
     },
   });
@@ -74,12 +74,14 @@ const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormPro
         throw new Error(error.message);
       }
 
-      showSuccess(`Employee ${values.first_name || ''} ${values.last_name || ''}'s profile updated!`);
+      showSuccess(
+        `Employee ${values.first_name || ''} ${values.last_name || ''}'s profile updated!`
+      );
       onSuccess();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error("Error updating employee", { error: errorMessage });
-      showError("Failed to update employee: " + errorMessage);
+      logger.error('Error updating employee', { error: errorMessage });
+      showError('Failed to update employee: ' + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -147,7 +149,7 @@ const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormPro
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Updating..." : "Update Employee"}
+            {isSubmitting ? 'Updating...' : 'Update Employee'}
           </Button>
         </div>
       </form>

@@ -37,7 +37,7 @@ describe('Environment Configuration', () => {
     if (config.app.env === 'test') {
       expect(isTest()).toBe(true);
     }
-    
+
     // Only one of isDev or isProd should be true in non-test mode
     if (config.app.env !== 'test') {
       expect(isDevelopment() || isProduction()).toBe(true);

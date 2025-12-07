@@ -73,14 +73,20 @@ export async function signOut(): Promise<{ error: AuthError | null }> {
 /**
  * Get the current session
  */
-export async function getSession(): Promise<{ data: { session: Session | null }; error: AuthError | null }> {
+export async function getSession(): Promise<{
+  data: { session: Session | null };
+  error: AuthError | null;
+}> {
   return await supabase.auth.getSession();
 }
 
 /**
  * Get the current user
  */
-export async function getCurrentUser(): Promise<{ data: { user: User | null }; error: AuthError | null }> {
+export async function getCurrentUser(): Promise<{
+  data: { user: User | null };
+  error: AuthError | null;
+}> {
   return await supabase.auth.getUser();
 }
 

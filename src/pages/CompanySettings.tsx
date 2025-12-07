@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import CompanySettingsForm from "@/components/CompanySettingsForm";
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import CompanySettingsForm from '@/components/CompanySettingsForm';
 import { useSession } from '@/hooks/useSession';
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError } from "@/utils/toast";
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError } from '@/utils/toast';
 
 const CompanySettings = () => {
   const { session, userProfile, userRole, isLoading } = useSession();
@@ -26,14 +26,14 @@ const CompanySettings = () => {
       .single();
 
     if (error) {
-      showError("Failed to fetch company details: " + error.message);
+      showError('Failed to fetch company details: ' + error.message);
       setCompanyName(null);
     } else if (data) {
       // Ensure only the owner can see/edit company settings
       if (data.owner_id === session.user.id) {
         setCompanyName(data.name);
       } else {
-        showError("You are not the owner of this company.");
+        showError('You are not the owner of this company.');
         setCompanyName(null); // Clear company name if not owner
       }
     }

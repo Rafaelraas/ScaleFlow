@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useSession } from '@/hooks/useSession';
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError, showSuccess } from "@/utils/toast";
-import { logger } from "@/utils/logger";
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError, showSuccess } from '@/utils/toast';
+import { logger } from '@/utils/logger';
 
 const CreateCompany = () => {
-  const [companyName, setCompanyName] = useState("");
+  const [companyName, setCompanyName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { session, userProfile } = useSession();
   const navigate = useNavigate();
@@ -20,11 +20,11 @@ const CreateCompany = () => {
   const handleCreateCompany = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session?.user?.id || !userProfile) {
-      showError("User not authenticated.");
+      showError('User not authenticated.');
       return;
     }
     if (!companyName.trim()) {
-      showError("Company name cannot be empty.");
+      showError('Company name cannot be empty.');
       return;
     }
 
@@ -71,8 +71,8 @@ const CreateCompany = () => {
       navigate('/dashboard'); // Redirect to dashboard after successful creation
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error("Error creating company", { error: errorMessage });
-      showError("Failed to create company: " + errorMessage);
+      logger.error('Error creating company', { error: errorMessage });
+      showError('Failed to create company: ' + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -102,7 +102,7 @@ const CreateCompany = () => {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Creating Company..." : "Create Company"}
+              {isSubmitting ? 'Creating Company...' : 'Create Company'}
             </Button>
           </form>
         </CardContent>

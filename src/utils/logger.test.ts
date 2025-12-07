@@ -40,35 +40,35 @@ describe('logger', () => {
 
   it('should call console.error when logging errors', () => {
     logger.error('Test error', { detail: 'test' });
-    
+
     // Logger calls console methods in dev mode (which includes test environment)
     expect(consoleErrorSpy).toHaveBeenCalledWith('[ERROR] Test error', { detail: 'test' });
   });
 
   it('should call console.warn when logging warnings', () => {
     logger.warn('Test warning');
-    
+
     // Logger calls console methods in dev mode
     expect(consoleWarnSpy).toHaveBeenCalledWith('[WARN] Test warning', '');
   });
 
   it('should call console.info when logging info', () => {
     logger.info('Test info');
-    
+
     // Logger calls console methods in dev mode
     expect(consoleInfoSpy).toHaveBeenCalledWith('[INFO] Test info', '');
   });
 
   it('should call console.log when logging debug', () => {
     logger.debug('Test debug');
-    
+
     // Logger calls console methods in dev mode
     expect(consoleLogSpy).toHaveBeenCalledWith('[DEBUG] Test debug', '');
   });
 
   it('should accept context objects', () => {
     const context = { userId: 123, action: 'test' };
-    
+
     // Should not throw
     expect(() => logger.error('Test', context)).not.toThrow();
     expect(() => logger.warn('Test', context)).not.toThrow();

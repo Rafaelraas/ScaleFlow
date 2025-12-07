@@ -1,15 +1,29 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import ShiftForm from "@/components/ShiftForm";
+import React, { useState, useEffect, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import ShiftForm from '@/components/ShiftForm';
 import { useSession } from '@/hooks/useSession';
-import { supabase } from "@/integrations/supabase/client.ts";
-import { showError, showSuccess } from "@/utils/toast";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { format } from "date-fns";
-import { Edit, Trash2, CalendarIcon } from "lucide-react";
+import { supabase } from '@/integrations/supabase/client.ts';
+import { showError, showSuccess } from '@/utils/toast';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { format } from 'date-fns';
+import { Edit, Trash2, CalendarIcon } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,18 +34,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Pagination,
   PaginationContent,
@@ -40,7 +54,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
 
 interface Shift {
   id: string;
@@ -110,13 +124,13 @@ const Schedules = () => {
       .order('name', { ascending: true });
 
     if (employeesError) {
-      showError("Failed to fetch employee filter options: " + employeesError.message);
+      showError('Failed to fetch employee filter options: ' + employeesError.message);
     } else {
       setEmployeeOptions(employeesData || []);
     }
 
     if (rolesError) {
-      showError("Failed to fetch role filter options: " + rolesError.message);
+      showError('Failed to fetch role filter options: ' + rolesError.message);
     } else {
       setRoleOptions(rolesData || []);
     }
@@ -141,7 +155,15 @@ const Schedules = () => {
     const to = from + ITEMS_PER_PAGE - 1;
 
     // Helper function to apply filters to a query
-    const applyFilters = <T extends { eq: (column: string, value: unknown) => T; gte: (column: string, value: string) => T; lte: (column: string, value: string) => T }>(query: T): T => {
+    const applyFilters = <
+      T extends {
+        eq: (column: string, value: unknown) => T;
+        gte: (column: string, value: string) => T;
+        lte: (column: string, value: string) => T;
+      },
+    >(
+      query: T
+    ): T => {
       let filteredQuery = query;
       if (filterEmployeeId) {
         filteredQuery = filteredQuery.eq('employee_id', filterEmployeeId);
@@ -156,7 +178,10 @@ const Schedules = () => {
         filteredQuery = filteredQuery.gte('start_time', format(filterStartDate, 'yyyy-MM-dd'));
       }
       if (filterEndDate) {
-        filteredQuery = filteredQuery.lte('end_time', format(filterEndDate, 'yyyy-MM-ddT23:59:59.999Z'));
+        filteredQuery = filteredQuery.lte(
+          'end_time',
+          format(filterEndDate, 'yyyy-MM-ddT23:59:59.999Z')
+        );
       }
       return filteredQuery;
     };
@@ -181,19 +206,28 @@ const Schedules = () => {
     const [countResult, dataResult] = await Promise.all([countQuery, dataQuery]);
 
     if (countResult.error) {
-      showError("Failed to fetch shift count: " + countResult.error.message);
+      showError('Failed to fetch shift count: ' + countResult.error.message);
     } else {
       setTotalCount(countResult.count || 0);
     }
 
     if (dataResult.error) {
-      showError("Failed to fetch shifts: " + dataResult.error.message);
+      showError('Failed to fetch shifts: ' + dataResult.error.message);
       setShifts([]);
     } else {
-      setShifts(dataResult.data as Shift[] || []);
+      setShifts((dataResult.data as Shift[]) || []);
     }
     setLoadingShifts(false);
-  }, [userProfile?.company_id, userRole, filterEmployeeId, filterRoleId, filterPublished, filterStartDate, filterEndDate, currentPage]);
+  }, [
+    userProfile?.company_id,
+    userRole,
+    filterEmployeeId,
+    filterRoleId,
+    filterPublished,
+    filterStartDate,
+    filterEndDate,
+    currentPage,
+  ]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -218,15 +252,12 @@ const Schedules = () => {
   };
 
   const handleDeleteShift = async (shiftId: string) => {
-    const { error } = await supabase
-      .from('shifts')
-      .delete()
-      .eq('id', shiftId);
+    const { error } = await supabase.from('shifts').delete().eq('id', shiftId);
 
     if (error) {
-      showError("Failed to delete shift: " + error.message);
+      showError('Failed to delete shift: ' + error.message);
     } else {
-      showSuccess("Shift deleted successfully!");
+      showSuccess('Shift deleted successfully!');
       fetchShifts(); // Re-fetch shifts after deletion
     }
   };
@@ -256,14 +287,20 @@ const Schedules = () => {
             <DialogHeader>
               <DialogTitle>Create New Shift</DialogTitle>
             </DialogHeader>
-            <ShiftForm onSuccess={handleShiftFormSuccess} onCancel={() => setIsCreateDialogOpen(false)} />
+            <ShiftForm
+              onSuccess={handleShiftFormSuccess}
+              onCancel={() => setIsCreateDialogOpen(false)}
+            />
           </DialogContent>
         </Dialog>
       </div>
 
       {/* Filter Section */}
       <div className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Select onValueChange={(value) => setFilterEmployeeId(value === 'all' ? null : value)} value={filterEmployeeId || 'all'}>
+        <Select
+          onValueChange={(value) => setFilterEmployeeId(value === 'all' ? null : value)}
+          value={filterEmployeeId || 'all'}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Filter by Employee" />
           </SelectTrigger>
@@ -277,7 +314,10 @@ const Schedules = () => {
           </SelectContent>
         </Select>
 
-        <Select onValueChange={(value) => setFilterRoleId(value === 'all' ? null : value)} value={filterRoleId || 'all'}>
+        <Select
+          onValueChange={(value) => setFilterRoleId(value === 'all' ? null : value)}
+          value={filterRoleId || 'all'}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Filter by Role" />
           </SelectTrigger>
@@ -291,7 +331,10 @@ const Schedules = () => {
           </SelectContent>
         </Select>
 
-        <Select onValueChange={(value) => setFilterPublished(value === 'all' ? null : value)} value={filterPublished || 'all'}>
+        <Select
+          onValueChange={(value) => setFilterPublished(value === 'all' ? null : value)}
+          value={filterPublished || 'all'}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Filter by Status" />
           </SelectTrigger>
@@ -306,14 +349,14 @@ const Schedules = () => {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant={"outline"}
+                variant={'outline'}
                 className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !filterStartDate && "text-muted-foreground"
+                  'w-full justify-start text-left font-normal',
+                  !filterStartDate && 'text-muted-foreground'
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {filterStartDate ? format(filterStartDate, "PPP") : <span>Start Date</span>}
+                {filterStartDate ? format(filterStartDate, 'PPP') : <span>Start Date</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -328,14 +371,14 @@ const Schedules = () => {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant={"outline"}
+                variant={'outline'}
                 className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !filterEndDate && "text-muted-foreground"
+                  'w-full justify-start text-left font-normal',
+                  !filterEndDate && 'text-muted-foreground'
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {filterEndDate ? format(filterEndDate, "PPP") : <span>End Date</span>}
+                {filterEndDate ? format(filterEndDate, 'PPP') : <span>End Date</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -368,12 +411,24 @@ const Schedules = () => {
             <TableBody>
               {[...Array(5)].map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-8" />
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
                       <Skeleton className="h-8 w-8" />
@@ -408,7 +463,9 @@ const Schedules = () => {
                   <TableCell>{format(new Date(shift.start_time), 'MMM dd, yyyy HH:mm')}</TableCell>
                   <TableCell>{format(new Date(shift.end_time), 'MMM dd, yyyy HH:mm')}</TableCell>
                   <TableCell>
-                    {shift.profiles ? `${shift.profiles.first_name} ${shift.profiles.last_name}` : 'Unassigned'}
+                    {shift.profiles
+                      ? `${shift.profiles.first_name} ${shift.profiles.last_name}`
+                      : 'Unassigned'}
                   </TableCell>
                   <TableCell>{shift.roles ? shift.roles.name : 'Any'}</TableCell>
                   <TableCell className="max-w-[200px] truncate">{shift.notes || '-'}</TableCell>
@@ -420,7 +477,11 @@ const Schedules = () => {
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
@@ -433,7 +494,9 @@ const Schedules = () => {
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteShift(shift.id)}>Delete</AlertDialogAction>
+                            <AlertDialogAction onClick={() => handleDeleteShift(shift.id)}>
+                              Delete
+                            </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
@@ -453,8 +516,10 @@ const Schedules = () => {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className={
+                    currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  }
                 />
               </PaginationItem>
               {[...Array(totalPages)].map((_, i) => {
@@ -486,14 +551,17 @@ const Schedules = () => {
               })}
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  className={
+                    currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  }
                 />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
           <p className="text-center text-sm text-muted-foreground mt-2">
-            Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} shifts
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
+            {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} shifts
           </p>
         </div>
       )}

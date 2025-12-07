@@ -37,9 +37,19 @@ describe('ProtectedRoute', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/protected']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter
+        initialEntries={['/protected']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <Routes>
-          <Route path="/protected" element={<ProtectedRoute><ProtectedContent /></ProtectedRoute>} />
+          <Route
+            path="/protected"
+            element={
+              <ProtectedRoute>
+                <ProtectedContent />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -57,9 +67,19 @@ describe('ProtectedRoute', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/protected']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter
+        initialEntries={['/protected']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <Routes>
-          <Route path="/protected" element={<ProtectedRoute><ProtectedContent /></ProtectedRoute>} />
+          <Route
+            path="/protected"
+            element={
+              <ProtectedRoute>
+                <ProtectedContent />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<div>Login Page</div>} />
         </Routes>
       </MemoryRouter>
@@ -78,9 +98,19 @@ describe('ProtectedRoute', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/protected']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter
+        initialEntries={['/protected']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <Routes>
-          <Route path="/protected" element={<ProtectedRoute requiresCompany={true}><ProtectedContent /></ProtectedRoute>} />
+          <Route
+            path="/protected"
+            element={
+              <ProtectedRoute requiresCompany={true}>
+                <ProtectedContent />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/create-company" element={<div>Create Company Page</div>} />
         </Routes>
       </MemoryRouter>
@@ -99,9 +129,19 @@ describe('ProtectedRoute', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/admin-route']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter
+        initialEntries={['/admin-route']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <Routes>
-          <Route path="/admin-route" element={<ProtectedRoute requiresCompany={false} allowedRoles={['system_admin']}><ProtectedContent /></ProtectedRoute>} />
+          <Route
+            path="/admin-route"
+            element={
+              <ProtectedRoute requiresCompany={false} allowedRoles={['system_admin']}>
+                <ProtectedContent />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -119,9 +159,19 @@ describe('ProtectedRoute', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/manager-only']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter
+        initialEntries={['/manager-only']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <Routes>
-          <Route path="/manager-only" element={<ProtectedRoute allowedRoles={['manager']}><ProtectedContent /></ProtectedRoute>} />
+          <Route
+            path="/manager-only"
+            element={
+              <ProtectedRoute allowedRoles={['manager']}>
+                <ProtectedContent />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -139,9 +189,19 @@ describe('ProtectedRoute', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/manager-dashboard']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter
+        initialEntries={['/manager-dashboard']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <Routes>
-          <Route path="/manager-dashboard" element={<ProtectedRoute allowedRoles={['manager']}><ProtectedContent /></ProtectedRoute>} />
+          <Route
+            path="/manager-dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['manager']}>
+                <ProtectedContent />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -159,9 +219,19 @@ describe('ProtectedRoute', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/any-authenticated']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter
+        initialEntries={['/any-authenticated']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <Routes>
-          <Route path="/any-authenticated" element={<ProtectedRoute><ProtectedContent /></ProtectedRoute>} />
+          <Route
+            path="/any-authenticated"
+            element={
+              <ProtectedRoute>
+                <ProtectedContent />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </MemoryRouter>
     );

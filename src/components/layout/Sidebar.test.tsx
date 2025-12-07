@@ -65,7 +65,7 @@ describe('Sidebar', () => {
     expect(screen.getByText('Profile Settings')).toBeInTheDocument();
     expect(screen.getByText('Company Settings')).toBeInTheDocument();
     expect(screen.queryByText('Admin Companies')).not.toBeInTheDocument(); // Admin specific
-    expect(screen.queryByText('Admin Users')).not.toBeInTheDocument();     // Admin specific
+    expect(screen.queryByText('Admin Users')).not.toBeInTheDocument(); // Admin specific
   });
 
   it('should render correct navigation items for an employee', () => {

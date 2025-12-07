@@ -1,6 +1,6 @@
 /**
  * Centralized environment configuration for ScaleFlow
- * 
+ *
  * This module provides type-safe access to environment variables
  * and validates required variables at startup.
  */

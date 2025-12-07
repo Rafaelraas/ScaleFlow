@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
-import { Calendar, Users, Clock, CheckCircle, LayoutDashboard, Settings } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, Users, Clock, CheckCircle, LayoutDashboard, Settings } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -10,40 +10,41 @@ const Index = () => {
   const features = [
     {
       icon: Calendar,
-      title: "Smart Scheduling",
-      description: "Create and manage shifts with intuitive calendar interface and automated scheduling tools.",
-      color: "text-blue-500"
+      title: 'Smart Scheduling',
+      description:
+        'Create and manage shifts with intuitive calendar interface and automated scheduling tools.',
+      color: 'text-blue-500',
     },
     {
       icon: Users,
-      title: "Team Management",
-      description: "Easily manage employees, roles, and permissions with comprehensive team tools.",
-      color: "text-green-500"
+      title: 'Team Management',
+      description: 'Easily manage employees, roles, and permissions with comprehensive team tools.',
+      color: 'text-green-500',
     },
     {
       icon: Clock,
-      title: "Shift Templates",
-      description: "Save time with reusable shift templates for common scheduling patterns.",
-      color: "text-purple-500"
+      title: 'Shift Templates',
+      description: 'Save time with reusable shift templates for common scheduling patterns.',
+      color: 'text-purple-500',
     },
     {
       icon: CheckCircle,
-      title: "Preference Handling",
-      description: "Let employees submit preferences and automatically match them with schedules.",
-      color: "text-orange-500"
+      title: 'Preference Handling',
+      description: 'Let employees submit preferences and automatically match them with schedules.',
+      color: 'text-orange-500',
     },
     {
       icon: LayoutDashboard,
-      title: "Real-time Dashboard",
-      description: "Monitor your workforce with live updates and comprehensive analytics.",
-      color: "text-cyan-500"
+      title: 'Real-time Dashboard',
+      description: 'Monitor your workforce with live updates and comprehensive analytics.',
+      color: 'text-cyan-500',
     },
     {
       icon: Settings,
-      title: "Flexible Configuration",
-      description: "Customize settings to match your business needs and workflows.",
-      color: "text-pink-500"
-    }
+      title: 'Flexible Configuration',
+      description: 'Customize settings to match your business needs and workflows.',
+      color: 'text-pink-500',
+    },
   ];
 
   return (
@@ -56,26 +57,23 @@ const Index = () => {
             Modern Workforce Management
           </Badge>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-            Welcome to{" "}
+            Welcome to{' '}
             <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
               ScaleFlow
             </span>
           </h1>
           <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Streamline your shift scheduling and workforce management with our powerful, intuitive platform.
+            Streamline your shift scheduling and workforce management with our powerful, intuitive
+            platform.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              size="lg" 
-              onClick={() => navigate("/register")}
-              className="w-full sm:w-auto"
-            >
+            <Button size="lg" onClick={() => navigate('/register')} className="w-full sm:w-auto">
               Get Started
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate('/login')}
               className="w-full sm:w-auto"
             >
               Sign In
@@ -92,10 +90,11 @@ const Index = () => {
               Everything you need to manage your workforce
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Powerful features designed to simplify scheduling, improve team coordination, and boost productivity.
+              Powerful features designed to simplify scheduling, improve team coordination, and
+              boost productivity.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => {
               const Icon = feature.icon;
@@ -110,9 +109,7 @@ const Index = () => {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-base">
-                      {feature.description}
-                    </CardDescription>
+                    <CardDescription className="text-base">{feature.description}</CardDescription>
                   </CardContent>
                 </Card>
               );
@@ -131,17 +128,13 @@ const Index = () => {
             Join teams that are already using ScaleFlow to manage their workforce more efficiently.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              onClick={() => navigate("/register")}
-              className="w-full sm:w-auto"
-            >
+            <Button size="lg" onClick={() => navigate('/register')} className="w-full sm:w-auto">
               Create Free Account
             </Button>
-            <Button 
+            <Button
               size="lg"
               variant="outline"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate('/login')}
               className="w-full sm:w-auto"
             >
               Sign In
@@ -151,8 +144,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8">
-      </footer>
+      <footer className="border-t py-8"></footer>
     </div>
   );
 };

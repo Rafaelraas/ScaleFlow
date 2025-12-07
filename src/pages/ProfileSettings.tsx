@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import ProfileForm from "@/components/ProfileForm";
-import UpdatePasswordForm from "@/components/UpdatePasswordForm"; // Import the new component
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import ProfileForm from '@/components/ProfileForm';
+import UpdatePasswordForm from '@/components/UpdatePasswordForm'; // Import the new component
 import { useSession } from '@/hooks/useSession';
-import { Separator } from "@/components/ui/separator"; // Import Separator for visual division
+import { Separator } from '@/components/ui/separator'; // Import Separator for visual division
 
 const ProfileSettings = () => {
   const { isLoading, session } = useSession();

@@ -1,6 +1,6 @@
 /**
  * Schedules API
- * 
+ *
  * Typed API layer for shift and schedule-related operations.
  * All operations enforce RLS policies defined in the database.
  */
@@ -103,14 +103,17 @@ export async function createShift(shift: {
  * Update a shift (manager only)
  * RLS Policy: managers can update shifts in their company
  */
-export async function updateShift(shiftId: string, updates: {
-  employee_id?: string | null;
-  role_id?: string | null;
-  start_time?: string;
-  end_time?: string;
-  notes?: string | null;
-  published?: boolean;
-}) {
+export async function updateShift(
+  shiftId: string,
+  updates: {
+    employee_id?: string | null;
+    role_id?: string | null;
+    start_time?: string;
+    end_time?: string;
+    notes?: string | null;
+    published?: boolean;
+  }
+) {
   const { data, error } = await supabase
     .from('shifts')
     .update(updates)
@@ -127,10 +130,7 @@ export async function updateShift(shiftId: string, updates: {
  * RLS Policy: managers can delete shifts in their company
  */
 export async function deleteShift(shiftId: string) {
-  const { error } = await supabase
-    .from('shifts')
-    .delete()
-    .eq('id', shiftId);
+  const { error } = await supabase.from('shifts').delete().eq('id', shiftId);
 
   if (error) throw error;
 }
@@ -139,21 +139,25 @@ export async function deleteShift(shiftId: string) {
  * Bulk create shifts (manager only)
  * RLS Policy: managers can insert shifts in their company
  */
-export async function bulkCreateShifts(shifts: Array<{
-  company_id: string;
-  employee_id: string | null;
-  role_id: string | null;
-  start_time: string;
-  end_time: string;
-  notes?: string | null;
-  published?: boolean;
-}>) {
+export async function bulkCreateShifts(
+  shifts: Array<{
+    company_id: string;
+    employee_id: string | null;
+    role_id: string | null;
+    start_time: string;
+    end_time: string;
+    notes?: string | null;
+    published?: boolean;
+  }>
+) {
   const { data, error } = await supabase
     .from('shifts')
-    .insert(shifts.map(shift => ({
-      ...shift,
-      published: shift.published ?? false,
-    })))
+    .insert(
+      shifts.map((shift) => ({
+        ...shift,
+        published: shift.published ?? false,
+      }))
+    )
     .select();
 
   if (error) throw error;

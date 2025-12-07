@@ -15,7 +15,9 @@ export interface SupabaseError {
 /**
  * Parse Supabase errors into a standardized format
  */
-export function parseSupabaseError(error: PostgrestError | AuthError | Error | null): SupabaseError | null {
+export function parseSupabaseError(
+  error: PostgrestError | AuthError | Error | null
+): SupabaseError | null {
   if (!error) return null;
 
   if ('code' in error && 'details' in error) {
@@ -55,7 +57,7 @@ export function getUserFriendlyMessage(error: PostgrestError | AuthError | Error
     '23505': 'This record already exists',
     '23503': 'Cannot delete: related records exist',
     '42501': 'You do not have permission to perform this action',
-    'PGRST116': 'No matching records found',
+    PGRST116: 'No matching records found',
     '22P02': 'Invalid data format',
     '23502': 'Required field is missing',
     '401': 'Invalid email or password',
@@ -78,7 +80,7 @@ export function handleSupabaseError(
 ): void {
   const message = customMessage || getUserFriendlyMessage(error);
   showError(message);
-  
+
   // Log detailed error for debugging
   logger.error('Supabase Error:', { error: parseSupabaseError(error) });
 }
@@ -110,19 +112,19 @@ export async function retryOnError<T>(
   delay = 1000
 ): Promise<T> {
   let lastError: Error | null = null;
-  
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await operation();
     } catch (error) {
       lastError = error instanceof Error ? error : new Error('Operation failed');
-      
+
       if (attempt < maxRetries) {
         // Wait before retrying
-        await new Promise(resolve => setTimeout(resolve, delay * attempt));
+        await new Promise((resolve) => setTimeout(resolve, delay * attempt));
       }
     }
   }
-  
+
   throw lastError;
 }

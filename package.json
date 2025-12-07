@@ -11,13 +11,16 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,md,css}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json,md,css}\"",
     "_comment": "Backend scripts require bash (Git Bash on Windows). Windows users should use WSL or Git Bash.",
     "backend:setup": "bash scripts/setup-backend.sh",
     "backend:deploy": "bash scripts/backend-commands.sh deploy",
     "backend:start": "bash scripts/backend-commands.sh start",
     "backend:stop": "bash scripts/backend-commands.sh stop",
     "backend:status": "bash scripts/backend-commands.sh status",
-    "backend:link": "bash scripts/backend-commands.sh link"
+    "backend:link": "bash scripts/backend-commands.sh link",
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -90,13 +93,25 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "husky": "^9.1.7",
     "jsdom": "^27.2.0",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.4.47",
+    "prettier": "^3.7.4",
     "tailwindcss": "^3.4.11",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^6.3.4",
     "vitest": "^2.0.5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   }
 }

@@ -71,7 +71,7 @@ export function useProfile(userId: string | null) {
     updateProfile,
     refetch: async () => {
       if (!userId) return;
-      
+
       setIsLoading(true);
       setError(null);
       try {
