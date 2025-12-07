@@ -1,6 +1,6 @@
 # GitHub Copilot Instructions Setup
 
-This document verifies that GitHub Copilot instructions are properly configured for the ScaleFlow repository following [GitHub's best practices](https://gh.io/copilot-coding-agent-tips).
+This document verifies that GitHub Copilot instructions are properly configured for the ScaleFlow repository following [GitHub's best practices for Copilot instructions](https://docs.github.com/en/copilot).
 
 ## ✅ Setup Verification
 
@@ -64,7 +64,7 @@ When contributing to ScaleFlow:
 ## 📚 Additional Resources
 
 - [GitHub Copilot Documentation](https://docs.github.com/en/copilot)
-- [Best Practices for Copilot Instructions](https://gh.io/copilot-coding-agent-tips)
+- [Using GitHub Copilot Effectively](https://docs.github.com/en/copilot/using-github-copilot)
 - [ScaleFlow Contributing Guide](../CONTRIBUTING.md)
 - [ScaleFlow Architecture Docs](../docs/ARCHITECTURE.md)
 
