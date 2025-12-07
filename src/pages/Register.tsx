@@ -32,6 +32,7 @@ const Register = () => {
             theme="light"
             view="sign_up"
             redirectTo={`${window.location.origin}${window.location.pathname}#/dashboard`}
+            showLinks={false}
           />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{' '}
