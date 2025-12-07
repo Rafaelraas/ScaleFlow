@@ -33,6 +33,32 @@ export default defineConfig(({ mode }) => {
       extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
     },
     base: basePath, // Use the configurable base path
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Split vendor chunks for better caching
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            'ui-vendor': [
+              '@radix-ui/react-dialog',
+              '@radix-ui/react-dropdown-menu',
+              '@radix-ui/react-select',
+              '@radix-ui/react-popover',
+              '@radix-ui/react-avatar',
+              '@radix-ui/react-label',
+              '@radix-ui/react-tabs',
+              '@radix-ui/react-toast',
+              '@radix-ui/react-tooltip',
+            ],
+            'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
+            'date-vendor': ['date-fns', 'react-day-picker'],
+            'charts-vendor': ['recharts'],
+            'query-vendor': ['@tanstack/react-query'],
+            'supabase-vendor': ['@supabase/supabase-js', '@supabase/auth-ui-react'],
+          },
+        },
+      },
+    },
     test: {
       globals: true, // Permite usar 'describe', 'it', 'expect' globalmente
       environment: 'jsdom', // Ambiente de DOM para testes de React
