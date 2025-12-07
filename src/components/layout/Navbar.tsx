@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client.ts";
 import { signOut } from "@/services/supabase/auth.service";
 import { showError } from "@/utils/toast";
 import { ModeToggle } from "@/components/ModeToggle";
+import { logger } from "@/utils/logger";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,7 +35,7 @@ export const Navbar = () => {
           .single();
 
         if (error) {
-          console.error("Error fetching company name:", error.message);
+          logger.error("Error fetching company name", { error: error.message });
           setCompanyName(null);
         } else {
           setCompanyName(data?.name || null);
@@ -51,12 +52,12 @@ export const Navbar = () => {
     try {
       const { error } = await signOut();
       if (error) {
-        console.error("Logout error:", error);
+        logger.error("Logout error", { error });
         showError("Failed to log out: " + error.message);
       }
       // SessionContextProvider will handle navigation and success toast
     } catch (err) {
-      console.error("Unexpected logout error:", err);
+      logger.error("Unexpected logout error", { error: err });
       showError("An error occurred during logout. Please try again.");
     }
   };

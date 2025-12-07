@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { showSuccess, showError } from "@/utils/toast";
 import { UserRole, isValidRole } from "@/types/roles";
 import { getUnauthenticatedPaths, isAuthFlowRoute } from "@/config/routes";
+import { logger } from "@/utils/logger";
 
 // Constants
 const POSTGREST_NOT_FOUND_CODE = 'PGRST116';
@@ -57,12 +58,12 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         
         if (isNotFoundError && retryCount < MAX_PROFILE_FETCH_RETRIES) {
           // Profile might not be created yet by trigger - retry after delay
-          console.info(`Profile not found, retrying... (attempt ${retryCount + 1}/${MAX_PROFILE_FETCH_RETRIES})`);
+          logger.info(`Profile not found, retrying...`, { attempt: retryCount + 1, maxRetries: MAX_PROFILE_FETCH_RETRIES });
           await new Promise(resolve => setTimeout(resolve, RETRY_BASE_DELAY_MS * (retryCount + 1)));
           return fetchUserProfileAndRole(userId, retryCount + 1);
         }
         
-        console.error("Error fetching user profile:", profileError);
+        logger.error("Error fetching user profile", { error: profileError });
         showError("Failed to load user profile.");
         setUserProfile(null);
         setUserRole(null);
@@ -90,11 +91,11 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
 
       return null;
     } catch (error) {
-      console.error("Unexpected error fetching user profile:", error);
+      logger.error("Unexpected error fetching user profile", { error });
       
       // Retry on unexpected errors too (network issues, etc.)
       if (retryCount < MAX_PROFILE_FETCH_RETRIES) {
-        console.info(`Retrying after error... (attempt ${retryCount + 1}/${MAX_PROFILE_FETCH_RETRIES})`);
+        logger.info(`Retrying after error...`, { attempt: retryCount + 1, maxRetries: MAX_PROFILE_FETCH_RETRIES });
         await new Promise(resolve => setTimeout(resolve, RETRY_BASE_DELAY_MS * (retryCount + 1)));
         return fetchUserProfileAndRole(userId, retryCount + 1);
       }
@@ -200,7 +201,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         await handleSessionAndProfile(initialSession);
       })
       .catch(error => {
-        console.error("Error during initial getSession:", error);
+        logger.error("Error during initial getSession", { error });
         if (isMounted) {
           setIsLoading(false);
         }

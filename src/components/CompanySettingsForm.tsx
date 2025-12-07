@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client.ts";
 import { useSession } from "@/providers/SessionContextProvider";
 import { showError, showSuccess } from "@/utils/toast";
+import { logger } from "@/utils/logger";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Company name cannot be empty." }),
@@ -61,7 +62,7 @@ const CompanySettingsForm = ({ companyId, initialCompanyName, onSuccess }: Compa
       onSuccess();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error updating company name:", errorMessage);
+      logger.error("Error updating company name", { error: errorMessage });
       showError("Failed to update company name: " + errorMessage);
     } finally {
       setIsSubmitting(false);

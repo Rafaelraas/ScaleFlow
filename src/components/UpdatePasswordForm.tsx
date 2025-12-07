@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { updatePassword } from "@/services/supabase/auth.service";
 import { showError, showSuccess } from "@/utils/toast";
+import { logger } from "@/utils/logger";
 
 const formSchema = z.object({
   newPassword: z.string().min(6, { message: "Password must be at least 6 characters." }),
@@ -50,7 +51,7 @@ const UpdatePasswordForm = () => {
       form.reset();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error updating password:", errorMessage);
+      logger.error("Error updating password", { error: errorMessage });
       showError("Failed to update password: " + errorMessage);
     } finally {
       setIsSubmitting(false);

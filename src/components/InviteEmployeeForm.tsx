@@ -26,6 +26,7 @@ import { supabase } from "@/integrations/supabase/client.ts";
 import { useSession } from "@/providers/SessionContextProvider";
 import { showError, showSuccess } from "@/utils/toast";
 import { useRoles } from "@/hooks/useRoles";
+import { logger } from "@/utils/logger";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -81,7 +82,7 @@ const InviteEmployeeForm = ({ onSuccess, onCancel }: InviteEmployeeFormProps) =>
       onSuccess();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error inviting employee:", errorMessage);
+      logger.error("Error inviting employee", { error: errorMessage });
       showError("Failed to send invitation: " + errorMessage);
     } finally {
       setIsSubmitting(false);

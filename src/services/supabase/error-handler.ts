@@ -4,6 +4,7 @@
 
 import { PostgrestError, AuthError } from '@supabase/supabase-js';
 import { showError } from '@/utils/toast';
+import { logger } from '@/utils/logger';
 
 export interface SupabaseError {
   message: string;
@@ -78,10 +79,8 @@ export function handleSupabaseError(
   const message = customMessage || getUserFriendlyMessage(error);
   showError(message);
   
-  // Log detailed error for debugging (in development only)
-  if (import.meta.env.DEV) {
-    console.error('Supabase Error:', parseSupabaseError(error));
-  }
+  // Log detailed error for debugging
+  logger.error('Supabase Error:', { error: parseSupabaseError(error) });
 }
 
 /**

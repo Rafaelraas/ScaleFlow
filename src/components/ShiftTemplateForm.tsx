@@ -27,6 +27,7 @@ import { supabase } from "@/integrations/supabase/client.ts";
 import { useSession } from "@/providers/SessionContextProvider";
 import { showError, showSuccess } from "@/utils/toast";
 import { useRoles } from "@/hooks/useRoles";
+import { logger } from "@/utils/logger";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Template name is required." }),
@@ -108,7 +109,7 @@ const ShiftTemplateForm = ({ onSuccess, onCancel, initialData }: ShiftTemplateFo
       onSuccess();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error saving shift template:", errorMessage);
+      logger.error("Error saving shift template", { error: errorMessage });
       showError("Failed to save shift template: " + errorMessage);
     } finally {
       setIsSubmitting(false);

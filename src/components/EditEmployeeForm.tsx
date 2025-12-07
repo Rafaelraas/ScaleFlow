@@ -25,6 +25,7 @@ import {
 import { supabase } from "@/integrations/supabase/client.ts";
 import { showError, showSuccess } from "@/utils/toast";
 import { useRoles } from "@/hooks/useRoles";
+import { logger } from "@/utils/logger";
 
 const formSchema = z.object({
   first_name: z.string().optional(),
@@ -77,7 +78,7 @@ const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormPro
       onSuccess();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error updating employee:", errorMessage);
+      logger.error("Error updating employee", { error: errorMessage });
       showError("Failed to update employee: " + errorMessage);
     } finally {
       setIsSubmitting(false);

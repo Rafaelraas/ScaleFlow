@@ -8,6 +8,7 @@ import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client.ts";
 import { showError, showSuccess } from "@/utils/toast";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { logger } from "@/utils/logger";
 import { format } from "date-fns";
 
 interface ShiftDetails {
@@ -162,7 +163,7 @@ const SwapRequests = () => {
       fetchSwapRequests(); // Re-fetch to update UI
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error approving swap:", errorMessage);
+      logger.error("Error approving swap", { error: errorMessage });
       showError("Failed to approve swap: " + errorMessage);
     }
   };
@@ -180,7 +181,7 @@ const SwapRequests = () => {
       fetchSwapRequests(); // Re-fetch to update UI
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error denying swap:", errorMessage);
+      logger.error("Error denying swap", { error: errorMessage });
       showError("Failed to deny swap: " + errorMessage);
     }
   };

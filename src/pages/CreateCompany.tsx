@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useSession } from "@/providers/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client.ts";
 import { showError, showSuccess } from "@/utils/toast";
+import { logger } from "@/utils/logger";
 
 const CreateCompany = () => {
   const [companyName, setCompanyName] = useState("");
@@ -70,7 +71,7 @@ const CreateCompany = () => {
       navigate('/dashboard'); // Redirect to dashboard after successful creation
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error creating company:", errorMessage);
+      logger.error("Error creating company", { error: errorMessage });
       showError("Failed to create company: " + errorMessage);
     } finally {
       setIsSubmitting(false);

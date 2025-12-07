@@ -352,7 +352,7 @@ describe('SessionContextProvider', () => {
 
       // Wait for error to be logged
       await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching user profile:', mockError);
+        expect(consoleErrorSpy).toHaveBeenCalledWith('[ERROR] Error fetching user profile', { error: mockError });
       });
 
       consoleErrorSpy.mockRestore();

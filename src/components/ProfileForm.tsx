@@ -21,6 +21,7 @@ import { showError, showSuccess } from "@/utils/toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserIcon } from "lucide-react";
 import { Label } from "@/components/ui/label"; // Added Label import
+import { logger } from "@/utils/logger";
 
 const formSchema = z.object({
   first_name: z.string().optional(),
@@ -78,7 +79,7 @@ const ProfileForm = () => {
       // The SessionContextProvider will re-fetch the profile on USER_UPDATED event
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Error updating profile:", errorMessage);
+      logger.error("Error updating profile", { error: errorMessage });
       showError("Failed to update profile: " + errorMessage);
     } finally {
       setIsSubmitting(false);
