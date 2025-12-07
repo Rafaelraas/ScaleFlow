@@ -132,6 +132,35 @@ Enables web search for research and documentation.
 - Research technical solutions
 - Find documentation
 
+## Quick Installation
+
+### Automated Setup (Recommended)
+
+Use the automated setup scripts for easy installation:
+
+**macOS/Linux:**
+```bash
+bash scripts/setup-mcp.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+.\scripts\setup-mcp.ps1
+```
+
+The script will:
+- ✅ Detect your operating system
+- ✅ Check prerequisites (Node.js)
+- ✅ Let you choose your AI assistant
+- ✅ Automatically copy and configure files
+- ✅ Update paths to your local repository
+- ✅ Optionally add GitHub token
+- ✅ Test the installation
+
+### Manual Installation
+
+If you prefer manual setup, follow these steps:
+
 ## Installation Guide
 
 ### For Claude Desktop

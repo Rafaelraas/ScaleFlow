@@ -231,6 +231,12 @@
 | `npm run backend:status` | Check Supabase status                  |
 | `npm run backend:link`   | Link to Supabase project               |
 
+#### MCP Scripts (🆕)
+
+| Script              | Description                                |
+| ------------------- | ------------------------------------------ |
+| `npm run mcp:setup` | Setup Model Context Protocol for AI agents |
+
 **Need help?** Check out the [Quick Start Guide](./QUICK_START.md) for a 5-minute setup tutorial.
 
 ---
