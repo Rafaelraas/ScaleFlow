@@ -10,6 +10,9 @@ import { initWebVitals } from './lib/web-vitals';
 // Initialize Web Vitals tracking
 initWebVitals();
 
+// Check if running on Vercel (Vercel sets VERCEL env var to "1" during build)
+const isVercel = import.meta.env.VITE_VERCEL === '1';
+
 // HashRouter handles routing without server-side configuration
 // This is the best practice for GitHub Pages static hosting
 // URLs will use hash-based routing (e.g., /#/dashboard)
@@ -23,7 +26,8 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <SessionContextProvider>
         <App />
-        <Analytics />
+        {/* Only load Vercel Analytics when deployed on Vercel to avoid 404 errors on other platforms (e.g., GitHub Pages) */}
+        {isVercel && <Analytics />}
       </SessionContextProvider>
     </ThemeProvider>
   </HashRouter>
