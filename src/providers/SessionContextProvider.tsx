@@ -182,10 +182,12 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       }
 
       // Check for special auth flows that should not trigger redirects
+      // Parse the hash properly - it can be #/path?param=value or #/path
+      const hash = window.location.hash.substring(1); // Remove the # symbol
+      const [currentPath, queryString] = hash.split('?');
       const urlParams = new URLSearchParams(window.location.search);
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const hashParams = new URLSearchParams(queryString || '');
       const authFlowType = urlParams.get('type') || hashParams.get('type');
-      const currentPath = window.location.hash.replace('#', '') || '/';
 
       if (
         isAuthFlowRoute(currentPath) &&
