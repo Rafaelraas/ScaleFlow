@@ -103,7 +103,7 @@ const App = () => (
               />
             </Route>
 
-            {/* Rotas Protegidas para Gerentes e Schedule Managers */}
+            {/* Protected Routes for Managers and Schedule Managers */}
             <Route element={<ProtectedRoute allowedRoles={['manager', 'schedule_manager']} />}>
               <Route
                 path="/schedules"
@@ -131,7 +131,7 @@ const App = () => (
               />
             </Route>
 
-            {/* Rotas para Gerentes, Schedule Managers e Operadores */}
+            {/* Protected Routes for Managers, Schedule Managers and Operators */}
             <Route
               element={
                 <ProtectedRoute allowedRoles={['manager', 'schedule_manager', 'operator']} />
@@ -147,7 +147,7 @@ const App = () => (
               />
             </Route>
 
-            {/* Rotas Protegidas para Gerentes */}
+            {/* Protected Routes for Managers Only */}
             <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
               <Route
                 path="/company-settings"
@@ -159,7 +159,7 @@ const App = () => (
               />
             </Route>
 
-            {/* Rotas Protegidas para Funcionários e Staff */}
+            {/* Protected Routes for Employees, Staff and Operators */}
             <Route element={<ProtectedRoute allowedRoles={['employee', 'staff', 'operator']} />}>
               <Route
                 path="/my-schedule"
@@ -171,7 +171,7 @@ const App = () => (
               />
             </Route>
 
-            {/* Rotas Protegidas para Funcionários e Staff (preferências) */}
+            {/* Protected Routes for Employees and Staff (preferences) */}
             <Route element={<ProtectedRoute allowedRoles={['employee', 'staff']} />}>
               <Route
                 path="/preferences"

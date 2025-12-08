@@ -18,17 +18,23 @@ import { showSuccess, showError } from '@/utils/toast';
 import { UserRole, ROLE_PERMISSIONS } from '@/types/roles';
 
 const Register = () => {
+  // Available roles for user selection (excluding system_admin and employee)
+  // Derived from ROLE_PERMISSIONS where canAccessAdmin is false and requiresCompany is true
+  const availableRoles: UserRole[] = (Object.keys(ROLE_PERMISSIONS) as UserRole[]).filter(
+    (role) =>
+      !ROLE_PERMISSIONS[role].canAccessAdmin &&
+      ROLE_PERMISSIONS[role].requiresCompany &&
+      role !== 'employee' // Exclude legacy employee role
+  );
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [selectedRole, setSelectedRole] = useState<UserRole>('staff');
+  const [selectedRole, setSelectedRole] = useState<UserRole>(availableRoles[0] || 'staff');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
-  // Available roles for user selection (excluding system_admin which should be created separately)
-  const availableRoles: UserRole[] = ['staff', 'operator', 'schedule_manager', 'manager'];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
