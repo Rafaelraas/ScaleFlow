@@ -43,6 +43,21 @@ export interface Database {
         Insert: Omit<SwapRequest, 'id' | 'created_at'>;
         Update: Partial<Omit<SwapRequest, 'id' | 'created_at'>>;
       };
+      workload_metrics: {
+        Row: WorkloadMetric;
+        Insert: Omit<WorkloadMetric, 'id' | 'created_at' | 'utilization_rate' | 'staffing_gap'>;
+        Update: Partial<Omit<WorkloadMetric, 'id' | 'created_at' | 'utilization_rate' | 'staffing_gap'>>;
+      };
+      demand_forecasts: {
+        Row: DemandForecast;
+        Insert: Omit<DemandForecast, 'id' | 'created_at'>;
+        Update: Partial<Omit<DemandForecast, 'id' | 'created_at'>>;
+      };
+      workload_templates: {
+        Row: WorkloadTemplate;
+        Insert: Omit<WorkloadTemplate, 'id' | 'created_at'>;
+        Update: Partial<Omit<WorkloadTemplate, 'id' | 'created_at'>>;
+      };
     };
   };
 }
@@ -127,6 +142,62 @@ export interface SwapRequest {
   status: 'pending' | 'approved' | 'rejected';
   notes: string | null;
   created_at: string;
+}
+
+export interface WorkloadMetric {
+  id: string;
+  company_id: string;
+  date: string;
+  department: string | null;
+  planned_capacity_hours: number;
+  scheduled_hours: number;
+  actual_hours: number | null;
+  required_staff_count: number;
+  scheduled_staff_count: number;
+  actual_staff_count: number | null;
+  utilization_rate: number; // Auto-calculated
+  staffing_gap: number; // Auto-calculated
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DemandForecast {
+  id: string;
+  company_id: string;
+  forecast_date: string;
+  department: string | null;
+  predicted_demand_hours: number;
+  predicted_staff_count: number;
+  confidence_level: number;
+  is_holiday: boolean;
+  is_weekend: boolean;
+  special_event: string | null;
+  historical_average: number | null;
+  expected_volume: number | null;
+  expected_revenue: number | null;
+  recommended_action: string | null;
+  recommendation_priority: 'low' | 'medium' | 'high' | 'critical' | null;
+  forecast_method: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+}
+
+export interface WorkloadTemplate {
+  id: string;
+  company_id: string;
+  name: string;
+  description: string | null;
+  department: string | null;
+  template_capacity_hours: number;
+  template_staff_count: number;
+  applies_to_days: string[];
+  applies_to_months: number[];
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
 }
 
 // Recurrence rule types (based on iCalendar RFC 5545)

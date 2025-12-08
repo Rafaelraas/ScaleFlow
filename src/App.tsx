@@ -27,6 +27,8 @@ const ProfileSettings = lazy(() => import('./pages/ProfileSettings'));
 const CompanySettings = lazy(() => import('./pages/CompanySettings'));
 const ShiftTemplates = lazy(() => import('./pages/ShiftTemplates'));
 const EmployeePreferences = lazy(() => import('./pages/EmployeePreferences'));
+const Workload = lazy(() => import('./pages/Workload'));
+const DemandForecast = lazy(() => import('./pages/DemandForecast'));
 const CreateCompany = lazy(() => import('./pages/CreateCompany'));
 const AdminCompanyManagement = lazy(() => import('./pages/AdminCompanyManagement'));
 const AdminUserManagement = lazy(() => import('./pages/AdminUserManagement'));
@@ -137,6 +139,26 @@ const App = () => (
                 <ProtectedRoute allowedRoles={['manager', 'schedule_manager']}>
                   <Layout>
                     <EmployeePreferences />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/workload"
+              element={
+                <ProtectedRoute allowedRoles={['manager', 'schedule_manager', 'operator']}>
+                  <Layout>
+                    <Workload />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/demand-forecast"
+              element={
+                <ProtectedRoute allowedRoles={['manager', 'schedule_manager']}>
+                  <Layout>
+                    <DemandForecast />
                   </Layout>
                 </ProtectedRoute>
               }
