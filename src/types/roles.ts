@@ -9,13 +9,26 @@
  * Available user roles in the system
  * These must match exactly with the 'name' column in the roles table
  */
-export type UserRole = 'employee' | 'manager' | 'system_admin';
+export type UserRole =
+  | 'employee'
+  | 'manager'
+  | 'system_admin'
+  | 'operator'
+  | 'schedule_manager'
+  | 'staff';
 
 /**
  * Type guard to check if a string is a valid UserRole
  */
 export function isValidRole(role: string | null | undefined): role is UserRole {
-  return role === 'employee' || role === 'manager' || role === 'system_admin';
+  return (
+    role === 'employee' ||
+    role === 'manager' ||
+    role === 'system_admin' ||
+    role === 'operator' ||
+    role === 'schedule_manager' ||
+    role === 'staff'
+  );
 }
 
 /**
@@ -26,6 +39,24 @@ export const ROLE_PERMISSIONS = {
   employee: {
     name: 'Employee',
     description: 'Standard employee with access to their own schedules and preferences',
+    requiresCompany: true,
+    canAccessAdmin: false,
+  },
+  staff: {
+    name: 'Staff',
+    description: 'General staff member with basic access to personal schedules and preferences',
+    requiresCompany: true,
+    canAccessAdmin: false,
+  },
+  operator: {
+    name: 'Operator',
+    description: 'Operations team member with access to operational tasks and reporting',
+    requiresCompany: true,
+    canAccessAdmin: false,
+  },
+  schedule_manager: {
+    name: 'Schedule Manager',
+    description: 'Schedule management specialist with focus on shift planning and coordination',
     requiresCompany: true,
     canAccessAdmin: false,
   },

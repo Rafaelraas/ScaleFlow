@@ -59,7 +59,10 @@ const App = () => (
             <Route
               path="/create-company"
               element={
-                <ProtectedRoute requiresCompany={false} allowedRoles={['manager', 'employee']} />
+                <ProtectedRoute
+                  requiresCompany={false}
+                  allowedRoles={['manager', 'employee', 'operator', 'schedule_manager', 'staff']}
+                />
               }
             >
               <Route
@@ -100,29 +103,13 @@ const App = () => (
               />
             </Route>
 
-            {/* Rotas Protegidas para Gerentes */}
-            <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
+            {/* Protected Routes for Managers and Schedule Managers */}
+            <Route element={<ProtectedRoute allowedRoles={['manager', 'schedule_manager']} />}>
               <Route
                 path="/schedules"
                 element={
                   <Layout>
                     <Schedules />
-                  </Layout>
-                }
-              />
-              <Route
-                path="/employees"
-                element={
-                  <Layout>
-                    <Employees />
-                  </Layout>
-                }
-              />
-              <Route
-                path="/company-settings"
-                element={
-                  <Layout>
-                    <CompanySettings />
                   </Layout>
                 }
               />
@@ -144,8 +131,36 @@ const App = () => (
               />
             </Route>
 
-            {/* Rotas Protegidas para Funcionários */}
-            <Route element={<ProtectedRoute allowedRoles={['employee']} />}>
+            {/* Protected Routes for Managers, Schedule Managers and Operators */}
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={['manager', 'schedule_manager', 'operator']} />
+              }
+            >
+              <Route
+                path="/employees"
+                element={
+                  <Layout>
+                    <Employees />
+                  </Layout>
+                }
+              />
+            </Route>
+
+            {/* Protected Routes for Managers Only */}
+            <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
+              <Route
+                path="/company-settings"
+                element={
+                  <Layout>
+                    <CompanySettings />
+                  </Layout>
+                }
+              />
+            </Route>
+
+            {/* Protected Routes for Employees, Staff and Operators */}
+            <Route element={<ProtectedRoute allowedRoles={['employee', 'staff', 'operator']} />}>
               <Route
                 path="/my-schedule"
                 element={
@@ -154,6 +169,10 @@ const App = () => (
                   </Layout>
                 }
               />
+            </Route>
+
+            {/* Protected Routes for Employees and Staff (preferences) */}
+            <Route element={<ProtectedRoute allowedRoles={['employee', 'staff']} />}>
               <Route
                 path="/preferences"
                 element={

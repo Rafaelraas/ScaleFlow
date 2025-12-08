@@ -31,55 +31,55 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       name: 'Dashboard',
       href: '/dashboard',
       icon: LayoutDashboard,
-      roles: ['manager', 'employee', 'system_admin'],
+      roles: ['manager', 'employee', 'system_admin', 'operator', 'schedule_manager', 'staff'],
     },
     {
       name: 'Schedules',
       href: '/schedules',
       icon: CalendarDays,
-      roles: ['manager', 'system_admin'],
+      roles: ['manager', 'system_admin', 'schedule_manager', 'operator'],
     },
     {
       name: 'Shift Templates',
       href: '/shift-templates',
       icon: Clock,
-      roles: ['manager', 'system_admin'],
+      roles: ['manager', 'system_admin', 'schedule_manager'],
     },
     {
       name: 'Employees',
       href: '/employees',
       icon: Users,
-      roles: ['manager', 'system_admin'],
+      roles: ['manager', 'system_admin', 'operator', 'schedule_manager'],
     },
     {
       name: 'Employee Preferences',
       href: '/employee-preferences',
       icon: ListChecks,
-      roles: ['manager', 'system_admin'],
+      roles: ['manager', 'system_admin', 'schedule_manager'],
     },
     {
       name: 'My Schedule',
       href: '/my-schedule',
       icon: CalendarDays,
-      roles: ['employee'],
+      roles: ['employee', 'staff', 'operator'],
     },
     {
       name: 'Preferences',
       href: '/preferences',
       icon: Settings,
-      roles: ['employee'],
+      roles: ['employee', 'staff'],
     },
     {
       name: 'Swap Requests',
       href: '/swap-requests',
       icon: Repeat,
-      roles: ['employee', 'manager', 'system_admin'],
+      roles: ['employee', 'manager', 'system_admin', 'operator', 'schedule_manager', 'staff'],
     },
     {
       name: 'Profile Settings',
       href: '/profile-settings',
       icon: User,
-      roles: ['manager', 'employee', 'system_admin'],
+      roles: ['manager', 'employee', 'system_admin', 'operator', 'schedule_manager', 'staff'],
     },
     {
       name: 'Company Settings',
@@ -88,15 +88,15 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       roles: ['manager', 'system_admin'],
     },
     {
-      name: 'Admin Companies', // New item for system admin
+      name: 'Admin Companies',
       href: '/admin/companies',
-      icon: Briefcase, // Using Briefcase icon
+      icon: Briefcase,
       roles: ['system_admin'],
     },
     {
-      name: 'Admin Users', // New item for system admin
+      name: 'Admin Users',
       href: '/admin/users',
-      icon: UserCog, // Using UserCog icon
+      icon: UserCog,
       roles: ['system_admin'],
     },
   ];

@@ -9,7 +9,10 @@ import { supabase } from '@/integrations/supabase/client.ts';
 import { showError } from '@/utils/toast';
 import { format, isFuture, parseISO } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
+import { Skeleton } from '@/components/ui/skeleton';
+import { StaffDashboard } from '@/components/dashboards/StaffDashboard';
+import { OperatorDashboard } from '@/components/dashboards/OperatorDashboard';
+import { ScheduleManagerDashboard } from '@/components/dashboards/ScheduleManagerDashboard';
 
 interface Shift {
   id: string;
@@ -221,6 +224,19 @@ const Dashboard = () => {
         </div>
       </div>
     );
+  }
+
+  // Route to role-specific dashboard
+  if (userRole === 'staff') {
+    return <StaffDashboard userProfile={userProfile} />;
+  }
+
+  if (userRole === 'operator') {
+    return <OperatorDashboard userProfile={userProfile} />;
+  }
+
+  if (userRole === 'schedule_manager') {
+    return <ScheduleManagerDashboard userProfile={userProfile} />;
   }
 
   return (

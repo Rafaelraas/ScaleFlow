@@ -17,6 +17,9 @@ describe('Role Types', () => {
       expect(isValidRole('employee')).toBe(true);
       expect(isValidRole('manager')).toBe(true);
       expect(isValidRole('system_admin')).toBe(true);
+      expect(isValidRole('operator')).toBe(true);
+      expect(isValidRole('schedule_manager')).toBe(true);
+      expect(isValidRole('staff')).toBe(true);
     });
 
     it('should return false for invalid roles', () => {
@@ -41,6 +44,12 @@ describe('Role Types', () => {
       expect(roleRequiresCompany('manager')).toBe(true);
     });
 
+    it('should return true for new roles', () => {
+      expect(roleRequiresCompany('staff')).toBe(true);
+      expect(roleRequiresCompany('operator')).toBe(true);
+      expect(roleRequiresCompany('schedule_manager')).toBe(true);
+    });
+
     it('should return false for system_admin', () => {
       expect(roleRequiresCompany('system_admin')).toBe(false);
     });
@@ -61,6 +70,12 @@ describe('Role Types', () => {
       expect(canAccessAdminRoutes('manager')).toBe(false);
     });
 
+    it('should return false for new roles', () => {
+      expect(canAccessAdminRoutes('staff')).toBe(false);
+      expect(canAccessAdminRoutes('operator')).toBe(false);
+      expect(canAccessAdminRoutes('schedule_manager')).toBe(false);
+    });
+
     it('should return true for system_admin', () => {
       expect(canAccessAdminRoutes('system_admin')).toBe(true);
     });
@@ -77,6 +92,9 @@ describe('Role Types', () => {
       expect(ROLE_PERMISSIONS.employee).toBeDefined();
       expect(ROLE_PERMISSIONS.manager).toBeDefined();
       expect(ROLE_PERMISSIONS.system_admin).toBeDefined();
+      expect(ROLE_PERMISSIONS.operator).toBeDefined();
+      expect(ROLE_PERMISSIONS.schedule_manager).toBeDefined();
+      expect(ROLE_PERMISSIONS.staff).toBeDefined();
     });
 
     it('should have correct structure for each role', () => {
@@ -98,6 +116,17 @@ describe('Role Types', () => {
       const manager = ROLE_PERMISSIONS.manager;
       expect(manager.requiresCompany).toBe(true);
       expect(manager.canAccessAdmin).toBe(false);
+    });
+
+    it('should have new roles with correct permissions', () => {
+      expect(ROLE_PERMISSIONS.staff.requiresCompany).toBe(true);
+      expect(ROLE_PERMISSIONS.staff.canAccessAdmin).toBe(false);
+
+      expect(ROLE_PERMISSIONS.operator.requiresCompany).toBe(true);
+      expect(ROLE_PERMISSIONS.operator.canAccessAdmin).toBe(false);
+
+      expect(ROLE_PERMISSIONS.schedule_manager.requiresCompany).toBe(true);
+      expect(ROLE_PERMISSIONS.schedule_manager.canAccessAdmin).toBe(false);
     });
 
     it('should have system_admin with correct permissions', () => {
