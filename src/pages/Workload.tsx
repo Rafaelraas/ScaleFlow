@@ -28,6 +28,7 @@ const Workload = () => {
     if (userProfile?.company_id) {
       loadWorkloadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile?.company_id, selectedPeriod]);
 
   const loadWorkloadData = async () => {
@@ -36,12 +37,14 @@ const Workload = () => {
     setIsLoading(true);
     try {
       const today = new Date();
-      const startDate = selectedPeriod === 'week' 
-        ? format(startOfWeek(today), 'yyyy-MM-dd')
-        : format(subDays(today, 30), 'yyyy-MM-dd');
-      const endDate = selectedPeriod === 'week'
-        ? format(endOfWeek(today), 'yyyy-MM-dd')
-        : format(addDays(today, 30), 'yyyy-MM-dd');
+      const startDate =
+        selectedPeriod === 'week'
+          ? format(startOfWeek(today), 'yyyy-MM-dd')
+          : format(subDays(today, 30), 'yyyy-MM-dd');
+      const endDate =
+        selectedPeriod === 'week'
+          ? format(endOfWeek(today), 'yyyy-MM-dd')
+          : format(addDays(today, 30), 'yyyy-MM-dd');
 
       const [metricsData, summaryData, templatesData] = await Promise.all([
         getWorkloadMetrics(userProfile.company_id, startDate, endDate),
@@ -122,7 +125,8 @@ const Workload = () => {
               {summary.avgUtilization.toFixed(1)}%
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {summary.totalScheduledHours.toFixed(0)} / {summary.totalPlannedHours.toFixed(0)} hours
+              {summary.totalScheduledHours.toFixed(0)} / {summary.totalPlannedHours.toFixed(0)}{' '}
+              hours
             </p>
           </CardContent>
         </Card>
@@ -134,10 +138,15 @@ const Workload = () => {
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${getStaffingGapColor(summary.avgStaffingGap)}`}>
-              {summary.avgStaffingGap > 0 ? '+' : ''}{summary.avgStaffingGap.toFixed(1)}
+              {summary.avgStaffingGap > 0 ? '+' : ''}
+              {summary.avgStaffingGap.toFixed(1)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {summary.avgStaffingGap < 0 ? 'Understaffed' : summary.avgStaffingGap > 0 ? 'Overstaffed' : 'Optimal'}
+              {summary.avgStaffingGap < 0
+                ? 'Understaffed'
+                : summary.avgStaffingGap > 0
+                  ? 'Overstaffed'
+                  : 'Optimal'}
             </p>
           </CardContent>
         </Card>
@@ -177,9 +186,7 @@ const Workload = () => {
           <Card>
             <CardHeader>
               <CardTitle>Daily Workload Metrics</CardTitle>
-              <CardDescription>
-                Capacity and staffing levels for each day
-              </CardDescription>
+              <CardDescription>Capacity and staffing levels for each day</CardDescription>
             </CardHeader>
             <CardContent>
               {metrics.length === 0 ? (
@@ -208,14 +215,17 @@ const Workload = () => {
                       <div className="flex gap-6 text-sm">
                         <div className="text-center">
                           <div className="text-muted-foreground">Utilization</div>
-                          <div className={`font-bold ${getUtilizationColor(metric.utilization_rate)}`}>
+                          <div
+                            className={`font-bold ${getUtilizationColor(metric.utilization_rate)}`}
+                          >
                             {metric.utilization_rate.toFixed(0)}%
                           </div>
                         </div>
                         <div className="text-center">
                           <div className="text-muted-foreground">Hours</div>
                           <div className="font-bold">
-                            {metric.scheduled_hours.toFixed(0)} / {metric.planned_capacity_hours.toFixed(0)}
+                            {metric.scheduled_hours.toFixed(0)} /{' '}
+                            {metric.planned_capacity_hours.toFixed(0)}
                           </div>
                         </div>
                         <div className="text-center">
@@ -237,9 +247,7 @@ const Workload = () => {
           <Card>
             <CardHeader>
               <CardTitle>Workload Templates</CardTitle>
-              <CardDescription>
-                Reusable patterns for capacity planning
-              </CardDescription>
+              <CardDescription>Reusable patterns for capacity planning</CardDescription>
             </CardHeader>
             <CardContent>
               {templates.length === 0 ? (
@@ -286,9 +294,7 @@ const Workload = () => {
           <Card>
             <CardHeader>
               <CardTitle>Workload Analytics</CardTitle>
-              <CardDescription>
-                Coming soon: Charts and trends
-              </CardDescription>
+              <CardDescription>Coming soon: Charts and trends</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-12">

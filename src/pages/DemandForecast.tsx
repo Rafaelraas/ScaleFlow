@@ -4,7 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TrendingUp, Calendar as CalendarIcon, AlertTriangle, CheckCircle, Sparkles } from 'lucide-react';
+import {
+  TrendingUp,
+  Calendar as CalendarIcon,
+  AlertTriangle,
+  CheckCircle,
+  Sparkles,
+} from 'lucide-react';
 import {
   getDemandForecasts,
   getDemandForecastSummary,
@@ -35,6 +41,7 @@ const DemandForecastPage = () => {
     if (userProfile?.company_id) {
       loadForecastData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile?.company_id]);
 
   const loadForecastData = async () => {
@@ -88,9 +95,7 @@ const DemandForecastPage = () => {
       critical: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
     };
     return (
-      <Badge className={colors[priority as keyof typeof colors]}>
-        {priority.toUpperCase()}
-      </Badge>
+      <Badge className={colors[priority as keyof typeof colors]}>{priority.toUpperCase()}</Badge>
     );
   };
 
@@ -117,14 +122,9 @@ const DemandForecastPage = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Demand Forecasting</h1>
-          <p className="text-muted-foreground mt-2">
-            Predict staffing needs and plan ahead
-          </p>
+          <p className="text-muted-foreground mt-2">Predict staffing needs and plan ahead</p>
         </div>
-        <Button
-          onClick={handleGenerateForecasts}
-          disabled={isGenerating}
-        >
+        <Button onClick={handleGenerateForecasts} disabled={isGenerating}>
           {isGenerating ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -176,9 +176,7 @@ const DemandForecastPage = () => {
             <div className="text-2xl font-bold text-orange-600">
               {summary.highPriorityDays + summary.criticalDays}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {summary.criticalDays} critical
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">{summary.criticalDays} critical</p>
           </CardContent>
         </Card>
 
@@ -208,9 +206,7 @@ const DemandForecastPage = () => {
           <Card>
             <CardHeader>
               <CardTitle>Upcoming Demand Forecasts</CardTitle>
-              <CardDescription>
-                Next 30 days staffing predictions
-              </CardDescription>
+              <CardDescription>Next 30 days staffing predictions</CardDescription>
             </CardHeader>
             <CardContent>
               {forecasts.length === 0 ? (
@@ -238,12 +234,8 @@ const DemandForecastPage = () => {
                             {format(new Date(forecast.forecast_date), 'EEEE, MMM dd, yyyy')}
                           </div>
                           {getPriorityBadge(forecast.recommendation_priority)}
-                          {forecast.is_weekend && (
-                            <Badge variant="outline">Weekend</Badge>
-                          )}
-                          {forecast.is_holiday && (
-                            <Badge variant="outline">Holiday</Badge>
-                          )}
+                          {forecast.is_weekend && <Badge variant="outline">Weekend</Badge>}
+                          {forecast.is_holiday && <Badge variant="outline">Holiday</Badge>}
                         </div>
                         {forecast.recommended_action && (
                           <div className="text-sm text-muted-foreground mt-1">
@@ -264,7 +256,9 @@ const DemandForecastPage = () => {
                         </div>
                         <div className="text-center">
                           <div className="text-muted-foreground">Confidence</div>
-                          <div className={`font-bold ${getConfidenceColor(forecast.confidence_level)}`}>
+                          <div
+                            className={`font-bold ${getConfidenceColor(forecast.confidence_level)}`}
+                          >
                             {(forecast.confidence_level * 100).toFixed(0)}%
                           </div>
                         </div>
@@ -281,9 +275,7 @@ const DemandForecastPage = () => {
           <Card>
             <CardHeader>
               <CardTitle>High Priority Forecasts</CardTitle>
-              <CardDescription>
-                Days requiring immediate attention
-              </CardDescription>
+              <CardDescription>Days requiring immediate attention</CardDescription>
             </CardHeader>
             <CardContent>
               {highPriorityForecasts.length === 0 ? (
@@ -329,9 +321,7 @@ const DemandForecastPage = () => {
           <Card>
             <CardHeader>
               <CardTitle>Forecast Insights</CardTitle>
-              <CardDescription>
-                Coming soon: AI-powered recommendations
-              </CardDescription>
+              <CardDescription>Coming soon: AI-powered recommendations</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-12">
