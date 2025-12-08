@@ -175,6 +175,26 @@ export const SCHEDULE_MANAGEMENT_ROUTES: RouteConfig[] = [
     category: 'manager_only',
     tablesAccessed: ['preferences', 'profiles'],
   },
+  {
+    path: '/workload',
+    name: 'Workload Management',
+    description: 'Track workload capacity and utilization',
+    requiresAuth: true,
+    requiresCompany: true,
+    allowedRoles: ['manager', 'schedule_manager', 'operator'],
+    category: 'manager_only',
+    tablesAccessed: ['workload_metrics', 'workload_templates', 'shifts'],
+  },
+  {
+    path: '/demand-forecast',
+    name: 'Demand Forecasting',
+    description: 'Predict staffing needs and manage demand forecasts',
+    requiresAuth: true,
+    requiresCompany: true,
+    allowedRoles: ['manager', 'schedule_manager'],
+    category: 'manager_only',
+    tablesAccessed: ['demand_forecasts', 'workload_metrics'],
+  },
 ];
 
 /**

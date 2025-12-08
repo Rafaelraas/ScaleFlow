@@ -17,6 +17,8 @@ import {
   Briefcase,
   UserCog,
   Flag,
+  TrendingUp,
+  BarChart3,
 } from 'lucide-react';
 import { useSession } from '@/hooks/useSession';
 import { UserRole } from '@/types/roles';
@@ -66,6 +68,20 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
       name: 'Employee Preferences',
       href: '/employee-preferences',
       icon: ListChecks,
+      roles: ['manager', 'schedule_manager'],
+      section: 'Schedule Management',
+    },
+    {
+      name: 'Workload',
+      href: '/workload',
+      icon: TrendingUp,
+      roles: ['manager', 'schedule_manager', 'operator'],
+      section: 'Schedule Management',
+    },
+    {
+      name: 'Demand Forecast',
+      href: '/demand-forecast',
+      icon: BarChart3,
       roles: ['manager', 'schedule_manager'],
       section: 'Schedule Management',
     },
