@@ -88,6 +88,11 @@ export interface Shift {
   notes: string | null;
   published: boolean;
   created_at: string;
+  // Recurring shift fields
+  is_recurring?: boolean;
+  recurrence_rule?: string | null;
+  recurrence_parent_id?: string | null;
+  recurrence_exception_dates?: string[] | null;
 }
 
 export interface ShiftTemplate {
@@ -122,6 +127,19 @@ export interface SwapRequest {
   status: 'pending' | 'approved' | 'rejected';
   notes: string | null;
   created_at: string;
+}
+
+// Recurrence rule types (based on iCalendar RFC 5545)
+export type RecurrenceFrequency = 'DAILY' | 'WEEKLY' | 'MONTHLY';
+
+export type WeekDay = 'MO' | 'TU' | 'WE' | 'TH' | 'FR' | 'SA' | 'SU';
+
+export interface RecurrenceRule {
+  freq: RecurrenceFrequency;
+  interval: number; // 1 = every period, 2 = every 2 periods, etc.
+  byDay?: WeekDay[]; // For weekly: ['MO', 'WE', 'FR']
+  until?: string; // End date (ISO 8601)
+  count?: number; // Or number of occurrences
 }
 
 // Joined/extended types for queries with relations
