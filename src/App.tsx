@@ -61,14 +61,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/verify" element={<Verify />} />
-            <Route
-              path="/"
-              element={
-                <Layout>
-                  <Index />
-                </Layout>
-              }
-            />
+            <Route path="/" element={<Index />} />
 
             {/* Company Creation - Auth required, no company */}
             <Route
