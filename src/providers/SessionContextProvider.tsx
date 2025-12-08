@@ -243,7 +243,10 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       subscription.unsubscribe();
     };
   }, [navigate, fetchUserProfileAndRole, getRedirectPath]);
-  // Removed location dependencies to prevent infinite loops on navigation
+  // Note: Location dependencies removed to prevent infinite loops
+  // The effect should only run once on mount and when auth state changes
+  // We use window.location.hash directly since we're using HashRouter
+  // Navigation-triggered redirects happen automatically via navigate()
 
   return (
     <SessionContext.Provider value={{ session, isLoading, userProfile, userRole }}>
