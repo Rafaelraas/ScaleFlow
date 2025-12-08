@@ -35,6 +35,18 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 const queryClient = new QueryClient();
 
+/**
+ * Route Organization:
+ * - Public routes: No auth required (/, /login, /register, /verify)
+ * - Company creation: Auth required, no company (managers/employees without company)
+ * - Generic protected: Auth + company, all roles
+ * - Schedule management: Auth + company, managers + schedule_managers
+ * - Employee management: Auth + company, managers + schedule_managers + operators
+ * - Manager only: Auth + company, managers only
+ * - Employee/Staff: Auth + company, employees/staff/operators
+ * - System admin: Auth, no company, system_admin only
+ */
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -45,6 +57,7 @@ const App = () => (
           {/* Performance monitoring in development only */}
           {import.meta.env.DEV && <PerformanceMonitor />}
           <Routes>
+            {/* Public Routes - No authentication required */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/verify" element={<Verify />} />
@@ -56,164 +69,165 @@ const App = () => (
                 </Layout>
               }
             />
+
+            {/* Company Creation - Auth required, no company */}
             <Route
               path="/create-company"
               element={
                 <ProtectedRoute
                   requiresCompany={false}
                   allowedRoles={['manager', 'employee', 'operator', 'schedule_manager', 'staff']}
-                />
-              }
-            >
-              <Route
-                index
-                element={
+                >
                   <Layout>
                     <CreateCompany />
                   </Layout>
-                }
-              />
-            </Route>
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Rotas Protegidas */}
-            <Route element={<ProtectedRoute />}>
-              <Route
-                path="/dashboard"
-                element={
+            {/* Generic Protected Routes - All authenticated users with company */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
                   <Layout>
                     <Dashboard />
                   </Layout>
-                }
-              />
-              <Route
-                path="/profile-settings"
-                element={
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile-settings"
+              element={
+                <ProtectedRoute>
                   <Layout>
                     <ProfileSettings />
                   </Layout>
-                }
-              />
-              <Route
-                path="/swap-requests"
-                element={
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/swap-requests"
+              element={
+                <ProtectedRoute>
                   <Layout>
                     <SwapRequests />
                   </Layout>
-                }
-              />
-            </Route>
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Protected Routes for Managers and Schedule Managers */}
-            <Route element={<ProtectedRoute allowedRoles={['manager', 'schedule_manager']} />}>
-              <Route
-                path="/schedules"
-                element={
+            {/* Schedule Management Routes - Managers and Schedule Managers */}
+            <Route
+              path="/schedules"
+              element={
+                <ProtectedRoute allowedRoles={['manager', 'schedule_manager']}>
                   <Layout>
                     <Schedules />
                   </Layout>
-                }
-              />
-              <Route
-                path="/shift-templates"
-                element={
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shift-templates"
+              element={
+                <ProtectedRoute allowedRoles={['manager', 'schedule_manager']}>
                   <Layout>
                     <ShiftTemplates />
                   </Layout>
-                }
-              />
-              <Route
-                path="/employee-preferences"
-                element={
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/employee-preferences"
+              element={
+                <ProtectedRoute allowedRoles={['manager', 'schedule_manager']}>
                   <Layout>
                     <EmployeePreferences />
                   </Layout>
-                }
-              />
-            </Route>
-
-            {/* Protected Routes for Managers, Schedule Managers and Operators */}
-            <Route
-              element={
-                <ProtectedRoute allowedRoles={['manager', 'schedule_manager', 'operator']} />
+                </ProtectedRoute>
               }
-            >
-              <Route
-                path="/employees"
-                element={
+            />
+
+            {/* Employee Management Routes - Managers, Schedule Managers, and Operators */}
+            <Route
+              path="/employees"
+              element={
+                <ProtectedRoute allowedRoles={['manager', 'schedule_manager', 'operator']}>
                   <Layout>
                     <Employees />
                   </Layout>
-                }
-              />
-            </Route>
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Protected Routes for Managers Only */}
-            <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
-              <Route
-                path="/company-settings"
-                element={
+            {/* Manager-Only Routes */}
+            <Route
+              path="/company-settings"
+              element={
+                <ProtectedRoute allowedRoles={['manager']}>
                   <Layout>
                     <CompanySettings />
                   </Layout>
-                }
-              />
-            </Route>
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Protected Routes for Employees, Staff and Operators */}
-            <Route element={<ProtectedRoute allowedRoles={['employee', 'staff', 'operator']} />}>
-              <Route
-                path="/my-schedule"
-                element={
+            {/* Employee/Staff Routes - Personal schedules and preferences */}
+            <Route
+              path="/my-schedule"
+              element={
+                <ProtectedRoute allowedRoles={['employee', 'staff', 'operator']}>
                   <Layout>
                     <MySchedule />
                   </Layout>
-                }
-              />
-            </Route>
-
-            {/* Protected Routes for Employees and Staff (preferences) */}
-            <Route element={<ProtectedRoute allowedRoles={['employee', 'staff']} />}>
-              <Route
-                path="/preferences"
-                element={
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/preferences"
+              element={
+                <ProtectedRoute allowedRoles={['employee', 'staff']}>
                   <Layout>
                     <Preferences />
                   </Layout>
-                }
-              />
-            </Route>
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Rotas Protegidas para Administradores do Sistema */}
+            {/* System Admin Routes - Platform-wide management */}
             <Route
-              element={<ProtectedRoute allowedRoles={['system_admin']} requiresCompany={false} />}
-            >
-              <Route
-                path="/admin/companies"
-                element={
+              path="/admin/companies"
+              element={
+                <ProtectedRoute allowedRoles={['system_admin']} requiresCompany={false}>
                   <Layout>
                     <AdminCompanyManagement />
                   </Layout>
-                }
-              />
-              <Route
-                path="/admin/users"
-                element={
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute allowedRoles={['system_admin']} requiresCompany={false}>
                   <Layout>
                     <AdminUserManagement />
                   </Layout>
-                }
-              />
-              <Route
-                path="/admin/feature-flags"
-                element={
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/feature-flags"
+              element={
+                <ProtectedRoute allowedRoles={['system_admin']} requiresCompany={false}>
                   <Layout>
                     <FeatureFlagAdmin />
                   </Layout>
-                }
-              />
-            </Route>
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Rota catch-all para 404 */}
+            {/* 404 - Catch all unmatched routes */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

@@ -142,29 +142,61 @@ export const GENERIC_PROTECTED_ROUTES: RouteConfig[] = [
 ];
 
 /**
- * Manager-only routes
+ * Schedule management routes - accessible by managers and schedule_managers
  */
-export const MANAGER_ROUTES: RouteConfig[] = [
+export const SCHEDULE_MANAGEMENT_ROUTES: RouteConfig[] = [
   {
     path: '/schedules',
     name: 'Schedules',
     description: 'Manage company schedules and shifts',
     requiresAuth: true,
     requiresCompany: true,
-    allowedRoles: ['manager'],
+    allowedRoles: ['manager', 'schedule_manager'],
     category: 'manager_only',
     tablesAccessed: ['shifts', 'profiles', 'shift_templates'],
   },
+  {
+    path: '/shift-templates',
+    name: 'Shift Templates',
+    description: 'Manage shift templates',
+    requiresAuth: true,
+    requiresCompany: true,
+    allowedRoles: ['manager', 'schedule_manager'],
+    category: 'manager_only',
+    tablesAccessed: ['shift_templates'],
+  },
+  {
+    path: '/employee-preferences',
+    name: 'Employee Preferences',
+    description: 'View and manage employee schedule preferences',
+    requiresAuth: true,
+    requiresCompany: true,
+    allowedRoles: ['manager', 'schedule_manager'],
+    category: 'manager_only',
+    tablesAccessed: ['preferences', 'profiles'],
+  },
+];
+
+/**
+ * Employee management routes - accessible by managers, schedule_managers, and operators
+ */
+export const EMPLOYEE_MANAGEMENT_ROUTES: RouteConfig[] = [
   {
     path: '/employees',
     name: 'Employees',
     description: 'Manage company employees',
     requiresAuth: true,
     requiresCompany: true,
-    allowedRoles: ['manager'],
+    allowedRoles: ['manager', 'schedule_manager', 'operator'],
     category: 'manager_only',
     tablesAccessed: ['profiles', 'roles'],
   },
+];
+
+/**
+ * Manager-only routes - exclusive to managers
+ */
+export const MANAGER_ROUTES: RouteConfig[] = [
   {
     path: '/company-settings',
     name: 'Company Settings',
@@ -175,30 +207,10 @@ export const MANAGER_ROUTES: RouteConfig[] = [
     category: 'manager_only',
     tablesAccessed: ['companies'],
   },
-  {
-    path: '/shift-templates',
-    name: 'Shift Templates',
-    description: 'Manage shift templates',
-    requiresAuth: true,
-    requiresCompany: true,
-    allowedRoles: ['manager'],
-    category: 'manager_only',
-    tablesAccessed: ['shift_templates'],
-  },
-  {
-    path: '/employee-preferences',
-    name: 'Employee Preferences',
-    description: 'View and manage employee schedule preferences',
-    requiresAuth: true,
-    requiresCompany: true,
-    allowedRoles: ['manager'],
-    category: 'manager_only',
-    tablesAccessed: ['preferences', 'profiles'],
-  },
 ];
 
 /**
- * Employee-only routes
+ * Employee-only routes - accessible by basic employees (employee, staff, operator)
  */
 export const EMPLOYEE_ROUTES: RouteConfig[] = [
   {
@@ -207,7 +219,7 @@ export const EMPLOYEE_ROUTES: RouteConfig[] = [
     description: 'View personal schedule',
     requiresAuth: true,
     requiresCompany: true,
-    allowedRoles: ['employee'],
+    allowedRoles: ['employee', 'staff', 'operator'],
     category: 'employee_only',
     tablesAccessed: ['shifts'],
   },
@@ -217,7 +229,7 @@ export const EMPLOYEE_ROUTES: RouteConfig[] = [
     description: 'Manage personal schedule preferences',
     requiresAuth: true,
     requiresCompany: true,
-    allowedRoles: ['employee'],
+    allowedRoles: ['employee', 'staff'],
     category: 'employee_only',
     tablesAccessed: ['preferences'],
   },
@@ -247,6 +259,16 @@ export const SYSTEM_ADMIN_ROUTES: RouteConfig[] = [
     category: 'system_admin',
     tablesAccessed: ['profiles', 'roles'],
   },
+  {
+    path: '/admin/feature-flags',
+    name: 'Admin - Feature Flags',
+    description: 'System-wide feature flag management',
+    requiresAuth: true,
+    requiresCompany: false,
+    allowedRoles: ['system_admin'],
+    category: 'system_admin',
+    tablesAccessed: [],
+  },
 ];
 
 /**
@@ -257,6 +279,8 @@ export const ALL_ROUTES: RouteConfig[] = [
   ...AUTH_FLOW_ROUTES,
   COMPANY_CREATION_ROUTE,
   ...GENERIC_PROTECTED_ROUTES,
+  ...SCHEDULE_MANAGEMENT_ROUTES,
+  ...EMPLOYEE_MANAGEMENT_ROUTES,
   ...MANAGER_ROUTES,
   ...EMPLOYEE_ROUTES,
   ...SYSTEM_ADMIN_ROUTES,
