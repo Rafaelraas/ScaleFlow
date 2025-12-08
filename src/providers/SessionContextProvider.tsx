@@ -182,12 +182,13 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       }
 
       // Check for special auth flows that should not trigger redirects
-      const urlParams = new URLSearchParams(location.search);
-      const hashParams = new URLSearchParams(location.hash.substring(1));
+      const urlParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const authFlowType = urlParams.get('type') || hashParams.get('type');
+      const currentPath = window.location.hash.replace('#', '') || '/';
 
       if (
-        isAuthFlowRoute(location.pathname) &&
+        isAuthFlowRoute(currentPath) &&
         (authFlowType === 'recovery' || authFlowType === 'signup')
       ) {
         if (isMounted) {
@@ -197,9 +198,9 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       }
 
       // Determine redirect path
-      const redirectPath = getRedirectPath(currentSession, profile, location.pathname);
+      const redirectPath = getRedirectPath(currentSession, profile, currentPath);
 
-      if (redirectPath && redirectPath !== location.pathname) {
+      if (redirectPath && redirectPath !== currentPath) {
         navigate(redirectPath);
 
         // Show success messages for auth events
@@ -239,15 +240,8 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [
-    navigate,
-    location.pathname,
-    location.search,
-    location.hash,
-    fetchUserProfileAndRole,
-    getRedirectPath,
-  ]);
-  // Note: location.search and location.hash are needed to detect auth flow types (recovery, signup)
+  }, [navigate, fetchUserProfileAndRole, getRedirectPath]);
+  // Removed location dependencies to prevent infinite loops on navigation
 
   return (
     <SessionContext.Provider value={{ session, isLoading, userProfile, userRole }}>
