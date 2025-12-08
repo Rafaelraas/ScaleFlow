@@ -36,7 +36,8 @@ const ProtectedRoute = ({
   }
 
   // Redirect to create company page if company is required but user has none
-  if (requiresCompany && !userProfile?.company_id) {
+  // Exception: system_admin can access routes even without a company
+  if (requiresCompany && !userProfile?.company_id && userRole !== 'system_admin') {
     return <Navigate to="/create-company" replace />;
   }
 
