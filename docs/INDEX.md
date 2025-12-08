@@ -19,6 +19,7 @@ Welcome to the ScaleFlow documentation! This index provides an overview of all a
 |----------|-------------|----------|
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture and design patterns | Developers, Architects |
 | [DATABASE.md](./DATABASE.md) | Database schema, RLS policies, and queries | Backend Developers |
+| [SUPABASE_MIGRATIONS_GUIDE.md](./SUPABASE_MIGRATIONS_GUIDE.md) | 🇧🇷 **Complete Portuguese guide for Supabase database migrations** | **Developers, DevOps** |
 | [API_GUIDELINES.md](./API_GUIDELINES.md) | API patterns and Supabase integration | Developers |
 | [SECURITY.md](./SECURITY.md) | Security best practices and guidelines | Everyone |
 | [CODEQL_SETUP.md](./CODEQL_SETUP.md) | CodeQL security scanning setup and troubleshooting | DevOps, Repository Admins |
@@ -311,6 +312,7 @@ Documentation should be updated when:
 | README.md | 2024-12-04 | ✅ Current | High |
 | ARCHITECTURE.md | 2024-12-04 | ✅ Current | High |
 | DATABASE.md | 2024-12-04 | ✅ Current | High |
+| SUPABASE_MIGRATIONS_GUIDE.md | 2024-12-08 | ✅ Current | High |
 | DEVELOPMENT_GUIDE.md | 2024-12-04 | ✅ Current | High |
 | API_GUIDELINES.md | 2024-12-04 | ✅ Current | Medium |
 | SECURITY.md | 2024-12-04 | ✅ Current | High |
