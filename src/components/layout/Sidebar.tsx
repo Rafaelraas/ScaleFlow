@@ -16,8 +16,18 @@ import {
   Clock,
   Briefcase,
   UserCog,
-} from 'lucide-react'; // Added Briefcase and UserCog icons
+  Flag,
+} from 'lucide-react';
 import { useSession } from '@/hooks/useSession';
+import { UserRole } from '@/types/roles';
+
+interface NavItem {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  roles: UserRole[];
+  section?: string;
+}
 
 interface SidebarProps {
   isMobile?: boolean;
@@ -26,82 +36,126 @@ interface SidebarProps {
 export const Sidebar = ({ isMobile = false }: SidebarProps) => {
   const { userRole } = useSession();
 
-  const navItems = [
+  // Organized navigation items by section
+  const navItems: NavItem[] = [
+    // General
     {
       name: 'Dashboard',
       href: '/dashboard',
       icon: LayoutDashboard,
       roles: ['manager', 'employee', 'system_admin', 'operator', 'schedule_manager', 'staff'],
+      section: 'General',
     },
+
+    // Schedule Management
     {
       name: 'Schedules',
       href: '/schedules',
       icon: CalendarDays,
-      roles: ['manager', 'system_admin', 'schedule_manager', 'operator'],
+      roles: ['manager', 'schedule_manager'],
+      section: 'Schedule Management',
     },
     {
       name: 'Shift Templates',
       href: '/shift-templates',
       icon: Clock,
-      roles: ['manager', 'system_admin', 'schedule_manager'],
-    },
-    {
-      name: 'Employees',
-      href: '/employees',
-      icon: Users,
-      roles: ['manager', 'system_admin', 'operator', 'schedule_manager'],
+      roles: ['manager', 'schedule_manager'],
+      section: 'Schedule Management',
     },
     {
       name: 'Employee Preferences',
       href: '/employee-preferences',
       icon: ListChecks,
-      roles: ['manager', 'system_admin', 'schedule_manager'],
+      roles: ['manager', 'schedule_manager'],
+      section: 'Schedule Management',
     },
+
+    // Employee Management
+    {
+      name: 'Employees',
+      href: '/employees',
+      icon: Users,
+      roles: ['manager', 'schedule_manager', 'operator'],
+      section: 'Team',
+    },
+
+    // Personal
     {
       name: 'My Schedule',
       href: '/my-schedule',
       icon: CalendarDays,
       roles: ['employee', 'staff', 'operator'],
+      section: 'Personal',
     },
     {
       name: 'Preferences',
       href: '/preferences',
       icon: Settings,
       roles: ['employee', 'staff'],
+      section: 'Personal',
     },
     {
       name: 'Swap Requests',
       href: '/swap-requests',
       icon: Repeat,
       roles: ['employee', 'manager', 'system_admin', 'operator', 'schedule_manager', 'staff'],
+      section: 'Personal',
     },
     {
       name: 'Profile Settings',
       href: '/profile-settings',
       icon: User,
       roles: ['manager', 'employee', 'system_admin', 'operator', 'schedule_manager', 'staff'],
+      section: 'Personal',
     },
+
+    // Company
     {
       name: 'Company Settings',
       href: '/company-settings',
       icon: Building,
-      roles: ['manager', 'system_admin'],
+      roles: ['manager'],
+      section: 'Company',
     },
+
+    // System Admin
     {
       name: 'Admin Companies',
       href: '/admin/companies',
       icon: Briefcase,
       roles: ['system_admin'],
+      section: 'System Admin',
     },
     {
       name: 'Admin Users',
       href: '/admin/users',
       icon: UserCog,
       roles: ['system_admin'],
+      section: 'System Admin',
+    },
+    {
+      name: 'Feature Flags',
+      href: '/admin/feature-flags',
+      icon: Flag,
+      roles: ['system_admin'],
+      section: 'System Admin',
     },
   ];
 
   const filteredNavItems = userRole ? navItems.filter((item) => item.roles.includes(userRole)) : [];
+
+  // Group items by section
+  const groupedItems = filteredNavItems.reduce(
+    (acc, item) => {
+      const section = item.section || 'Other';
+      if (!acc[section]) {
+        acc[section] = [];
+      }
+      acc[section].push(item);
+      return acc;
+    },
+    {} as Record<string, NavItem[]>
+  );
 
   return (
     <div
@@ -117,19 +171,28 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
           </Link>
         </div>
       )}
-      <nav className="flex-1 p-4 space-y-2">
-        {filteredNavItems.map((item) => (
-          <Button
-            key={item.name}
-            asChild
-            variant="ghost"
-            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          >
-            <Link to={item.href}>
-              <item.icon className="mr-2 h-4 w-4" />
-              {item.name}
-            </Link>
-          </Button>
+      <nav className="flex-1 p-4 space-y-4 overflow-y-auto">
+        {Object.entries(groupedItems).map(([section, items]) => (
+          <div key={section}>
+            <h3 className="mb-2 px-2 text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider">
+              {section}
+            </h3>
+            <div className="space-y-1">
+              {items.map((item) => (
+                <Button
+                  key={item.name}
+                  asChild
+                  variant="ghost"
+                  className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                >
+                  <Link to={item.href}>
+                    <item.icon className="mr-2 h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </Button>
+              ))}
+            </div>
+          </div>
         ))}
       </nav>
     </div>
