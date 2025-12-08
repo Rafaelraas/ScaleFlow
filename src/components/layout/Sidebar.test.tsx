@@ -34,16 +34,16 @@ describe('Sidebar', () => {
     expect(screen.getByText('Admin Users')).toBeInTheDocument();
     expect(screen.getByText('Feature Flags')).toBeInTheDocument();
 
-    // System admin does NOT see company-specific management items (those are for manager/schedule_manager)
-    expect(screen.queryByText('Schedules')).not.toBeInTheDocument(); // Manager/Schedule Manager only
-    expect(screen.queryByText('Shift Templates')).not.toBeInTheDocument(); // Manager/Schedule Manager only
-    expect(screen.queryByText('Employees')).not.toBeInTheDocument(); // Manager/Schedule Manager/Operator only
-    expect(screen.queryByText('Employee Preferences')).not.toBeInTheDocument(); // Manager/Schedule Manager only
-    expect(screen.queryByText('Company Settings')).not.toBeInTheDocument(); // Manager only
+    // System admin does NOT see company-specific management items (these require company-level roles)
+    expect(screen.queryByText('Schedules')).not.toBeInTheDocument(); // Requires: manager, schedule_manager
+    expect(screen.queryByText('Shift Templates')).not.toBeInTheDocument(); // Requires: manager, schedule_manager
+    expect(screen.queryByText('Employees')).not.toBeInTheDocument(); // Requires: manager, schedule_manager, operator
+    expect(screen.queryByText('Employee Preferences')).not.toBeInTheDocument(); // Requires: manager, schedule_manager
+    expect(screen.queryByText('Company Settings')).not.toBeInTheDocument(); // Requires: manager
 
-    // System admin does NOT see employee-specific items
-    expect(screen.queryByText('My Schedule')).not.toBeInTheDocument(); // Employee/Staff/Operator only
-    expect(screen.queryByText('Preferences')).not.toBeInTheDocument(); // Employee/Staff only
+    // System admin does NOT see employee-specific items (these require staff-level roles)
+    expect(screen.queryByText('My Schedule')).not.toBeInTheDocument(); // Requires: employee, staff, operator
+    expect(screen.queryByText('Preferences')).not.toBeInTheDocument(); // Requires: employee, staff
   });
 
   it('should render correct navigation items for a manager', () => {
