@@ -110,13 +110,14 @@ describe('Sidebar', () => {
       userProfile: null,
     });
 
-    render(
+    const { container } = render(
       <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>
     );
 
-    // Expect no navigation items to be rendered.
+    // Expect the sidebar to not render at all when there's no user role
+    expect(container.querySelector('nav')).not.toBeInTheDocument();
     expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
     expect(screen.queryByText('Schedules')).not.toBeInTheDocument();
     expect(screen.queryByText('My Schedule')).not.toBeInTheDocument();
@@ -137,8 +138,8 @@ describe('Sidebar', () => {
       </MemoryRouter>
     );
 
-    // Expect the sidebar container to be present, but no navigation items inside
-    expect(container.querySelector('nav')).toBeInTheDocument();
+    // Expect the sidebar to not render at all when there's no user role (no navigation items)
+    expect(container.querySelector('nav')).not.toBeInTheDocument();
     expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
   });
 });

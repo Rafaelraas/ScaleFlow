@@ -144,6 +144,11 @@ export const Sidebar = ({ isMobile = false }: SidebarProps) => {
 
   const filteredNavItems = userRole ? navItems.filter((item) => item.roles.includes(userRole)) : [];
 
+  // Don't render sidebar if there are no navigation items
+  if (filteredNavItems.length === 0) {
+    return null;
+  }
+
   // Group items by section
   const groupedItems = filteredNavItems.reduce(
     (acc, item) => {
