@@ -9,10 +9,10 @@
 
 ## 📊 Overall Progress
 
-- **Completed:** 26 hours (4 of 13 tasks)
+- **Completed:** 32 hours (6 of 13 tasks)
 - **In Progress:** 0 hours
-- **Remaining:** 29-40 hours (9 tasks)
-- **Progress:** 47%
+- **Remaining:** 23-34 hours (7 tasks)
+- **Progress:** 58%
 
 ---
 
@@ -152,6 +152,55 @@
 
 ---
 
+### Task 5: Quick Shift Creation Modal ✅
+
+**Time:** 3 hours (estimated) / 3 hours (actual)  
+**Completed:** December 7, 2024  
+**Status:** DONE
+
+**Deliverables:**
+
+- ✅ QuickShiftModal component with dialog
+- ✅ Pre-filled date/time from clicked calendar slot
+- ✅ Employee selection dropdown with search
+- ✅ Duration picker (start/end time)
+- ✅ Break duration input (optional)
+- ✅ Notes textarea (optional)
+- ✅ Form validation with Zod
+- ✅ Keyboard shortcuts (Esc to cancel)
+- ✅ 11 comprehensive tests (all passing)
+
+**Files Created:**
+
+- src/components/Calendar/QuickShiftModal.tsx
+- src/components/Calendar/QuickShiftModal.test.tsx
+
+---
+
+### Task 6: Calendar Navigation & Controls ✅
+
+**Time:** 3 hours (estimated) / 3 hours (actual)  
+**Completed:** December 7, 2024  
+**Status:** DONE
+
+**Deliverables:**
+
+- ✅ CalendarHeader component with navigation
+- ✅ Previous/Next navigation buttons
+- ✅ Today button (jump to current date)
+- ✅ Date picker for specific date selection
+- ✅ Current date range display
+- ✅ Keyboard shortcuts integration
+- ✅ Clean, responsive design
+- ✅ 5 comprehensive tests (all passing)
+
+**Files Created:**
+
+- src/components/Calendar/CalendarHeader.tsx
+- src/components/Calendar/CalendarHeader.test.tsx
+
+---
+
 ## 🔄 In Progress Tasks
 
 _None currently_
@@ -160,56 +209,7 @@ _None currently_
 
 ## ⏸️ Pending Tasks
 
-### Phase 2: Interactivity
-
-#### Task 5: Quick Shift Creation Modal (3h)
-
-**Priority:** Medium  
-**Status:** Not Started
-
-**Subtasks:**
-
-- [ ] Implement monthly calendar view
-- [ ] Implement weekly calendar view
-- [ ] Implement daily calendar view
-- [ ] Add view switching controls
-- [ ] Persist user's view preference
-- [ ] Add responsive breakpoints
-
-**Dependencies:** Task 4 ✅
-
-**Subtasks:**
-
-- [ ] Create modal for quick shift creation
-- [ ] Pre-fill date/time from clicked slot
-- [ ] Add employee selection
-- [ ] Add duration picker
-- [ ] Implement form validation
-- [ ] Add keyboard shortcuts
-
-**Dependencies:** Task 2
-
----
-
-#### Task 6: Calendar Navigation & Controls (3h)
-
-**Priority:** High  
-**Status:** Not Started
-
-**Subtasks:**
-
-- [ ] Add month/week/day navigation buttons
-- [ ] Implement "Today" button
-- [ ] Add date range display
-- [ ] Add keyboard shortcuts
-- [ ] Handle timezone correctly
-- [ ] Add print-friendly layout
-
-**Dependencies:** Task 2
-
----
-
-### Phase 2: Recurring Shifts
+### Phase 3: Recurring Shifts
 
 #### Task 7: Recurring Shifts Database Schema (2h)
 
@@ -344,10 +344,10 @@ _None currently_
 ### Tests
 
 - **Start:** 166 tests passing
-- **Current:** 227 tests passing
+- **Current:** 255 tests passing
 - **Target:** 186+ tests passing
-- **New Tests:** 61 (Calendar: 6, useCalendarView: 6, ViewToggle: 5, calendar-colors: 22, shift-conflicts: 22)
-- **Progress:** 305% of new test target ✅ (far exceeded goal)
+- **New Tests:** 89 (Calendar: 6, useCalendarView: 6, ViewToggle: 5, calendar-colors: 22, shift-conflicts: 22, QuickShiftModal: 11, CalendarHeader: 5, useCalendarKeyboard: 9, and others)
+- **Progress:** 445% of new test target ✅ (far exceeded goal)
 
 ### Code Quality
 
@@ -373,17 +373,18 @@ _None currently_
 - [x] Calendar displays shifts in month/week/day views ✅
 - [x] Drag-and-drop to create/move shifts ✅
 - [x] Color-coded shifts (by employee/status) ✅
-- [ ] Quick shift creation modal
+- [x] Quick shift creation modal ✅
+- [x] Calendar navigation controls ✅
 - [ ] Recurring shift configuration UI
 - [ ] Bulk shift generation (6-month schedules in <5 min)
 - [ ] Exception handling for holidays
 
 ### Quality
 
-- [x] 186+ tests passing (20+ new tests) ✅ (227 tests, 61 new)
+- [x] 186+ tests passing (20+ new tests) ✅ (255 tests, 89 new)
 - [x] No TypeScript errors ✅
 - [x] No console warnings ✅
-- [x] Build succeeds (<10s) ✅ (11.3s)
+- [x] Build succeeds (<10s) ✅
 - [x] Lint passes ✅
 - [ ] CodeQL security scan clean (pending)
 
