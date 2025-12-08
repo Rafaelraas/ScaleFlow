@@ -4,12 +4,15 @@ import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
 import { Calendar, CalendarEvent } from './Calendar';
 import { ViewToggle } from './ViewToggle';
 import { ColorLegend } from './ColorLegend';
+import { CalendarHeader } from './CalendarHeader';
 import { useCalendarView } from '@/hooks/useCalendarView';
 import { useShiftDragDrop } from '@/hooks/useShiftDragDrop';
+import { useCalendarKeyboard } from '@/hooks/useCalendarKeyboard';
 import { Button } from '@/components/ui/button';
 import { CalendarDays, List, Undo2, Redo2 } from 'lucide-react';
 import { logger } from '@/utils/logger';
 import { detectConflicts, formatConflictsMessage } from '@/lib/shift-conflicts';
+import '@/styles/calendar-print.css';
 
 interface Shift {
   id: string;
@@ -144,6 +147,53 @@ export const ShiftCalendar = ({
     [handleDrop]
   );
 
+  // Handle calendar header navigation
+  const handleHeaderNavigate = useCallback(
+    (action: 'PREV' | 'NEXT' | 'TODAY' | 'DATE', date?: Date) => {
+      let newDate = new Date(currentDate);
+
+      switch (action) {
+        case 'PREV':
+          if (view === 'month') {
+            newDate.setMonth(newDate.getMonth() - 1);
+          } else if (view === 'week') {
+            newDate.setDate(newDate.getDate() - 7);
+          } else if (view === 'day') {
+            newDate.setDate(newDate.getDate() - 1);
+          }
+          break;
+        case 'NEXT':
+          if (view === 'month') {
+            newDate.setMonth(newDate.getMonth() + 1);
+          } else if (view === 'week') {
+            newDate.setDate(newDate.getDate() + 7);
+          } else if (view === 'day') {
+            newDate.setDate(newDate.getDate() + 1);
+          }
+          break;
+        case 'TODAY':
+          newDate = new Date();
+          break;
+        case 'DATE':
+          if (date) {
+            newDate = date;
+          }
+          break;
+      }
+
+      setCurrentDate(newDate);
+      logger.debug('Calendar navigated via header:', action, newDate);
+    },
+    [currentDate, view]
+  );
+
+  // Enable keyboard shortcuts
+  useCalendarKeyboard({
+    onNavigate: handleHeaderNavigate,
+    onViewChange: setView,
+    enabled: isCalendarView,
+  });
+
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Calendar Header with Controls */}
@@ -207,6 +257,17 @@ export const ShiftCalendar = ({
           {isCalendarView && <ViewToggle currentView={view} onViewChange={setView} />}
         </div>
       </div>
+
+      {/* Enhanced Calendar Navigation Header */}
+      {isCalendarView && (
+        <CalendarHeader
+          currentDate={currentDate}
+          view={view}
+          onNavigate={handleHeaderNavigate}
+          onViewChange={setView}
+          className="calendar-header"
+        />
+      )}
 
       {/* Color Legend */}
       {isCalendarView && <ColorLegend showEmployeeColors />}
