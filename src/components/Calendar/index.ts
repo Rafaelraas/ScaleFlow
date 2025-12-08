@@ -19,3 +19,5 @@ export { ShiftCalendar } from './ShiftCalendar';
 export type { ShiftCalendarProps } from './ShiftCalendar';
 export { QuickShiftModal } from './QuickShiftModal';
 export type { QuickShiftModalProps } from './QuickShiftModal';
+export { CalendarHeader } from './CalendarHeader';
+export type { CalendarHeaderProps } from './CalendarHeader';
