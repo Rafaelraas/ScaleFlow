@@ -2,6 +2,14 @@
 
 This directory contains SQL migration files for the ScaleFlow database schema.
 
+> **🇧🇷 Guia em Português disponível!**  
+> Para instruções completas em português sobre como aplicar e verificar migrações:  
+> **[📖 Guia de Migrações do Supabase em Português](../docs/SUPABASE_MIGRATIONS_GUIDE.md)**
+
+> **🇺🇸 English Guide available!**  
+> For complete English instructions on how to apply and verify migrations:  
+> **[📖 Deployment Guide](DEPLOYMENT_GUIDE.md)**
+
 ## Migration Files
 
 Migrations are numbered sequentially and should be run in order:
