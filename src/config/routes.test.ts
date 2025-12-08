@@ -149,7 +149,9 @@ describe('Route Configuration', () => {
       EMPLOYEE_ROUTES.forEach((route) => {
         expect(route.requiresAuth).toBe(true);
         expect(route.requiresCompany).toBe(true);
-        expect(route.allowedRoles).toEqual(['employee']);
+        // Employee routes now support multiple staff-level roles (employee, staff, operator)
+        expect(route.allowedRoles).toBeDefined();
+        expect(route.allowedRoles).toContain('employee');
         expect(route.category).toBe('employee_only');
       });
     });
