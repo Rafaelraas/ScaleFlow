@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from '@/hooks/useSession';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,14 +24,7 @@ const Workload = () => {
     daysOverStaffed: 0,
   });
 
-  useEffect(() => {
-    if (userProfile?.company_id) {
-      loadWorkloadData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userProfile?.company_id, selectedPeriod]);
-
-  const loadWorkloadData = async () => {
+  const loadWorkloadData = useCallback(async () => {
     if (!userProfile?.company_id) return;
 
     setIsLoading(true);
@@ -61,7 +54,13 @@ const Workload = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userProfile?.company_id, selectedPeriod]);
+
+  useEffect(() => {
+    if (userProfile?.company_id) {
+      loadWorkloadData();
+    }
+  }, [userProfile?.company_id, loadWorkloadData]);
 
   const getUtilizationColor = (rate: number) => {
     if (rate < 50) return 'text-yellow-600';

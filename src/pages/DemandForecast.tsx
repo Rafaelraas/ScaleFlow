@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from '@/hooks/useSession';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,14 +37,7 @@ const DemandForecastPage = () => {
     holidayDays: 0,
   });
 
-  useEffect(() => {
-    if (userProfile?.company_id) {
-      loadForecastData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userProfile?.company_id]);
-
-  const loadForecastData = async () => {
+  const loadForecastData = useCallback(async () => {
     if (!userProfile?.company_id) return;
 
     setIsLoading(true);
@@ -68,7 +61,13 @@ const DemandForecastPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userProfile?.company_id]);
+
+  useEffect(() => {
+    if (userProfile?.company_id) {
+      loadForecastData();
+    }
+  }, [userProfile?.company_id, loadForecastData]);
 
   const handleGenerateForecasts = async () => {
     if (!userProfile?.company_id) return;

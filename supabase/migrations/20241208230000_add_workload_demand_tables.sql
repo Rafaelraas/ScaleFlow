@@ -199,7 +199,12 @@ BEGIN
     scheduled_staff_count = EXCLUDED.scheduled_staff_count,
     updated_at = NOW();
 
-  RETURN NEW;
+  -- Return appropriate record based on operation
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  ELSE
+    RETURN NEW;
+  END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -371,14 +376,14 @@ CREATE POLICY "demand_forecasts_modify_managers" ON public.demand_forecasts
   );
 
 -- Workload Templates Policies
--- SELECT: Managers and schedule_managers can view templates for their company
+-- SELECT: Managers, schedule_managers, and operators can view templates for their company
 CREATE POLICY "workload_templates_select_company_staff" ON public.workload_templates
   FOR SELECT
   USING (
     company_id IN (
       SELECT p.company_id FROM public.profiles p
       WHERE p.id = auth.uid()
-      AND public.can_manage_schedules(p.id)
+      AND public.has_any_role(p.id, ARRAY['manager', 'schedule_manager', 'operator'])
     )
   );
 
