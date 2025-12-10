@@ -250,8 +250,8 @@ Comprehensive documentation is available to help you understand and contribute t
 | Document                                            | Description                                    |
 | --------------------------------------------------- | ---------------------------------------------- |
 | [📖 Documentation Index](./docs/INDEX.md)           | Complete documentation overview and navigation |
-| [⚡ Quick Start Guide](./QUICK_START.md)            | Get up and running in 5 minutes                |
-| [🔧 Backend Setup Guide](./BACKEND_SETUP.md)        | **🆕 Complete backend configuration guide**    |
+| [⚡ Quick Start Guide](./docs/setup/QUICK_START.md)            | Get up and running in 5 minutes                |
+| [🔧 Backend Setup Guide](./docs/setup/BACKEND_SETUP.md)        | **🆕 Complete backend configuration guide**    |
 | [🔒 Security & Roles](./docs/security-and-roles.md) | **🆕 Security model, RBAC, and RLS policies**  |
 | [🏗️ Architecture Guide](./docs/ARCHITECTURE.md)     | System architecture and design patterns        |
 | [🗄️ Database Schema](./docs/DATABASE.md)            | Database structure and RLS policies            |
@@ -271,7 +271,7 @@ Comprehensive documentation is available to help you understand and contribute t
 
 | Document                                           | Description                                       |
 | -------------------------------------------------- | ------------------------------------------------- |
-| [🚨 CodeQL Setup Fix](./CODEQL_TROUBLESHOOTING.md) | **Quick fix for CodeQL "default setup" conflict** |
+| [🚨 CodeQL Setup Fix](./docs/CODEQL_TROUBLESHOOTING.md) | **Quick fix for CodeQL "default setup" conflict** |
 | [🛡️ CodeQL Setup Guide](./docs/CODEQL_SETUP.md)    | Comprehensive CodeQL configuration guide          |
 
 ### Contributing
@@ -287,7 +287,7 @@ Comprehensive documentation is available to help you understand and contribute t
 | File                                           | Description                                      |
 | ---------------------------------------------- | ------------------------------------------------ |
 | [🤖 .cursorrules](./.cursorrules)              | AI-assisted development rules and patterns       |
-| [🛠️ AI_RULES.md](./AI_RULES.md)                | Tech stack and development guidelines            |
+| [🛠️ AI_RULES.md](./docs/setup/AI_RULES.md)                | Tech stack and development guidelines            |
 | [🔌 MCP Setup Guide](./docs/MCP_SETUP.md)      | **🆕 Model Context Protocol configuration guide** |
 | [📁 .mcp/config.json](./.mcp/config.json)      | **🆕 MCP servers configuration**                 |
 

@@ -36,10 +36,23 @@ Welcome to the ScaleFlow documentation! This index provides an overview of all a
 
 ### Planning & Strategy
 
-| Document                               | Description                            | Audience                     |
-| -------------------------------------- | -------------------------------------- | ---------------------------- |
-| [FEATURE_IDEAS.md](./FEATURE_IDEAS.md) | Future feature suggestions and roadmap | Product Managers, Developers |
-| [CHANGELOG.md](../CHANGELOG.md)        | Version history and release notes      | Everyone                     |
+| Document                                           | Description                                  | Audience                     |
+| -------------------------------------------------- | -------------------------------------------- | ---------------------------- |
+| [FEATURE_IDEAS.md](./FEATURE_IDEAS.md)             | Future feature suggestions and roadmap       | Product Managers, Developers |
+| [CHANGELOG.md](../CHANGELOG.md)                    | Version history and release notes            | Everyone                     |
+| [Sprint Plans](./sprints/)                         | 🆕 **Sprint planning and progress tracking** | **Developers, Managers**     |
+| [Implementation Summaries](./summaries/)           | 🆕 **Detailed implementation summaries**     | **Developers, Architects**   |
+| [Troubleshooting](./CODEQL_TROUBLESHOOTING.md)     | 🆕 **CodeQL setup fix and troubleshooting**  | **DevOps**                   |
+| [Dependency Management](./DEPENDENCY_BLOCKERS.md)  | 🆕 **Dependency issues and blockers**        | **Developers, DevOps**       |
+| [Dependency Update Matrix](./DEPENDENCY_UPDATE_MATRIX.md) | 🆕 **Dependency update tracking**     | **Developers, DevOps**       |
+
+### Setup & Configuration
+
+| Document                                       | Description                                | Audience              |
+| ---------------------------------------------- | ------------------------------------------ | --------------------- |
+| [Quick Start Guide](./setup/QUICK_START.md)    | 🆕 **Get up and running in 5 minutes**     | **Everyone**          |
+| [Backend Setup](./setup/BACKEND_SETUP.md)      | 🆕 **Complete backend configuration**      | **Developers, DevOps** |
+| [AI Rules](./setup/AI_RULES.md)                | 🆕 **Tech stack and development rules**    | **AI Agents**         |
 
 ### AI Development
 
@@ -47,7 +60,7 @@ Welcome to the ScaleFlow documentation! This index provides an overview of all a
 | --------------------------------------------------------------------- | -------------------------------------------- | ----------------------------- |
 | [.github/copilot-instructions.md](../.github/copilot-instructions.md) | **GitHub Copilot coding agent instructions** | **GitHub Copilot, AI Agents** |
 | [.cursorrules](../.cursorrules)                                       | AI-assisted development rules for Cursor IDE | AI Agents, Developers         |
-| [AI_RULES.md](../AI_RULES.md)                                         | Tech stack and development rules             | AI Agents                     |
+| [AI_RULES.md](./setup/AI_RULES.md)                                    | Tech stack and development rules             | AI Agents                     |
 | [MCP_SETUP.md](./MCP_SETUP.md)                                        | **🆕 Model Context Protocol setup guide**    | **AI Agents, Developers**     |
 | [.mcp/config.json](../.mcp/config.json)                               | **🆕 MCP servers configuration**             | **AI Agents**                 |
 
@@ -407,6 +420,52 @@ Documentation should be updated when:
 5. 🎯 Prioritize roadmap items
 6. 🌟 Engage with community
 
+## 📁 Documentation Organization
+
+The ScaleFlow documentation is organized into the following directories:
+
+### Root Level (`/`)
+Essential project files that should be immediately visible:
+- `README.md` - Main project documentation
+- `CONTRIBUTING.md` - Contribution guidelines
+- `CODE_OF_CONDUCT.md` - Community standards
+- `CHANGELOG.md` - Version history
+
+### Setup & Configuration (`/docs/setup/`)
+Quick start guides and configuration documentation:
+- `QUICK_START.md` - Get started in 5 minutes
+- `BACKEND_SETUP.md` - Complete backend setup guide
+- `AI_RULES.md` - Tech stack rules for AI agents
+
+### Sprint Planning (`/docs/sprints/`)
+All sprint-related planning and progress tracking (26 files):
+- Sprint plans (SPRINT_1 through SPRINT_10)
+- Sprint agent prompts and briefs
+- Sprint completion summaries
+- `SPRINT_OVERVIEW.md` - Overview of all sprints
+- `FUTURE_BACKLOG.md` - Future feature backlog
+- `QUICK_SPRINT_REFERENCE.md` - Quick sprint reference
+
+### Implementation Summaries (`/docs/summaries/`)
+Detailed implementation and refactoring summaries (26 files):
+- Feature implementation summaries
+- Refactoring summaries
+- Code review summaries
+- Session summaries
+- Test fix analyses
+- Action required documents
+
+### Core Documentation (`/docs/`)
+Technical documentation and guides (30+ files):
+- Architecture guides
+- Database documentation
+- API guidelines
+- Security documentation
+- Permission system guides
+- Migration guides
+- Deployment guides
+- Developer tools documentation
+
 ## 💡 Feedback
 
 Found an issue with the documentation? Want to suggest improvements?
@@ -417,10 +476,16 @@ Found an issue with the documentation? Want to suggest improvements?
 
 ---
 
-**Last Updated:** December 8, 2024  
-**Documentation Version:** 1.1  
+**Last Updated:** December 10, 2024  
+**Documentation Version:** 1.2  
 **Project Version:** 0.1.0  
-**Latest Addition:** Routing & Permission System Documentation (35KB)
+**Latest Changes:** 
+- Organized 60+ root-level markdown files into structured directories
+- Created `/docs/sprints/` for sprint planning (26 files)
+- Created `/docs/summaries/` for implementation summaries (26 files)
+- Created `/docs/setup/` for setup guides (3 files)
+- Moved 4 additional files to main `/docs/` directory
+- Updated all references in README.md
 
 ---
 
