@@ -7,6 +7,10 @@ import * as z from 'zod';
 import { addHours } from 'date-fns';
 
 import { DateTimePicker } from '@/components/ui/date-time-picker';
+import { RecurrencePanel } from '@/components/Shifts/RecurrencePanel';
+import { RecurrencePreview } from '@/components/Shifts/RecurrencePreview';
+import { stringifyRecurrenceRule } from '@/lib/recurrence-parser';
+import type { RecurrenceRule, WeekDay } from '@/types/database';
 
 interface Employee {
   id: string;
@@ -52,6 +56,14 @@ const formSchema = z.object({
   role_id: z.string().uuid().nullable().optional(),
   notes: z.string().max(500).optional(),
   published: z.boolean().default(false),
+  // Recurring shift fields
+  is_recurring: z.boolean().default(false),
+  recurrence_frequency: z.enum(['DAILY', 'WEEKLY', 'MONTHLY']).nullable().optional(),
+  recurrence_interval: z.number().min(1).max(99).default(1),
+  recurrence_byDay: z.array(z.enum(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'])).default([]),
+  recurrence_end_type: z.enum(['never', 'on', 'after']).default('never'),
+  recurrence_until: z.string().nullable().optional(),
+  recurrence_count: z.number().min(1).max(365).nullable().optional(),
 });
 
 interface ShiftFormProps {
@@ -93,6 +105,13 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
       role_id: initialData?.role_id || undefined,
       notes: initialData?.notes || '',
       published: initialData?.published || false,
+      is_recurring: false,
+      recurrence_frequency: null,
+      recurrence_interval: 1,
+      recurrence_byDay: [],
+      recurrence_end_type: 'never',
+      recurrence_until: null,
+      recurrence_count: null,
     },
   });
 
@@ -159,6 +178,41 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
       return;
     }
 
+    // Build recurrence rule string if recurring
+    let recurrenceRuleString: string | null = null;
+    if (values.is_recurring && values.recurrence_frequency) {
+      try {
+        // Validate weekly has days selected
+        if (values.recurrence_frequency === 'WEEKLY' && values.recurrence_byDay.length === 0) {
+          showError('Please select at least one day for weekly recurrence.');
+          return;
+        }
+
+        const rule: RecurrenceRule = {
+          freq: values.recurrence_frequency,
+          interval: values.recurrence_interval,
+        };
+
+        if (values.recurrence_frequency === 'WEEKLY' && values.recurrence_byDay.length > 0) {
+          rule.byDay = values.recurrence_byDay as WeekDay[];
+        }
+
+        if (values.recurrence_end_type === 'on' && values.recurrence_until) {
+          rule.until = values.recurrence_until;
+        } else if (values.recurrence_end_type === 'after' && values.recurrence_count) {
+          rule.count = values.recurrence_count;
+        }
+
+        recurrenceRuleString = stringifyRecurrenceRule(rule);
+      } catch (error) {
+        showError(
+          'Invalid recurrence configuration: ' +
+            (error instanceof Error ? error.message : 'Unknown error')
+        );
+        return;
+      }
+    }
+
     if (initialData?.id) {
       // Update existing shift
       const { error } = await supabase
@@ -170,6 +224,8 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
           role_id: values.role_id || null,
           notes: values.notes || null,
           published: values.published,
+          is_recurring: values.is_recurring,
+          recurrence_rule: recurrenceRuleString,
         })
         .eq('id', initialData.id);
 
@@ -189,12 +245,18 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
         role_id: values.role_id || null,
         notes: values.notes || null,
         published: values.published,
+        is_recurring: values.is_recurring,
+        recurrence_rule: recurrenceRuleString,
       });
 
       if (error) {
         showError('Failed to create shift: ' + error.message);
       } else {
-        showSuccess('Shift created successfully!');
+        showSuccess(
+          values.is_recurring
+            ? 'Recurring shift created successfully! Use bulk generation to create all occurrences.'
+            : 'Shift created successfully!'
+        );
         onSuccess();
       }
     }
@@ -325,6 +387,54 @@ const ShiftForm = ({ onSuccess, onCancel, initialData }: ShiftFormProps) => {
             </FormItem>
           )}
         />
+        {/* Recurring Shift Toggle */}
+        {!initialData && ( // Only show for new shifts
+          <FormField
+            control={form.control}
+            name="is_recurring"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Make this a recurring shift</FormLabel>
+                  <p className="text-sm text-muted-foreground">
+                    Create a schedule pattern that repeats automatically.
+                  </p>
+                </div>
+              </FormItem>
+            )}
+          />
+        )}
+
+        {/* Recurrence Configuration Panel */}
+        {form.watch('is_recurring') && !initialData && (
+          <div className="space-y-4">
+            <RecurrencePanel control={form.control} watch={form.watch} setValue={form.setValue} />
+            <RecurrencePreview
+              recurrenceRule={
+                form.watch('recurrence_frequency')
+                  ? {
+                      freq: form.watch('recurrence_frequency') as RecurrenceRule['freq'],
+                      interval: form.watch('recurrence_interval') as number,
+                      byDay: form.watch('recurrence_byDay') as WeekDay[] | undefined,
+                      until:
+                        form.watch('recurrence_end_type') === 'on'
+                          ? (form.watch('recurrence_until') as string)
+                          : undefined,
+                      count:
+                        form.watch('recurrence_end_type') === 'after'
+                          ? (form.watch('recurrence_count') as number)
+                          : undefined,
+                    }
+                  : null
+              }
+              startDate={form.watch('start_time') as Date | null}
+            />
+          </div>
+        )}
+
         <FormField
           control={form.control}
           name="published"
